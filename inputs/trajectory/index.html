@@ -6,11 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Jun Zhang">
-        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/contributing/code-Style-Conventions/">
+        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/inputs/trajectory/">
         <link rel="shortcut icon" href="../../favicon.icon">
         
 
-	<title>Code Style - JuPedSim/jpsreport</title>
+	<title>Trajectory File - JuPedSim/jpsreport</title>
 
         <link href="../../css/bootstrap-3.0.3.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -82,20 +82,20 @@
             
             
             
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Input Files <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../inputs/geometry/">Geometry File</a>
+                            <a href="../geometry/">Geometry File</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Trajectory File</a>
                         </li>
                     
                         <li >
-                            <a href="../../inputs/trajectory/">Trajectory File</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../inputs/inifile/">Configuration File</a>
+                            <a href="../inifile/">Configuration File</a>
                         </li>
                     
                     </ul>
@@ -149,20 +149,20 @@
             
             
             
-                <li class="dropdown active">
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li class="active">
-                            <a href="./">Code Style</a>
+                        <li >
+                            <a href="../../contributing/code-Style-Conventions/">Code Style</a>
                         </li>
                     
                         <li >
-                            <a href="../workflow/">Workflow</a>
+                            <a href="../../contributing/workflow/">Workflow</a>
                         </li>
                     
                         <li >
-                            <a href="../utest/">Unit testing</a>
+                            <a href="../../contributing/utest/">Unit testing</a>
                         </li>
                     
                     </ul>
@@ -174,12 +174,12 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 <li >
-                    <a rel="next" href="../../samples/get_flow_bottleneck/">
+                    <a rel="next" href="../geometry/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../workflow/">
+                    <a rel="prev" href="../inifile/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -202,71 +202,105 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#code-style">Code Style</a></li>
+        <li class="main active"><a href="#xml-format">XML format</a></li>
         
-            <li><a href="#tabs-vs-spaces">Tabs vs Spaces</a></li>
-        
-            <li><a href="#comments">Comments</a></li>
+    
+        <li class="main "><a href="#txt-format">TXT format</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="code-style"><a class="toclink" href="#code-style">Code Style</a></h1>
-<p>In JuPedSim we try to code according to the <em>Stroustrup</em> style of formatting/indenting. 
-If you want (or have) to write code in JuPedSim you really <strong>need</strong> to respect that style.
-This is important not just aesthetically but also practically. Diff commits are much more clearer and cleaner.</p>
-<p>The code is formated using the automatic formatter <a href="http://astyle.sourceforge.net/astyle.html">astyle</a>  with the option <code>--style=stroustrup</code>:</p>
-<blockquote>
-<p>Stroustrup style formatting/indenting uses stroustrup brackets. 
-Brackets are broken from function definitions only.
-Brackets are attached to everything else including 
-namespaces, classes, and statements within a function, arrays, structs, and enums. 
-This style frequently is used with an indent of 5 spaces. </p>
-</blockquote>
-<p>Here is an <strong>example:</strong></p>
-<pre><code class="python">int Foo(bool isBar) 
-{
-     if (isBar) {
-          bar();
-          return 1;
-     } else
-          return 0;
-}
-</code></pre>
-
-<h2 id="tabs-vs-spaces"><a class="toclink" href="#tabs-vs-spaces">Tabs vs Spaces</a></h2>
-<p>This can be a long and religious discussion, to make it short <em>DO NOT</em> use tabs, just spaces please.</p>
-<p>Here are some hints to configure your editor in order to use the <em>stroustrup</em> style</p>
+<p><code>JPSreport</code> supports the formats <code>.xml</code> and <code>.txt</code> in current version. The format is the same with the output from <code>JPScore</code>. </p>
+<p><strong>Note that</strong> the unit of the data in trajectory file should be all in <code>m</code>.</p>
+<h2 id="xml-format"><a class="toclink" href="#xml-format">XML format</a></h2>
+<p>The file should include at least two main sections: header and frames.</p>
 <ul>
-<li><strong>Emacs</strong>:
-    Add this to your <code>.emacs</code></li>
-</ul>
-<pre><code class="lisp">(setq c-default-style &quot;stroustrup&quot; c-basic-offset 5)
-(setq indent-tabs-mode nil)
+<li>
+<p>Header</p>
+<pre><code> &lt;header version = "0.5"&gt;
+    &lt;agents&gt; 1 &lt;/agents&gt;
+    &lt;frameRate&gt; 8 &lt;/frameRate&gt;
+ &lt;/header&gt;
 </code></pre>
-
 <ul>
-<li><strong>Vim</strong>:
-    Set in your config file these variables</li>
+<li>
+<p>agents: The total number of agents in the trajectory data.</p>
+</li>
+<li>
+<p>frameRate: The frame rate. </p>
+</li>
 </ul>
-<pre><code class="javascript">:set autoindent
-:set cindent
-:set expandtab
-:set shiftwidth=5
-:set softtabstop=5
+</li>
+<li>
+<p>Frames: gives trajectory information in each frame.</p>
+<pre><code>&lt;frame ID="0"&gt;
+&lt;agent ID="1"   x="6.60"    y="3.33"    z="0.30" rA="0.17"  rB="0.24"   eO="-1.68" eC="0"/&gt;
+&lt;/frame&gt;
+
+&lt;frame ID="1"&gt;
+&lt;agent ID="1"   x="6.58"    y="3.32"    z="0.30" rA="0.31"  rB="0.23"   eO="-1.75" eC="54"/&gt;
+&lt;/frame&gt;
 </code></pre>
-
 <ul>
-<li><strong>Eclipse</strong>:
-    Here is a <a href="http://astyleclipse.sourceforge.net/">plugin</a> for astyle in eclipse.
-    Read also
-    <a href="https://superuser.com/questions/462221/how-do-i-reliably-change-the-indentation-width-in-eclipse">How to change indentation width in eclipse?</a></li>
+<li><strong>ID</strong>: mandatory, the id of the pedestrians starting with 1.</li>
+<li><strong>x, y, z</strong>: mandatory, the position of the agent.</li>
+<li><strong>xVel, yVel, zVel</strong>: Optional, the instantaneous velocity. They are not used in <code>JPSreport</code>.</li>
+<li><strong>rA, rB</strong>: Optional. The shape which is defined by a circle (ellipse) drawn around a human. They are not used in <code>JPSreport</code>.</li>
+<li><strong>eO, eC</strong>: Optional. They are the &ldquo;ellipseOrientation&rdquo; and the &ldquo;ellipseColo&rdquo;&rsquo;. They are not used in <code>JPSreport</code>.</li>
 </ul>
-<h2 id="comments"><a class="toclink" href="#comments">Comments</a></h2>
-<p>Comments and commit messages have to be written in <strong>English</strong>. Please write clear and concise commit messages so that
-your co-developers can directly grasp what changes on the code are you committing/pushing.</p></div>
+</li>
+<li>
+<p>Sample trajectory file</p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;trajectories&gt;
+    &lt;header version = "0.5"&gt;
+        &lt;agents&gt;1&lt;/agents&gt;
+        &lt;frameRate&gt;8&lt;/frameRate&gt;
+    &lt;/header&gt;
+
+    &lt;frame ID="0"&gt;
+        &lt;agent ID="1"   x="6.60"    y="3.33"    z="0.30"/&gt;
+    &lt;/frame&gt;
+
+    &lt;frame ID="1"&gt;
+        &lt;agent ID="1"   x="6.58"    y="3.32"    z="0.30"/&gt;
+    &lt;/frame&gt;
+&lt;/trajectories&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="txt-format"><a class="toclink" href="#txt-format">TXT format</a></h2>
+<p>A sample trajectory in .txt format is present as below:</p>
+<pre><code>    #description: my super simulation
+    #framerate: 16
+    #geometry: /home/sim/corridor.xml
+    #ID: the agent ID
+    #FR: the current frame
+    #X,Y,Z: the agents coordinates in metres
+
+    #ID FR  X       Y       Z
+    1   0   8.21    131.57  0.00
+    2   0   8.41    133.42  0.00
+    1   1   8.21    131.57  0.00
+    2   1   8.41    133.42  0.00
+    1   2   8.24    131.57  0.00
+    2   2   8.44    133.42  0.00
+    1   3   8.29    131.57  0.00
+    2   3   8.49    133.42  0.00
+    1   4   8.36    131.57  0.00
+    2   4   8.56    133.42  0.00
+    1   5   8.44    131.57  0.00
+    2   5   8.64    133.42  0.00
+    1   6   8.54    131.57  0.00
+    2   6   8.74    133.42  0.00
+    1   7   8.65    131.57  0.00
+    2   7   8.85    133.42  0.00
+    1   8   8.77    131.57  0.00
+</code></pre>
+<p>The second line is always the <code>framerate</code>. <code>z</code> are not used in <code>JPSreport</code> but is should be stay there. The value of <code>z</code> is not important.</p></div>
         </div>
 
 	<footer class="col-md-12">

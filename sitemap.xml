@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//contributing/code-Style-Conventions/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//contributing/workflow/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//contributing/utest/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+    
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//about/disclaimer/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//about/LICENSE/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//about/contributors/</loc>
+     <lastmod>2016-02-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    
+
+</urlset>

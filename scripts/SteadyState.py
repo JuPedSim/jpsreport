@@ -58,19 +58,24 @@ def getParserArgs():
     """
     parser = argparse.ArgumentParser(
         description='Detection of Steady State. JuPedSim v%0.1f.' % VERSION)
+    parser.add_argument("-a", "--automatic", action='store_true',
+                        help="use calculated reference start and end frames. If given -rs and -re are ignored")
     parser.add_argument("-f", "--input_file", default=demo_file,
                         help='Full name of the input file (default %s). File format is | frame | rho | velocity |' % demo_file)
-    parser.add_argument("-c", "--columns", nargs='+', type=int, default=[0, 1, 2], help="columns to read from file (default 0, 1, 2)")
+    parser.add_argument("-c", "--columns", nargs='+', type=int, default=[0, 1, 2],
+                        help="columns to read from file (default 0, 1, 2)")
+    parser.add_argument("-xl", "--xlabel", type=str, default="t /s",
+                        help="xlabel")
+    parser.add_argument("-yl", "--ylabel", nargs='+', type=str, default=["\rho /m/s", "v m/s"],
+                        help="ylabel")
     parser.add_argument("-rs", "--reference_start", nargs='+', type=int, default=[240, 240],
                         help='Start frame of the reference process in density (default 240)')
     parser.add_argument("-re", "--reference_end", nargs='+', type=int, default=[640, 640],
                         help='End frame of the reference process in density (default 640)')
-    # parser.add_argument("-vs", "--reference_v_start", type=int, default=240,
-                        # help='Start frame of the reference process in speed (default 240)')
-    # parser.add_argument("-ve", "--reference_v_end", type=int, default=640,
-                        # help='End frame of the reference process in speed (default 640)')
-    parser.add_argument("-p", "--plotfigs", default="yes", help='Plot figures (default yes)')
-    parser.add_argument("-r", "--fps", type=int, default=16, help='Frame per second (default 16)')
+    parser.add_argument("-p", "--plotfigs", default="yes",
+                        help='Plot figures (default yes)')
+    parser.add_argument("-r", "--fps", type=int, default=16,
+                        help='Frame per second (default 16)')
     args = parser.parse_args()
     return args
 
@@ -251,7 +256,7 @@ def plot_series(statistics, theta, column):
     limit = (int((statistics[-1, 0] / frame) / 10) + 1) * 10
     plt.plot(statistics[:, 0] / frame, statistics[:, 1], 'b--', lw=2, label=r'S$_{k}$')
     plt.plot([0, limit], [theta, theta], 'r-', lw=2, label=r'$\theta$')
-    plt.xlabel('t [s]', fontsize=25)
+    plt.xlabel(xlabel, fontsize=25)
     plt.ylabel('Statistics %d'%column, fontsize=25)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
@@ -265,26 +270,33 @@ def plot_series(statistics, theta, column):
 def plot_steady_state(statistics, data, ref_start, ref_end, info, column):
     fig = plt.figure(figsize=(11, 10), dpi=100)
     ax = fig.add_subplot(111)
-    limit = (int((statistics[-1, 0] / frame) / 10) + 1) * 10
-    plt.plot((data[:, 0] + minframe) / frame, data[:, 1], 'b-', lw=2)
-    plt.plot([ref_start / frame, ref_start / frame], [0, 50], 'g--', lw=2, label='reference')
-    plt.plot([ref_end / frame, ref_end / frame], [0, 50], 'g--', lw=2)
+    if xlabel == "frame":
+        fps = 1.0  # hack
+    else:
+        fps = frame
+
+    limit = (int((statistics[-1, 0] / fps) / 10) + 1) * 10
+    plt.plot((data[:, 0] + minframe) / fps, data[:, 1], 'b-', lw=2)
+    plt.plot([ref_start / fps, ref_start / fps], [0, 50], 'g--', lw=2, label='reference')
+    plt.plot([ref_end / fps, ref_end / fps], [0, 50], 'g--', lw=2)
     for i in range(len(info[:, 0])):
-        ax.add_patch(mpatches.Polygon([[info[i, 0] / frame, 0],
-                                       [info[i, 1] / frame, 0],
-                                       [info[i, 1] / frame, 50],
-                                       [info[i, 0] / frame, 50]],
+        ax.add_patch(mpatches.Polygon([[info[i, 0] / fps, 0],
+                                       [info[i, 1] / fps, 0],
+                                       [info[i, 1] / fps, 50],
+                                       [info[i, 0] / fps, 50]],
                                       closed=True, fill=False,
                                       color='r', hatch='/', label='steady (%d)'%column))
+
     for i in range(len(info[:, 0])):
-        ax.add_patch(mpatches.Polygon([[info[i, 0] / frame, 0],
-                                       [info[i, 1] / frame, 0],
-                                       [info[i, 1] / frame, 50],
-                                       [info[i, 0] / frame, 50]],
+        ax.add_patch(mpatches.Polygon([[info[i, 0] / fps, 0],
+                                       [info[i, 1] / fps, 0],
+                                       [info[i, 1] / fps, 50],
+                                       [info[i, 0] / fps, 50]],
                                       closed=True, fill=True,
                                       color='y', alpha=0.2, label='steady (final)'))
-    plt.xlabel('t [s]', fontsize=25)
-    plt.ylabel(r'$\rho$ [m$^{-2}$]', fontsize=25)
+
+    plt.xlabel(xlabel, fontsize=25)
+    plt.ylabel(r'$%s$'%ylabel[column-1], fontsize=25)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.xlim(0, limit)
@@ -292,7 +304,6 @@ def plot_steady_state(statistics, data, ref_start, ref_end, info, column):
     plt.legend(numpoints=1, ncol=1, loc=1, fontsize=20)
     plt.savefig('%s/SteadyState_%d_%s.png' % (filepath, column, filename))
     plt.close()
-
 
 if __name__ == '__main__':
     rho_max = 8.0
@@ -303,7 +314,16 @@ if __name__ == '__main__':
     plotfigs = args.plotfigs
     frame = args.fps
     columns = args.columns
-    # input data
+    xlabel = args.xlabel
+    ylabel = args.ylabel
+    # sanity check
+
+    if not args.automatic: # in case references are manually given, lengths should be correct
+        assert (len(columns)-1) == len(ref_start) == len(ref_end) == len(ylabel),\
+            "mismatch lengths.\n\t columns: %s (first is frame)\n\t ref_start: %s\n\t ref_end: %s\n ylabel: %s"%\
+            (", ".join(map(str, columns)), ", ".join(map(str, ref_start)), ", ".join(map(str, ref_end)), ", ".join(map(str, ylabel)))
+
+    # read input data
     try:
         data = loadtxt('%s' % (input_file), usecols=columns)# [0, 6, 8]
     except IOError:
@@ -314,7 +334,7 @@ if __name__ == '__main__':
     data[:, 0] = data[:, 0] - minframe
 
     # get filepath and filename
-    filename = os.path.basename(input_file)
+    filename = os.path.basename(input_file).split(".")[0]
     filepath = os.path.dirname(input_file)
     print('file path = %s' % filepath)
     print('file name = %s' % filename)
@@ -331,7 +351,7 @@ if __name__ == '__main__':
         calculate_statistics(data, i+1, ref_mean, ref_std)
         # choose steady state
         info, statistics = choose_steady_state(i+1, theta)
-        print('+--------------------------------------------------------------------------------------------+')
+        print('+------------------------------------------------------------------------------+')
         for j in range(info.shape[0]):
             print('steady state of series %d (%d): from %d (%.1f s) to %d (%.1f s) [ratio=%.2f, mean=%.2f, std=%.2f]' % (
                 i, j,
@@ -348,14 +368,14 @@ if __name__ == '__main__':
             # plot steady
             plot_steady_state(statistics, data, ref_start[i], ref_end[i], info, i+1)
 
-
+        print('+------------------------------------------------------------------------------+')
         os.remove('%s/cusum_%d_%s.txt' % (filepath, i+1, filename))
 
     # choose steady state
     ss = open('%s/SteadyState_%s.txt' % (filepath, filename), 'w')
     ss.write('# start end ratio \n')
-    print "starts: ", starts
-    print "ends: ", ends
+    print "start frames: ", starts
+    print "end frames: ", ends
     mix_start = max(starts)
     mix_end = min(ends)
     if mix_start < mix_end:
@@ -366,7 +386,7 @@ if __name__ == '__main__':
     info = loadtxt('%s/SteadyState_%s.txt' % (filepath, filename))
     print('final steady state is  from %d (%.1f s) to %d (%.1f s)  [ratio=%.2f]' %
           (mix_start, mix_start / frame, mix_end, mix_end / frame, ss_data_ratio))
-    print('+--------------------------------------------------------------------------------------------+')
+
 
     print('Steady state detected successfully!')
 

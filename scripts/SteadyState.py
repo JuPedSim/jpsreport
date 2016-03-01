@@ -300,19 +300,16 @@ if __name__ == '__main__':
     input_file = args.input_file
     ref_start = args.reference_start
     ref_end = args.reference_end
-    # ref_v_start = args.reference_v_start
-    # ref_v_end = args.reference_v_end
     plotfigs = args.plotfigs
     frame = args.fps
     columns = args.columns
     # input data
     try:
-        # data = loadtxt('%s'%(input_file))
         data = loadtxt('%s' % (input_file), usecols=columns)# [0, 6, 8]
     except IOError:
         exit("Can not open file <%s>" % input_file)
 
-    data = data[data[:, 1] != 0] # why?
+    data = data[data[:, 1] != 0] # todo: why?
     minframe = data[0, 0]
     data[:, 0] = data[:, 0] - minframe
 
@@ -323,17 +320,16 @@ if __name__ == '__main__':
     print('file name = %s' % filename)
 
     ia, ib, dnorm = init_parameters()
+    starts = []  # collect start of steady state for all series
+    ends = [] # collect end of steady state for all series
     for i in range(len(columns)-1):
         ref_acf, ref_mean, ref_std = set_ref_series(data, i+1, ref_start[i], ref_end[i])
-
         # calculate theta rho
         theta = get_theta(ia, ib, dnorm, ref_acf)
         print('theta[%d] = %.0f' % (i, theta))
-
-        # calculate statistics rho
+        # calculate statistics
         calculate_statistics(data, i+1, ref_mean, ref_std)
-
-        # choose steady state rho
+        # choose steady state
         info, statistics = choose_steady_state(i+1, theta)
         print('+--------------------------------------------------------------------------------------------+')
         for j in range(info.shape[0]):
@@ -342,22 +338,37 @@ if __name__ == '__main__':
                 info[j][0], info[j][0] / frame, info[j][1], info[j][1] / frame,
                 info[j][2], info[j][3], info[j][4]))
 
+            ends.append(info[j][1])
+            starts.append(info[j][0])
 
         if plotfigs == 'yes':
             print('Plotting figures...')
-            # plot cusum rho
+            # plot cusum
             plot_series(statistics, theta, i+1)
-
-            # plot steady rho
+            # plot steady
             plot_steady_state(statistics, data, ref_start[i], ref_end[i], info, i+1)
 
 
         os.remove('%s/cusum_%d_%s.txt' % (filepath, i+1, filename))
-        
+
+    # choose steady state
+    ss = open('%s/SteadyState_%s.txt' % (filepath, filename), 'w')
+    ss.write('# start end ratio \n')
+    print "starts: ", starts
+    print "ends: ", ends
+    mix_start = max(starts)
+    mix_end = min(ends)
+    if mix_start < mix_end:
+        ss_data_ratio = (mix_end - mix_start) / len(data[:, 0]) * 100
+        ss.write('%.0f %.0f %.2f \n' % (mix_start, mix_end, ss_data_ratio))
+
+    ss.close()
+    info = loadtxt('%s/SteadyState_%s.txt' % (filepath, filename))
+    print('final steady state is  from %d (%.1f s) to %d (%.1f s)  [ratio=%.2f]' %
+          (mix_start, mix_start / frame, mix_end, mix_end / frame, ss_data_ratio))
+    print('+--------------------------------------------------------------------------------------------+')
 
     print('Steady state detected successfully!')
-
-
 
 
 
@@ -374,17 +385,6 @@ if __name__ == '__main__':
         # print('+--------------------------------------------------------------------------------------------+')
 
     # calculate steady state
-    # ss = open('%s/SteadyState_%s.txt' % (filepath, filename), 'w')
-    # ss.write('# start end ratio \n')
-    # print infos
-    # print infos2
-    # for element in itertools.product(*infos): #todo: consider only the case of one steady state / series_data
-    #     # print element
-    #     mix_start = max(element)
-    #     mix_end = min(element)
-    #     if mix_start < mix_end:
-    #         ss_data_ratio = (mix_end - mix_start) / len(data[:, 0]) * 100
-    #         ss.write('%.0f %.0f %.2f \n' % (mix_start, mix_end, ss_data_ratio))
 
         
     # for i in range(len(info_rho[:, 0])):

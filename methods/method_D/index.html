@@ -140,10 +140,6 @@
                             <a href="../../samples/get_profile/">How to get profiles</a>
                         </li>
                     
-                        <li >
-                            <a href="../../samples/get_flow_bottleneck/">How to get flow through bottleneck</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -206,7 +202,16 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-</div>
+<p><code>Method D</code> is based on the use of Voronoi diagrams which are a special kind of decomposition of a metric space determined by distances to a specified discrete set of objects in the space. At any time the positions of the pedestrians
+can be represented as a set of points, from which the Voronoi
+diagram can be generated. The Voronoi cell area, <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24A_i%24" />, for each person <code>i</code> can be obtained. Then, the
+density and velocity distribution of the space <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Crho_%7Bxy%7D%24" />  and <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%20v_%7Bxy%7D%24" /> can be defined as</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Crho_%7Bxy%7D%20%3D%201/A_i%20%5Cquad%20and%20%5Cquad%20v_%7Bxy%7D%3D%7Bv_i%28t%29%7D%5Cqquad%20%5Cmbox%7Bif%20%24%28x%2Cy%29%5Cin%20A_i%24%7D" /></p>
+<p>where <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24v_i%28t%29%24" /> is the instantaneous velocity of each person. The Voronoi density and velocity for the
+measurement area is defined as:</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20%5Crho%20%5Crangle_v%3D%5Cfrac%7B%5Ciint%7B%5Crho_%7Bxy%7Ddxdy%7D%7D%7Bb_%7B%5Crm%20cor%7D%5Ccdot%5CDelta%20x%7D" /></p>
+<p>Similarly, the Voronoi velocity is defined as:</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20v%20%5Crangle_v%3D%5Cfrac%7B%5Ciint%7Bv_%7Bxy%7Ddxdy%7D%7D%7Bb_%7B%5Crm%20cor%7D%5Ccdot%5CDelta%20x%7D" /></p></div>
         </div>
 
 	<footer class="col-md-12">

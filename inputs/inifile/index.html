@@ -140,10 +140,6 @@
                             <a href="../../samples/get_profile/">How to get profiles</a>
                         </li>
                     
-                        <li >
-                            <a href="../../samples/get_flow_bottleneck/">How to get flow through bottleneck</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -239,20 +235,20 @@
 </code></pre>
 </li>
 <li>
-<p><strong>measurement_areas</strong> indicates the types and location of the measurement areas you plan to use for analysis. Mainly Two kind of measurement areas can be exist here. <code>area_B</code> is 2D area and can be polygon (all the vertexes of the polygon should be given in clockwise), while <code>area_L</code> is a reference line indicating with two points.  <code>area_L</code> is only used in &lsquo;method_A&rsquo; and <code>area_B</code> are used for &lsquo;method_B, method_C and method_D&rsquo;. Several measurement areas can be given and distiguished with different <code>id</code>. Note that the option <code>length_in_movement_direction</code> is only used in &lsquo;method_B&rsquo; and the value will be ignored in other methods.</p>
+<p><strong>measurement_areas</strong> indicates the types and location of the measurement areas you plan to use for analysis. Mainly Two kind of measurement areas can be exist here. <code>area_B</code> is 2D area and can be polygon (all the vertexes of the polygon should be given in clockwise), while <code>area_L</code> is a reference line indicating with two points.  <code>area_L</code> is only used in &lsquo;method_A&rsquo; and <code>area_B</code> are used for &lsquo;method_B, method_C and method_D&rsquo;. Several measurement areas can be given and distiguished with different <code>id</code>. Note that the option <code>length_in_movement_direction</code> is only used in &lsquo;method_B&rsquo; and the value will be ignored in other methods. The parameter <code>zPos</code> is used to indicate the position of measuement area in z axis. <code>zPos</code> is useful for geometry with several stories. </p>
 <pre><code>&lt;measurement_areas unit="m"&gt;
-    &lt;area_B id="1" type="BoundingBox"&gt;
+    &lt;area_B id="1" type="BoundingBox" zPos="None"&gt;
         &lt;vertex x="-2.40" y="1.00" /&gt; &lt;!-- Clockwise --&gt;
         &lt;vertex x="-2.40" y="3.00" /&gt;
         &lt;vertex x="0" y="3.00" /&gt;
         &lt;vertex x="0" y="1.00" /&gt;
         &lt;length_in_movement_direction distance="2.0" /&gt;
     &lt;/area_B&gt;
-    &lt;area_L id="2" type="Line"&gt;
+    &lt;area_L id="2" type="Line" zPos="None"&gt;
         &lt;start x="-2.40" y="1.00" /&gt;
         &lt;end x="0" y="1.00" /&gt;
     &lt;/area_L&gt;
-    &lt;area_L id="3" type="Line"&gt;
+    &lt;area_L id="3" type="Line" zPos="None"&gt;
         &lt;start x="-2.40" y="2.00" /&gt;
         &lt;end x="0" y="2.00" /&gt;
     &lt;/area_L&gt;
@@ -274,18 +270,15 @@
 <li>
 <p><strong>Method A</strong></p>
 <pre><code>&lt;method_A enabled="true"&gt;
-    &lt;frame_interval unit="frame"&gt;
-        100
-    &lt;/frame_interval&gt;
-    &lt;measurement_area id="2" /&gt;
-    &lt;plot_time_series enabled="false"/&gt;
+    &lt;measurement_area id="2" frame_interval="100" plot_time_series="true"/&gt;
+    &lt;measurement_area id="3" frame_interval="100" plot_time_series="true"/&gt;
 &lt;/method_A&gt;
 </code></pre>
 <ul>
 <li>
 <p>Parameters:</p>
-<p>a) <code>frame_interval</code> specifies the size of time interval (in <em>frame</em>) for calculating flow rate.</p>
-<p>b) <code>measurement_area</code> specifies the location of the reference line by the <code>id</code>. several ids can be set in one inifile.</p>
+<p>a) <code>id</code> specifies the location of the reference line. several measurement areas can be set in one inifile with different id.</p>
+<p>b) <code>frame_interval</code> specifies the size of time interval (in <em>frame</em>) for calculating flow rate.</p>
 <p>c) <code>plot_time_series</code> specifies whether output the N-t Diagram.</p>
 </li>
 <li>
@@ -320,14 +313,13 @@ Figure-Example-Method-B</p>
 <li>
 <p><strong>Method C</strong>&ndash;Classical method</p>
 <pre><code>&lt;method_C enabled="true"&gt;
-    &lt;measurement_area id="1" /&gt;
-    &lt;plot_time_series enabled="false"/&gt;
+    &lt;measurement_area id="1" plot_time_series="false"/&gt;
 &lt;/method_C&gt;
 </code></pre>
 <ul>
 <li>
 <p>Parameters:</p>
-<p>a) <code>measurement_area</code> given by id. Several  </p>
+<p>a) <code>id</code> indicates the size and location of the measurement_area. Several measurement areas can be set in one inifile.</p>
 <p>b) <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram.</p>
 </li>
 <li>
@@ -341,28 +333,24 @@ Figure-Example-Method-C</p>
 <li>
 <p><strong>Method D</strong>&ndash;Voronoi method</p>
 <pre><code>&lt;method_D enabled="true"&gt; 
-    &lt;measurement_area id="1" /&gt; 
+    &lt;measurement_area id="1" start_frame="None", stop_frame="None" plot_time_series="false" get_individual_FD="false"/&gt; 
     &lt;one_dimensional enabled="false"/&gt;
-    &lt;plot_time_series enabled="false"/&gt;
     &lt;cut_by_circle enabled="false" radius="1.0" edges="10"/&gt;
     &lt;output_voronoi_cells enabled="false" plot_graphs="false"/&gt;
-    &lt;individual_FD enabled="false" measurement_area_id="1"/&gt;
     &lt;profiles enabled="false" grid_size_x="0.20" grid_size_y="0.20"/&gt; 
 &lt;/method_D&gt;
 </code></pre>
 <ul>
 <li>
 <p>Parameters:</p>
-<p>a) <code>measurement_area</code> given by id. Several ids can be given in one inifile.</p>
-<p>b) <code>one_dimensional</code> should be used when pedestrians move on a line (for example, trajectories from <a href="http://www.asim.uni-wuppertal.de/datenbank/own-experiments/corridor/1d-single-file-no-2.html">single-file experiment</a>)</p>
-<p>c) <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram.</p>
+<p>a) For each <code>measurement_area</code>, its id should be given and several ids can be set in one inifile.  <code>start_frame</code> and <code>stop_frame</code> give the starting and ending frame for data analysis. <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram. <code>get_individual_FD</code> determines whether or not to output the data for individual fundamental diagram in the given measurement area, which is based on the Voronoi density <script type="math/tex">rho_i</script> and velocity <script type="math/tex">v_i</script> of each pedestrian <script type="math/tex">i</script> in a given measurement area but not mean value over space. If true, the related data will be written in the folder <em>./Output/Fundamental_Diagram/IndividualFD/</em></p>
+<p><img src="../img/Figue4-4-4.png" width="822" height="750"/></p>
+<p>c) <code>one_dimensional</code> should be used when pedestrians move on a line (for example, trajectories from <a href="http://www.asim.uni-wuppertal.de/datenbank/own-experiments/corridor/1d-single-file-no-2.html">single-file experiment</a>)</p>
 <p><img src="../img/Figue4-4-1.png" width="852" height="651"/></p>
 <p>d) <code>cut_by_circle</code> determines whether to cut each cell by circle or not. Two options <code>radius</code> of the circle and the number of <code>edges</code> have to be supplied for approximating the circle if <code>enabled</code> is <em>true</em>.</p>
 <p>e) <code>output_voronoi_cells</code> specifies whether or not to output data for visualizing the Voronoi diagram. Two options <code>enabled</code> and <code>plot_graphs</code> have to be set. If both of them are <em>true</em>, files including Voronoi cells, speed and the coordinates of pedestrian corresponding to each cell as well as the figures of Voronoi cells will be created in the folder <em>./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/</em>. If the latter is <em>false</em>, only the datas will be created but the figures will not be plotted. When <code>enable</code> is <em>false</em>, nothing will be created.</p>
 <p><img src="../img/Figue4-4-2.png" width="653" height="495"/></p>
-<p>f) <code>individual_FD</code> determines whether or not to output the data for individual fundamental diagram, which is based on the Voronoi density <script type="math/tex">rho_i</script> and velocity <script type="math/tex">v_i</script> of each pedestrian <script type="math/tex">i</script> in a given measurement area but not mean value over space. If true, the related data will be written in the folder <em>./Output/Fundamental_Diagram/IndividualFD/</em></p>
-<p><img src="../img/Figue4-4-4.png" width="822" height="750"/></p>
-<p>g) <code>profiles</code> indicates whether to calculate the profiles over time and space. If <code>enabled</code> is true, the resolution which is decided by the parameters <code>grid_size_x</code> and <code>grid_size_x</code> should be set. The data will be in the folder +./Output/Fundamental_ Diagram/Classical_Voronoi/field/.</p>
+<p>f) <code>profiles</code> indicates whether to calculate the profiles over time and space. If <code>enabled</code> is true, the resolution which is decided by the parameters <code>grid_size_x</code> and <code>grid_size_x</code> should be set. The data will be in the folder +./Output/Fundamental_ Diagram/Classical_Voronoi/field/.</p>
 <p><img src="../img/Figue4-4-3.png" width="935" height="325"/></p>
 </li>
 <li>

@@ -140,10 +140,6 @@
                             <a href="../../samples/get_profile/">How to get profiles</a>
                         </li>
                     
-                        <li >
-                            <a href="../../samples/get_flow_bottleneck/">How to get flow through bottleneck</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -206,7 +202,16 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-</div>
+<p><code>Method A</code> calculates mean value of flow and density over time. A
+reference line is taken and studied over a
+fixed period of time <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20%7Bt%7D%24" />. Using this method we can obtain the pedestrian flow <code>J</code> and the velocity <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24v_i%24" /> of each pedestrian passing the reference line directly. Thus, the flow over time
+<img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Clangle%20J%20%5Crangle_%7B%5CDelta%20t%7D%24" /> and the time mean velocity <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Clangle%20v%20%5Crangle_%7B%5CDelta%20t%7D%24" /> can be calculated as</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20J%20%5Crangle_%7B%5CDelta%20t%7D%3D%5Cfrac%7BN_%7B%5CDelta%20t%7D%7D%7Bt_%7BN_%7B%5CDelta%20t%7D%7D%7D%5Cqquad%20%7B%5Crm%20and%7D%20%5Cqquad%20%5Clangle%20v%20%5Crangle_%7B%5CDelta%20t%7D%3D%5Cfrac%7B1%7D%7BN_%7B%5CDelta%20t%7D%7D%5Csum_%7Bi%3D1%7D%5E%7BN_%7B%5CDelta%20t%7D%7D%20v_i%28t%29" /></p>
+<p>where <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N_%7B%5CDelta%20t%7D%24" /> is the number of persons passing the reference line during the time interval <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20%7Bt%7D%24" />. <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7BN_%7B%5CDelta%20t%7D%7D%24" /> is the
+time between the first and the last of the <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N_%7B%5CDelta%20t%7D%24" /> pedestrians. <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7BN_%7B%5CDelta%20t%7D%7D%24" /> is the actual time
+that the <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N_%7B%5CDelta%20t%7D%24" /> pedestrians used for passing the line. It can be different from <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20%7Bt%7D%24" />. The time mean velocity <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Clangle%20v%20%5Crangle_%7B%5CDelta%20t%7D%24" /> is defined as the mean value of the
+instantaneous velocities <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24v_i%28t%29%24" /> of the <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N_%7B%5CDelta%20t%7D%24" /> pedestrians. <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24v_i%28t%29%24" /> is calculated by use of the displacement of pedestrian <code>i</code> in a small time interval <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20t%5E%5Cprime%24" /> around <code>t</code>:</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?v_i%28t%29%3D%5Cfrac%7B%5Cvec%7Bx_i%7D%28t&amp;plus;%5CDelta%20t%5E%5Cprime/2%29-%5Cvec%7Bx_i%7D%28t-%5CDelta%20t%5E%5Cprime/2%29%29%7D%7B%5CDelta%20t%5E%5Cprime%7D" /></p></div>
         </div>
 
 	<footer class="col-md-12">

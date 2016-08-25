@@ -140,10 +140,6 @@
                             <a href="../../samples/get_profile/">How to get profiles</a>
                         </li>
                     
-                        <li >
-                            <a href="../../samples/get_flow_bottleneck/">How to get flow through bottleneck</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -206,7 +202,17 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-</div>
+<p><code>Method B</code> measures the mean value of velocity and density
+over space and time. The spatial mean velocity and density are
+calculated by taking a segment <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20x%24" /> in a corridor as the
+measurement area. The velocity <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Clangle%20v%20%5Crangle_i%24" /> of each person
+is defined as the length <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20x%24" /> of the measurement area divided
+by the time he or she needs to cross the area,</p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20v%20%5Crangle_i%3D%5Cfrac%7B%5CDelta%20x%7D%7Bt_%7B%5Crm%20out%7D-t_%7B%5Crm%20in%7D%7D" /></p>
+<p>where <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7B%5Crm%20in%7D%24" /> and <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7B%5Crm%20out%7D%24" /> are the times a person enters and exits the measurement area, respectively.
+The density <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Crho_i%24" /> for each person is calculated with equation </p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20%5Crho%20%5Crangle_i%3D%5Cfrac%7B1%7D%7Bt_%7B%5Crm%20out%7D-t_%7B%5Crm%20in%7D%7D%5Ccdot%5Cint_%7Bt_%7B%5Crm%20in%7D%7D%5E%7Bt_%7B%5Crm%20out%7D%7D%20%5Cfrac%7BN%5E%5Cprime%28t%29%7D%7Bb_%7B%5Crm%20cor%7D%5Ccdot%5CDelta%20x%7Ddt" /></p>
+<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%24b_%7B%5Crm%20cor%7D%24" /> is the width of the measurement area while <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N%5E%5Cprime%28t%29%24" /> is the number of person in this area at a time <code>t</code>.</p></div>
         </div>
 
 	<footer class="col-md-12">

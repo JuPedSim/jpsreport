@@ -140,10 +140,6 @@
                             <a href="./">How to get profiles</a>
                         </li>
                     
-                        <li >
-                            <a href="../get_flow_bottleneck/">How to get flow through bottleneck</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -179,7 +175,7 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../get_flow_bottleneck/">
+                    <a rel="prev" href="../../contributing/code-Style-Conventions/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -206,7 +202,22 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-</div>
+<p>This page shows how to get profiles of density, velocity and specific flow.</p>
+<ul>
+<li>
+<p>Run JPSreport in the same procedure as <a href="../docs/samples/get_fundamental_diagram">getting fundamental diagram</a>. The only one point should be noticed is the preparing of the configuration file. The method D should be enabled. Set the parameter <code>enabled</code> of profiles as <code>true</code>. Set the resolution of the profile from the two parameters <code>grid_size_x</code>and <code>grid_size_y</code> </p>
+<pre><code>&lt;method_D enabled="true"&gt; 
+        &lt;profiles enabled="true" grid_size_x="0.20" grid_size_y="0.20"/&gt; 
+&lt;/method_D&gt;
+</code></pre>
+</li>
+<li>
+<p>Determine the steady state of the experiment in the whole measurement region.</p>
+</li>
+<li>
+<p>Run the python script <code>_Plot_profiles.py</code>, which is in the scripts folder in JPSreport.</p>
+</li>
+</ul></div>
         </div>
 
 	<footer class="col-md-12">

@@ -29,6 +29,18 @@
      <changefreq>daily</changefreq>
     </url>
         
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//about/disclaimer/</loc>
+     <lastmod>2016-10-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//about/LICENSE/</loc>
+     <lastmod>2016-10-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     
@@ -103,28 +115,6 @@
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
-        
-    <url>
-     <loc>http://jupedsim.github.io/jpsreport//about/disclaimer/</loc>
-     <lastmod>2016-10-13</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>http://jupedsim.github.io/jpsreport//about/LICENSE/</loc>
-     <lastmod>2016-10-13</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>http://jupedsim.github.io/jpsreport//about/contributors/</loc>
-     <lastmod>2016-10-13</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
     
 
 </urlset>

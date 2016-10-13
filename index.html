@@ -73,6 +73,14 @@
                             <a href="user_guide/configuration/">Configuration</a>
                         </li>
                     
+                        <li >
+                            <a href="about/disclaimer/">Disclaimer</a>
+                        </li>
+                    
+                        <li >
+                            <a href="about/LICENSE/">License</a>
+                        </li>
+                    
                     </ul>
                 </li>
             
@@ -146,27 +154,6 @@
                 </li>
             
             
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="about/disclaimer/">Disclaimer</a>
-                        </li>
-                    
-                        <li >
-                            <a href="about/LICENSE/">License</a>
-                        </li>
-                    
-                        <li >
-                            <a href="about/contributors/">Contributors</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
             </ul>
 
             <!-- Search, Navigation and Repo links -->
@@ -202,8 +189,6 @@
     
         <li class="main active"><a href="#jpsreport">JPSreport</a></li>
         
-            <li><a href="#get-started">Get started</a></li>
-        
             <li><a href="#implemented-methods">Implemented methods</a></li>
         
     
@@ -227,20 +212,6 @@
 <li><a href="http://jupedsim.github.io/jpsreport/">JPSreport</a>: Implementation of different measurement methods to evaluate out of trajectories the density, the velocity and the flow.</li>
 <li><a href="https://cst.version.fz-juelich.de/jupedsim/jpseditor">JPSreditor</a>: Geometry editor.</li>
 </ol>
-<h2 id="get-started"><a class="toclink" href="#get-started">Get started</a></h2>
-<p>The organization of <strong>JPSreport</strong> is as follows</p>
-<p><img src="img/usage_JPSreport.png" width="800" height="478"/></p>
-<p>Three input files are required to run <strong>JPSreport</strong>:</p>
-<ul>
-<li><strong>Trajectory file</strong>: Pedestrians&rsquo;s 2D position information over time. <em>.xml</em> and <em>.txt</em> format are adopted.</li>
-<li><strong>Geometry file</strong>: Geometry information for a certain trajectory data. This file should be in <em>.xml</em> format.</li>
-<li><strong>Configuration file</strong>: This inifile give some information related to each measurement method. e. g. 
-  the location of measurement areas, the chosen method etc. This file should be in <em>.xml</em> format.</li>
-</ul>
-<p>Further information for the three input files are described in other pages in more detail. </p>
-<p>Possible output of <strong>JPSreport</strong> includes data for plotting fundamental diagrams, 
-Voronoi diagrams and profiles of pedestrians etc. in a given geometry. 
-All the output data, e.g. density and speed, are stored in different folders as plain text in ASCII format.</p>
 <h2 id="implemented-methods"><a class="toclink" href="#implemented-methods">Implemented methods</a></h2>
 <p>In current version, four different measurement methods are implemented in <strong>JPSreport</strong> 
 to analyze pedestrian movement in different aspects and scales. For more details see <a href="http://juser.fz-juelich.de/record/128157">Pedestrian fundamental diagrams: Comparative analysis of<code></code>experiments in different geometries</a>.</p>

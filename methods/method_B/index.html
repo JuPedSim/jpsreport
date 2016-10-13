@@ -73,6 +73,14 @@
                             <a href="../../user_guide/configuration/">Configuration</a>
                         </li>
                     
+                        <li >
+                            <a href="../../about/disclaimer/">Disclaimer</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/LICENSE/">License</a>
+                        </li>
+                    
                     </ul>
                 </li>
             
@@ -146,27 +154,6 @@
                 </li>
             
             
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../about/disclaimer/">Disclaimer</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../about/LICENSE/">License</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../about/contributors/">Contributors</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
             </ul>
 
             <!-- Search, Navigation and Repo links -->
@@ -206,15 +193,20 @@
 
 <p><code>Method B</code> measures the mean value of velocity and density
 over space and time. The spatial mean velocity and density are
-calculated by taking a segment <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20x%24" /> in a corridor as the
-measurement area. The velocity <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Clangle%20v%20%5Crangle_i%24" /> of each person
-is defined as the length <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5CDelta%20x%24" /> of the measurement area divided
+calculated by taking a segment <script type="math/tex">\Delta x</script> in a corridor as the
+measurement area. The velocity <script type="math/tex">\langle v \rangle_i</script> of each person
+is defined as the length <script type="math/tex">\Delta x</script> of the measurement area divided
 by the time he or she needs to cross the area,</p>
-<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20v%20%5Crangle_i%3D%5Cfrac%7B%5CDelta%20x%7D%7Bt_%7B%5Crm%20out%7D-t_%7B%5Crm%20in%7D%7D" /></p>
-<p>where <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7B%5Crm%20in%7D%24" /> and <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24t_%7B%5Crm%20out%7D%24" /> are the times a person enters and exits the measurement area, respectively.
-The density <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24%5Crho_i%24" /> for each person is calculated with equation </p>
-<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%5Clangle%20%5Crho%20%5Crangle_i%3D%5Cfrac%7B1%7D%7Bt_%7B%5Crm%20out%7D-t_%7B%5Crm%20in%7D%7D%5Ccdot%5Cint_%7Bt_%7B%5Crm%20in%7D%7D%5E%7Bt_%7B%5Crm%20out%7D%7D%20%5Cfrac%7BN%5E%5Cprime%28t%29%7D%7Bb_%7B%5Crm%20cor%7D%5Ccdot%5CDelta%20x%7Ddt" /></p>
-<p><img alt="equation" src="http://latex.codecogs.com/gif.latex?%24b_%7B%5Crm%20cor%7D%24" /> is the width of the measurement area while <img alt="equation" src="http://latex.codecogs.com/gif.latex?%24N%5E%5Cprime%28t%29%24" /> is the number of person in this area at a time <code>t</code>.</p></div>
+<p>
+<script type="math/tex">\langle v \rangle_i=\frac{\Delta x}{t_{\rm out}-t_{\rm in}}</script>
+</p>
+<p>where <script type="math/tex">t_{in}</script> and <script type="math/tex">t_{out}</script> are the times a person enters and exits the measurement area, respectively.
+The density <script type="math/tex">\rho_i</script> for each person is calculated with equation </p>
+<p>
+<script type="math/tex">\langle \rho \rangle_i=\frac{1}{t_{\rm out}-t_{\rm in}}\cdot\int_{t_{\rm in}}^{t_{\rm out}} \frac{N^\prime(t)}{b_{\rm cor}\cdot\Delta x}dt</script>
+</p>
+<p>
+<script type="math/tex">b_{cor}</script> is the width of the measurement area while <script type="math/tex">N^\prime(t)</script> is the number of person in this area at a time <code>t</code>.</p></div>
         </div>
 
 	<footer class="col-md-12">

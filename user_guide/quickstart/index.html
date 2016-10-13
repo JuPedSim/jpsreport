@@ -73,6 +73,14 @@
                             <a href="../configuration/">Configuration</a>
                         </li>
                     
+                        <li >
+                            <a href="../../about/disclaimer/">Disclaimer</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../../about/LICENSE/">License</a>
+                        </li>
+                    
                     </ul>
                 </li>
             
@@ -146,27 +154,6 @@
                 </li>
             
             
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../about/disclaimer/">Disclaimer</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../about/LICENSE/">License</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../about/contributors/">Contributors</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
             </ul>
 
             <!-- Search, Navigation and Repo links -->
@@ -200,14 +187,31 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#get-started">Get started</a></li>
+        <li class="main active"><a href="#get-started-input-files">Get started: Input files</a></li>
+        
+    
+        <li class="main "><a href="#run-jpsreport">Run jpsreport</a></li>
+        
+    
+        <li class="main "><a href="#results">Results</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="get-started"><a class="toclink" href="#get-started">Get started</a></h1>
+<h1 id="get-started-input-files"><a class="toclink" href="#get-started-input-files">Get started: Input files</a></h1>
+<p>The organization of <strong>JPSreport</strong> is as follows</p>
+<p><img src="img/usage_JPSreport.png" width="800" height="478"/></p>
+<p>Three input files are required to run <code>JPSreport</code>:</p>
+<ul>
+<li><a href="../../inputs/trajectory/">Trajectory file</a>: Pedestrians&rsquo;s 2D position information over time. <code>.xml</code> and <code>.txt</code> format are adopted.</li>
+<li><a href="../../inputs/geometry/">Geometry file</a>: Geometry information for a certain trajectory data. This file should be in <code>.xml</code> format.</li>
+<li><a href="../../inputs/inifile/">Configuration file</a>: This inifile give some information related to each measurement method. e. g. 
+  the location of measurement areas, the chosen method etc. This file should be in <code>.xml</code> format.</li>
+</ul>
+<p>Further information for the three input files are described in other pages in more detail. </p>
+<h1 id="run-jpsreport"><a class="toclink" href="#run-jpsreport">Run jpsreport</a></h1>
 <p>After succesfully <a href="../configuration">compiling</a> the code you can just run
 <code>jpsreport</code> in a terminal as follows:</p>
 <pre><code class="bash">./bin/jpsreport inifile.xml
@@ -215,10 +219,13 @@
 
 <p><code>inifile.xml</code> defines all the needed information to start a analysis with
 <code>JPSreport</code>. See  the specifications of the <a href="../../inputs/inifile">Writing JPSreport Input Files</a>.</p>
-<hr />
+<h1 id="results"><a class="toclink" href="#results">Results</a></h1>
+<p>Possible output of <code>JPSreport</code> includes data for plotting fundamental diagrams, 
+Voronoi diagrams and profiles of pedestrians etc. in a given geometry. 
+All the output data, e.g. density and speed, are stored in different folders as plain text in ASCII format.</p>
 <p>After a successful analysis additional folder named <code>Output</code> will be created in
 the same directory as the used inifile. 
-It contains the basic data including plain text and eventually figures (depending on your specifications in the inifile).</p></div>
+It contains the basic data including plain text and eventually figures (depending on your specifications in the infill).</p></div>
         </div>
 
 	<footer class="col-md-12">

@@ -22,22 +22,22 @@
         }, 
         {
             "location": "/user_guide/quickstart/", 
-            "text": "Get started\n\n\nAfter succesfully \ncompiling\n the code you can just run\n\njpscore\n in a Terminal as follows:\n\n\n./bin/jpscore inifile.xml\n\n\n\n\ninifile.xml\n defines all the needed information to start a simulation with\n\njpscore\n. See  the specifications of the \nfile format\n.\n\n\nAfter a successful simulation an additional xml-file will be created in\nthe same directory as the used inifile. It contains discrete values\nfor the trajectories of the agents.\n\n\nYou can visualize the produced trajectory file with \njpscore\n as follows\n\n\n/path/to/jpsvis  trajectory.xml", 
+            "text": "Get started\n\n\nAfter succesfully \ncompiling\n the code you can just run\n\njpsreport\n in a terminal as follows:\n\n\n./bin/jpsreport inifile.xml\n\n\n\n\ninifile.xml\n defines all the needed information to start a analysis with\n\nJPSreport\n. See  the specifications of the \nWriting JPSreport Input Files\n.\n\n\n\n\nAfter a successful analysis additional folder named \nOutput\n will be created in\nthe same directory as the used inifile. \nIt contains the basic data including plain text and eventually figures (depending on your specifications in the inifile).", 
             "title": "Quickstart"
         }, 
         {
             "location": "/user_guide/quickstart/#get-started", 
-            "text": "After succesfully  compiling  the code you can just run jpscore  in a Terminal as follows:  ./bin/jpscore inifile.xml  inifile.xml  defines all the needed information to start a simulation with jpscore . See  the specifications of the  file format .  After a successful simulation an additional xml-file will be created in\nthe same directory as the used inifile. It contains discrete values\nfor the trajectories of the agents.  You can visualize the produced trajectory file with  jpscore  as follows  /path/to/jpsvis  trajectory.xml", 
+            "text": "After succesfully  compiling  the code you can just run jpsreport  in a terminal as follows:  ./bin/jpsreport inifile.xml  inifile.xml  defines all the needed information to start a analysis with JPSreport . See  the specifications of the  Writing JPSreport Input Files .   After a successful analysis additional folder named  Output  will be created in\nthe same directory as the used inifile. \nIt contains the basic data including plain text and eventually figures (depending on your specifications in the inifile).", 
             "title": "Get started"
         }, 
         {
             "location": "/user_guide/requirements/", 
-            "text": "Requirements\n\n\n\n\nCMake\n\n\nA compiler with support for C++11 e.g. \ng++\n or \nclang\n or \nVisual Studio 2013\n\n\nfor \nJPSvis\n and \nJPSeditor\n additionally \nQt\n and \nVTK\n are needed.\n\n\nJPSreport\n and \nJPScore\n need \nBoost-libraries\n. At the moment boost is hard-linked in \nJPSreport\n, but this should be fixed in the future.\n\n\n\n\nJuPedSim offers a Vagrant image that comes with all the necessary\npackages and libraries. See for more information \nhere\n.", 
+            "text": "Requirements\n\n\n\n\nCMake\n\n\nA compiler with support for C++11 e.g. \ng++\n or \nclang\n or \nVisual Studio 2013\n\n\nfor \nJPSvis\n and \nJPSeditor\n additionally \nQt\n and \nVTK\n are needed.\n\n\nJPSreport\n and \nJPScore\n need \nBoost-libraries\n. At the moment boost is hard-linked in \nJPSreport\n, but this should be fixed in the future.", 
             "title": "Requirements"
         }, 
         {
             "location": "/user_guide/requirements/#requirements", 
-            "text": "CMake  A compiler with support for C++11 e.g.  g++  or  clang  or  Visual Studio 2013  for  JPSvis  and  JPSeditor  additionally  Qt  and  VTK  are needed.  JPSreport  and  JPScore  need  Boost-libraries . At the moment boost is hard-linked in  JPSreport , but this should be fixed in the future.   JuPedSim offers a Vagrant image that comes with all the necessary\npackages and libraries. See for more information  here .", 
+            "text": "CMake  A compiler with support for C++11 e.g.  g++  or  clang  or  Visual Studio 2013  for  JPSvis  and  JPSeditor  additionally  Qt  and  VTK  are needed.  JPSreport  and  JPScore  need  Boost-libraries . At the moment boost is hard-linked in  JPSreport , but this should be fixed in the future.", 
             "title": "Requirements"
         }, 
         {

@@ -41,6 +41,31 @@
             "title": "How to Compile JPSreport"
         }, 
         {
+            "location": "/running/IDE/Build_in_eclipse_platform/", 
+            "text": "Step 1:\n\n\n\n\nDownload and install the [Eclipse] (http://www.eclipse.org/downloads/?) platform (here we take the version \nJuno Service Release 2\n as an example).\n\n\nDownload [JPSreport source files] (https://cst.version.fz-juelich.de/jupedsim/jpsreport)\n\n\nInstall latest version (g++ version should not be older than g++ 4.8.2) of \nMinGW\n\n\n\n\nStep 2:\n\n\nOpen Eclipse \n File \n New \n C++ Project, give \nProject name\n and select \nProject type\n and \nToolchains\n as shown in the following figure (MinGW GCC or Cross GCC are all ok). For \nLocation\n set as the directory where the source files are.\n\n\n\n\nStep3:\n\n\n\n\nRight-click on the project and click \nProperties\n in the pop-up menu, you will get a window as the figure below.\n\n\nClick \nC/C++ Build\n \n \nEnviorment\n, please to be sure that the path of GCC and make.exe (for example \n./MinGW/bin\n if you installed MinGW) is included in \nPATH\n.\n\n\nClick \nC/C++ Build\n \n \nSettings\n, Click \nTool Settings\n tab, \n    \nGCC C++ Compiler\n \n \nDialect\n, for the \nLanguage standard\n please select \nISO C++11\n. \nGCC C++ Compiler\n \n \nIncludes\n, add \ninclude paths (-I)\n by clicking the button and in the coming dialog box click the button \nWorkspace\n and select the location of the project.  \nGCC C++ Compiler\n \n \nMiscellaneous\n, add the text \n-std=c++11 -fopenmp -Wno-unused-local-typedefs\n in the textbox of \nOther flags\n. Click \nMinGW C++ Linker\n \n \nLibraries\n, add the text \nwsock32\n to  \nLibraries (-l)\n in the right box. Click \nMinGW C++ Linker\n \n \nMiscellaneous\n, add the text \n-fopenmp\n in the textbox of \nLinker flags\n.\n\n\nSelect \n[All configurations]\n from the drop-down menu of \nConfiguration\n and then push the button \nApply\n and \nOK\n\n\n\n\n\n\n\n\nStep 4:\n\n\n\n\nExclude the folder \nUtest\n from Build by right click on it as shown in the following figure\n\n\nBuild and Run JPSreport", 
+            "title": "Eclipse"
+        }, 
+        {
+            "location": "/running/IDE/Build_in_eclipse_platform/#step-1", 
+            "text": "Download and install the [Eclipse] (http://www.eclipse.org/downloads/?) platform (here we take the version  Juno Service Release 2  as an example).  Download [JPSreport source files] (https://cst.version.fz-juelich.de/jupedsim/jpsreport)  Install latest version (g++ version should not be older than g++ 4.8.2) of  MinGW", 
+            "title": "Step 1:"
+        }, 
+        {
+            "location": "/running/IDE/Build_in_eclipse_platform/#step-2", 
+            "text": "Open Eclipse   File   New   C++ Project, give  Project name  and select  Project type  and  Toolchains  as shown in the following figure (MinGW GCC or Cross GCC are all ok). For  Location  set as the directory where the source files are.", 
+            "title": "Step 2:"
+        }, 
+        {
+            "location": "/running/IDE/Build_in_eclipse_platform/#step3", 
+            "text": "Right-click on the project and click  Properties  in the pop-up menu, you will get a window as the figure below.  Click  C/C++ Build     Enviorment , please to be sure that the path of GCC and make.exe (for example  ./MinGW/bin  if you installed MinGW) is included in  PATH .  Click  C/C++ Build     Settings , Click  Tool Settings  tab, \n     GCC C++ Compiler     Dialect , for the  Language standard  please select  ISO C++11 .  GCC C++ Compiler     Includes , add  include paths (-I)  by clicking the button and in the coming dialog box click the button  Workspace  and select the location of the project.   GCC C++ Compiler     Miscellaneous , add the text  -std=c++11 -fopenmp -Wno-unused-local-typedefs  in the textbox of  Other flags . Click  MinGW C++ Linker     Libraries , add the text  wsock32  to   Libraries (-l)  in the right box. Click  MinGW C++ Linker     Miscellaneous , add the text  -fopenmp  in the textbox of  Linker flags .  Select  [All configurations]  from the drop-down menu of  Configuration  and then push the button  Apply  and  OK", 
+            "title": "Step3:"
+        }, 
+        {
+            "location": "/running/IDE/Build_in_eclipse_platform/#step-4", 
+            "text": "Exclude the folder  Utest  from Build by right click on it as shown in the following figure  Build and Run JPSreport", 
+            "title": "Step 4:"
+        }, 
+        {
             "location": "/running/runJPSreport/", 
             "text": "After succesfully \ncompiling\n the code, then users can start to run \nJPSreport\n and analyze your trajectories.\n\n\nSample input files are provided with the program for new users who are encouraged to first run a sample calculation before attempting to write an input file. You can find sample files in the folder \ndemos\n. Assuming that an input file called infile.xml exists in some directory *../demos/corridor/inifile.xml, run the program either in different operating systems as follows:\n\n\nFor Linux Users:\n\n\nYou can just run \nJPSreport\n in a Terminal as follows:\n\n\n./bin/JPSreport ../demos/corridor/inifile.xml\n\n\n\n\nFor Windows Users:\n\n\nOpen up a Command Prompt window, and change directories (\u201ccd\u201d) to where the executable file (\nJPSreport.exe)\n is located, then run the code by typing at the command prompt\n\n\n./bin/JPSreport.exe ../demos/corridor/inifile.xml\n\n\n\n\nFor Windows users, you can also drag the \ninifile\n to the executable file \nJPSreport\n.\n\n\ninifile.xml\n defines all the needed information to start a analysis with\n\nJPSreport\n. See  the specifications of the \nWriting JPSreport Input Files\n.\n\n\n===========\n\n\nAfter a successful analysis additional folder named \nOutput\n will be created in\nthe same directory as the used inifile. It contains the basic data including plain text and figures you planed to obtain.", 
             "title": "Running JPSreport"

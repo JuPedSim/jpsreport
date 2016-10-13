@@ -18,6 +18,12 @@
     </url>
         
     <url>
+     <loc>http://jupedsim.github.io/jpsreport//running/IDE/Build_in_eclipse_platform/</loc>
+     <lastmod>2016-10-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
      <loc>http://jupedsim.github.io/jpsreport//running/runJPSreport/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>

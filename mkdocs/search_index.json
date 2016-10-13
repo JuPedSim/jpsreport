@@ -162,8 +162,28 @@
         }, 
         {
             "location": "/samples/get_profile/", 
-            "text": "This page shows how to get profiles of density, velocity and specific flow.\n\n\n\n\n\n\nRun \nJPSreport\n as described in \ngetting fundamental diagram\n.\n\n   In order to calculate the profiles it is mandatory to use \nmethod D\n.\n\n   Moreover, Set the parameter \nenabled\n of profiles as \ntrue\n.\n\n   Set the resolution of the profile by initializing the  two parameters \ngrid_size_x\nand \ngrid_size_y\n, e.g.:  \n\n\nmethod_D enabled=\"true\"\n \n        \nprofiles enabled=\"true\" grid_size_x=\"0.20\" grid_size_y=\"0.20\"/\n \n\n/method_D\n\n\n\n\n\n\n\n\nDetermine the steady state of the experiment in the whole measurement region.\n\n\n\n\n\n\nRun the python script \n_Plot_profiles.py\n, which is in the scripts folder in \nJPSreport\n.", 
+            "text": "Profiles\n\n\nThis page shows how to get profiles of density, velocity and specific flow.\n\n\nRun jpsreport\n\n\nRun \nJPSreport\n as described in \ngetting fundamental diagram\n.\n\nIn order to calculate the profiles it is mandatory to use \nmethod D\n.\n\nMoreover, Set the parameter \nenabled\n of profiles as \ntrue\n.\n\nSet the resolution of the profile by initializing the  two parameters \ngrid_size_x\nand \ngrid_size_y\n, e.g.:  \n\n\n    \nmethod_D enabled=\"true\"\n \n            \nprofiles enabled=\"true\" grid_size_x=\"0.20\" grid_size_y=\"0.20\"/\n \n    \n/method_D\n\n\n\n\n(optional) Steady state\n\n\nDetermine the steady state of the experiment in the whole measurement region. \nIn the folder script there is a script to fulfill this task semi-manually.  \n\n\nProduce the profiles\n\n\nRun the python script \n_Plot_profiles.py\n, which is in the scripts folder in \nJPSreport\n.", 
             "title": "How to get profiles"
+        }, 
+        {
+            "location": "/samples/get_profile/#profiles", 
+            "text": "This page shows how to get profiles of density, velocity and specific flow.", 
+            "title": "Profiles"
+        }, 
+        {
+            "location": "/samples/get_profile/#run-jpsreport", 
+            "text": "Run  JPSreport  as described in  getting fundamental diagram . \nIn order to calculate the profiles it is mandatory to use  method D . \nMoreover, Set the parameter  enabled  of profiles as  true . \nSet the resolution of the profile by initializing the  two parameters  grid_size_x and  grid_size_y , e.g.:         method_D enabled=\"true\"  \n             profiles enabled=\"true\" grid_size_x=\"0.20\" grid_size_y=\"0.20\"/  \n     /method_D", 
+            "title": "Run jpsreport"
+        }, 
+        {
+            "location": "/samples/get_profile/#optional-steady-state", 
+            "text": "Determine the steady state of the experiment in the whole measurement region. \nIn the folder script there is a script to fulfill this task semi-manually.", 
+            "title": "(optional) Steady state"
+        }, 
+        {
+            "location": "/samples/get_profile/#produce-the-profiles", 
+            "text": "Run the python script  _Plot_profiles.py , which is in the scripts folder in  JPSreport .", 
+            "title": "Produce the profiles"
         }, 
         {
             "location": "/contributing/", 

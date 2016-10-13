@@ -193,16 +193,16 @@
 
 <p>This page shows how to get profiles of density, velocity and specific flow.</p>
 <ul>
-<li>
-<p>Run <code>JPSreport</code> as described in <a href="../get_fundamental_diagram/">getting fundamental diagram</a>. 
-  In order to calculate the profiles it is mandatory to use <a href="../../methods/method_D/">method D</a>. 
-  Moreover, Set the parameter <code>enabled</code> of profiles as <code>true</code>. 
-  Set the resolution of the profile by initializing the  two parameters <code>grid_size_x</code>and <code>grid_size_y</code>, e.g.:  </p>
-<pre><code>&lt;method_D enabled="true"&gt; 
-        &lt;profiles enabled="true" grid_size_x="0.20" grid_size_y="0.20"/&gt; 
-&lt;/method_D&gt;
+<li>Run <code>JPSreport</code> as described in <a href="../get_fundamental_diagram/">getting fundamental diagram</a>. </li>
+</ul>
+<p>In order to calculate the profiles it is mandatory to use <a href="../../methods/method_D/">method D</a>. 
+  Moreover, Set the parameter <code>enabled</code> of profiles as <code>true</code>. </p>
+<p>Set the resolution of the profile by initializing the  two parameters <code>grid_size_x</code>and <code>grid_size_y</code>, e.g.:  </p>
+<pre><code>    &lt;method_D enabled="true"&gt; 
+            &lt;profiles enabled="true" grid_size_x="0.20" grid_size_y="0.20"/&gt; 
+    &lt;/method_D&gt;
 </code></pre>
-</li>
+<ul>
 <li>
 <p>Determine the steady state of the experiment in the whole measurement region.</p>
 </li>

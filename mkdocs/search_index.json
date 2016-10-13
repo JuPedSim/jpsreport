@@ -162,7 +162,7 @@
         }, 
         {
             "location": "/samples/get_profile/", 
-            "text": "This page shows how to get profiles of density, velocity and specific flow.\n\n\n\n\nRun \nJPSreport\n as described in \ngetting fundamental diagram\n. \n   In order to calculate the profiles it is mandatory to use \nmethod D\n. \n   Moreover, Set the parameter \nenabled\n of profiles as \ntrue\n. \n\n\n\n\nSet the resolution of the profile by initializing the  two parameters \ngrid_size_x\nand \ngrid_size_y\n, e.g.:  \n\n\n    \nmethod_D enabled=\"true\"\n \n            \nprofiles enabled=\"true\" grid_size_x=\"0.20\" grid_size_y=\"0.20\"/\n \n    \n/method_D\n\n\n\n\n\n\n\n\nDetermine the steady state of the experiment in the whole measurement region.\n\n\n\n\n\n\nRun the python script \n_Plot_profiles.py\n, which is in the scripts folder in \nJPSreport\n.", 
+            "text": "This page shows how to get profiles of density, velocity and specific flow.\n\n\n\n\n\n\nRun \nJPSreport\n as described in \ngetting fundamental diagram\n.\n\n   In order to calculate the profiles it is mandatory to use \nmethod D\n.\n\n   Moreover, Set the parameter \nenabled\n of profiles as \ntrue\n.\n\n   Set the resolution of the profile by initializing the  two parameters \ngrid_size_x\nand \ngrid_size_y\n, e.g.:  \n\n\nmethod_D enabled=\"true\"\n \n        \nprofiles enabled=\"true\" grid_size_x=\"0.20\" grid_size_y=\"0.20\"/\n \n\n/method_D\n\n\n\n\n\n\n\n\nDetermine the steady state of the experiment in the whole measurement region.\n\n\n\n\n\n\nRun the python script \n_Plot_profiles.py\n, which is in the scripts folder in \nJPSreport\n.", 
             "title": "How to get profiles"
         }, 
         {

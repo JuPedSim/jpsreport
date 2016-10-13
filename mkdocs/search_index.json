@@ -157,8 +157,13 @@
         }, 
         {
             "location": "/samples/get_fundamental_diagram/", 
-            "text": "To obtain fundamental diagram from pedestrian trajectories using JPSreport, the following procedures should be followed:\n\n\n\n\n\n\nPrepare trajectory files\n\n\n\n\n\n\nPrepare geometry files\n\n\n\n\n\n\nPrepare the configuration file\n\n\n\n\n\n\nspecify the measurement method\n\n\n\n\n\n\nspecify the measurement area\n\n\n\n\n\n\nspecify other parameters related to each method\n\n\n\n\n\n\n\n\n\n\nDetermine starting and ending time of the the steady state from the time series of density and velocity\n\n\n\n\n\n\nRun JPSreport\n\n\n\n\n\n\nGet fundamental diagram using the steady state data", 
+            "text": "Fundamental diagram\n\n\nTo obtain fundamental diagram from pedestrian trajectories using JPSreport, the following procedures should be followed:\n\n\n\n\n\n\nPrepare trajectory files\n\n\n\n\n\n\nPrepare geometry files\n\n\n\n\n\n\nPrepare the configuration file\n\n\n\n\n\n\nspecify the measurement method\n\n\n\n\n\n\nspecify the measurement area\n\n\n\n\n\n\nspecify other parameters related to each method\n\n\n\n\n\n\n\n\n\n\nDetermine starting and ending time of the the steady state from the time series of density and velocity\n\n\n\n\n\n\nRun JPSreport\n\n\n\n\n\n\nGet fundamental diagram using the steady state data", 
             "title": "How to get fundamental diagram"
+        }, 
+        {
+            "location": "/samples/get_fundamental_diagram/#fundamental-diagram", 
+            "text": "To obtain fundamental diagram from pedestrian trajectories using JPSreport, the following procedures should be followed:    Prepare trajectory files    Prepare geometry files    Prepare the configuration file    specify the measurement method    specify the measurement area    specify other parameters related to each method      Determine starting and ending time of the the steady state from the time series of density and velocity    Run JPSreport    Get fundamental diagram using the steady state data", 
+            "title": "Fundamental diagram"
         }, 
         {
             "location": "/samples/get_profile/", 

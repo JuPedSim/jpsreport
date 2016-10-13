@@ -256,17 +256,26 @@
 </code></pre>
 </li>
 <li>
-<p><strong>velocity</strong> indicates the way for calculating instantaneous velocity <em>v_i(t)</em> of pedestrian <em>i</em> at time <em>t</em> from trajectories. In the tool, <em>v_i(t) = (X(t+frame_step/2) - X(t-frame_step/2))/frame_step</em>. X is location. <code>&lt;use_x_component&gt;</code> and <code>&lt;use_x_component&gt;</code> indicates coordinates will be used in the calculation. When both <code>&lt;use_x_component&gt;</code> and <code>&lt;use_x_component&gt;</code> are set as &ldquo;true&rdquo;, <em>x</em> and <em>y</em> coordinates will be used. Otherwise, only coordinates in x or y direction will be used. Note that at least one of the above variables should be &ldquo;true&rdquo;. <code>frame_step</code> gives the size of time interval for calculating the velocity.</p>
-<pre><code>&lt;velocity&gt;
-    &lt;use_x_component&gt;true&lt;/use_x_component&gt;
-    &lt;use_y_component&gt;true&lt;/use_y_component&gt;
-    &lt;frame_step&gt;10&lt;/frame_step&gt;
-&lt;/velocity&gt;
+<p><strong>velocity</strong> indicates the way for calculating instantaneous velocity <em>v_i(t)</em> of pedestrian <em>i</em> at time <em>t</em> from trajectories. In the tool, <em>v_i(t) = (X(t+frame_step/2) - X(t-frame_step/2))/frame_step</em>.</p>
+<pre><code>&lt;velocity frame_step="10" set_movement_direction="None" ignore_backward_movement="false"/&gt;
 </code></pre>
 <ul>
 <li>
-<p><strong>methods</strong> indicates the parameters related to each measurement method. Four different meathods <code>method_A</code> to <code>method_D</code> are integrated in current version of <strong>JPSreport</strong> and can chosen in your analysis. Further information relating to each method can be found in <a href="http://hdl.handle.net/2128/4898">Pedestrian fundamental diagrams: Comparative analysis of experiments in different geometries</a>. The meaning of each parameters can be found <a href="../measurement_methods">Measurement methods</a>.   </p>
+<p>Parameters:</p>
+<p>a) <code>frame_step</code> gives the size of time interval for calculating the velocity. The default value is 10.</p>
+<p>b) <code>set_movement_direction</code> indicates in which direction the velocity will be projected. The value of <code>set_movement_direction</code> can be any of the following three ones:</p>
+<ul>
+<li><code>None</code>,which means that you don&rsquo;t consider the movement direction and calculate the velocity by the real distance. The default value is <code>None</code>.</li>
+<li>Any real number from <code>0</code>to <code>360</code>which represents the angular information of the direction in the coordination system. Note that the axis can be represented either by <code>X+</code>, <code>Y+</code>, <code>X-</code>, <code>Y-</code> or by 0, 90,180, 270. </li>
+<li><code>SeeTraj</code>. For the complex trajectories with several times of direction change, you can indicate the detailed direction using the angular information in the trajectory file (By adding a new column in .txt file or adding a new variable in .xml file with the indicator <code>VD</code>) . </li>
+</ul>
+<p>c) <code>ignore_backward_movement</code> indicates whether you want to ignore the movement opposite to the direction from <code>set_movement_direction</code>. The default value is <code>false</code>.</p>
 </li>
+</ul>
+</li>
+<li>
+<p><strong>methods</strong> indicates the parameters related to each measurement method. Four different meathods <code>method_A</code> to <code>method_D</code> are integrated in current version of <strong>JPSreport</strong> and can chosen in your analysis. Further information relating to each method can be found in <a href="http://hdl.handle.net/2128/4898">Pedestrian fundamental diagrams: Comparative analysis of experiments in different geometries</a>. The meaning of each parameters can be found <a href="../measurement_methods">Measurement methods</a>.   </p>
+<ul>
 <li>
 <p><strong>Method A</strong></p>
 <pre><code>&lt;method_A enabled="true"&gt;
@@ -283,7 +292,7 @@
 </li>
 <li>
 <p>Output data (in the folder: &lsquo;./Output/Fundamental_Diagram/FlowVelocity/&rsquo;) See <code>Example-Method-A</code>:</p>
-<p>File1: data for plotting N-t Diagram. (the accumlative nnumber of pedestrians passing the reference line and the corresponding time) </p>
+<p>File1: data for plotting N-t Diagram. (the accumlative number of pedestrians passing the reference line and the corresponding time) </p>
 <p>File2: The mean flow and velocity over the given time interval.</p>
 <p><img src="../img/Figue4-1.png" width="917" height="781"/>
 Figure-Example-Method-A</p>
@@ -343,7 +352,7 @@ Figure-Example-Method-C</p>
 <ul>
 <li>
 <p>Parameters:</p>
-<p>a) For each <code>measurement_area</code>, its id should be given and several ids can be set in one inifile.  <code>start_frame</code> and <code>stop_frame</code> give the starting and ending frame for data analysis. <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram. <code>get_individual_FD</code> determines whether or not to output the data for individual fundamental diagram in the given measurement area, which is based on the Voronoi density <script type="math/tex">rho_i</script> and velocity <script type="math/tex">v_i</script> of each pedestrian <script type="math/tex">i</script> in a given measurement area but not mean value over space. If true, the related data will be written in the folder <em>./Output/Fundamental_Diagram/IndividualFD/</em></p>
+<p>a) For each <code>measurement_area</code>, its id should be given and several ids can be set in one inifile.  <code>start_frame</code> and <code>stop_frame</code> give the starting and ending frame for data analysis.  The default values of these two parameters are <code>None</code>. If you plan to analysis the whole run from beginning to the end, set both of <code>start_frame</code> and <code>stop_frame</code> as <code>None</code>; If <code>start_frame =None</code> but <code>stop_frame</code> is not, then it analyze from beginning of the trajectory to the <code>stop_frame</code>. if <code>start_frame</code> is not <code>None</code> but <code>stop_frame = None</code>, it will analyze from the <code>start_frame</code> to the end of the movement.  <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram. <code>get_individual_FD</code> determines whether or not to output the data for individual fundamental diagram in the given measurement area, which is based on the Voronoi density <script type="math/tex">rho_i</script> and velocity <script type="math/tex">v_i</script> of each pedestrian <script type="math/tex">i</script> in a given measurement area but not mean value over space. If true, the related data will be written in the folder <em>./Output/Fundamental_Diagram/IndividualFD/</em></p>
 <p><img src="../img/Figue4-4-4.png" width="822" height="750"/></p>
 <p>c) <code>one_dimensional</code> should be used when pedestrians move on a line (for example, trajectories from <a href="http://www.asim.uni-wuppertal.de/datenbank/own-experiments/corridor/1d-single-file-no-2.html">single-file experiment</a>)</p>
 <p><img src="../img/Figue4-4-1.png" width="852" height="651"/></p>

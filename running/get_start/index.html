@@ -198,10 +198,10 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#how-to-get-jpsreport">How to Get JPSreport</a></li>
+        <li class="main active"><a href="#get-jpsreport">Get JPSreport</a></li>
         
     
-        <li class="main "><a href="#computer-operating-system-and-software-requirements">Computer Operating System and Software Requirements</a></li>
+        <li class="main "><a href="#requirements">Requirements</a></li>
         
     
         <li class="main "><a href="#how-to-compile-jpsreport">How to Compile JPSreport</a></li>
@@ -211,31 +211,31 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<p><code>JPSreport</code> is a computer program that can be used to analyze pedestrian trajectories from experiment. or simulations. It is a C++ program that reads input parameters from a text file (<em>.XML</em> format), calculates basic pedestrian movement parameters like density, velocity and flow, and writes user-specified output data to files. This section describes how to obtain <code>JPSreport</code> and how to use it. </p>
-<h1 id="how-to-get-jpsreport"><a class="toclink" href="#how-to-get-jpsreport">How to Get JPSreport</a></h1>
-<p>Detailed instructions on how to download executables, manuals, source-code and related utilities, can be found on the <a href="http://www.fz-juelich.de/ias/jsc/EN/Research/ModellingSimulation/CivilSecurityTraffic/PedestrianDynamics/Activities/JuPedSim/jupedsimNode.html">JuPedSim Website</a>. The typical
-JPSreport distribution consists of an compressed archive, which is available
-for MS Windows, Mac OS X, and Linux. </p>
-<h1 id="computer-operating-system-and-software-requirements"><a class="toclink" href="#computer-operating-system-and-software-requirements">Computer Operating System and Software Requirements</a></h1>
-<p>The goal of making <code>JPSreport</code> publicly available is to provide researchers and students a tool for analyzing their trajectories obtained from model simulations as well as experiments easily. Thus, <code>JPSreport</code> has been designed for computers running Microsoft Windows, Mac OS X, and various implementations of Unix/Linux.</p>
+<h1 id="get-jpsreport"><a class="toclink" href="#get-jpsreport">Get JPSreport</a></h1>
+<ul>
+<li>Download the code from the <a href="https://cst.version.fz-juelich.de/jupedsim/jpsreport">Gitlab repository</a></li>
+<li>or get the executables from the latest <a href="https://github.com/JuPedSim/JuPedSim/releases">release</a></li>
+</ul>
+<h1 id="requirements"><a class="toclink" href="#requirements">Requirements</a></h1>
 <p>The following software is necessary to run <code>JPSreport</code>:</p>
 <ul>
-<li>CMake</li>
-<li>A compiler with support for C++11 e.g. g++ or clang or Visual Studio 2013</li>
-<li>Boost-libraries. At the moment boost is hard-linked in JPSreport.</li>
-<li>Python. At least Modules Numpy, Matplotlib, Polygon should be installed, since some python scripts are embeded for plotting diagrams.</li>
+<li><code>CMake</code></li>
+<li>A compiler with support for C++11 e.g. g++, clang or Visual Studio 2013</li>
+<li>Boost-libraries. At the moment boost is hard-linked in <code>JPSreport</code>.</li>
+<li>Python. At least modules <code>Numpy</code>, <code>Matplotlib</code>, <code>Polygon</code> should be installed, since some python scripts are embedded for plotting diagrams.</li>
 </ul>
 <h1 id="how-to-compile-jpsreport"><a class="toclink" href="#how-to-compile-jpsreport">How to Compile JPSreport</a></h1>
-<p><code>JPSreport</code> can not be installed but can be compiled under different operating systems. For the details on how to compile it please see the following links:</p>
+<p><code>JPSreport</code> can be compiled under different operating systems. 
+ For the details on how to compile it please see the following links:</p>
 <ul>
 <li>
-<p><a href="../Build_in_Eclipse_Platform">Compile JPSreport in Windows</a></p>
+<p><a href="Build_in_Eclipse_Platform.md">With Eclipse</a></p>
 </li>
 <li>
-<p><a href="../configuration_linux">Compile JPSreport in Linux</a></p>
+<p><a href="configuration_linux.md">Compile JPSreport in Linux</a></p>
 </li>
 <li>
-<p><a href="../configuration_mac">Compile JPSreport in Mac OS X</a></p>
+<p><a href="configuration_mac.md">Compile JPSreport in Mac OS X</a></p>
 </li>
 </ul></div>
         </div>

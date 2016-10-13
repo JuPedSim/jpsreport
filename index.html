@@ -201,7 +201,10 @@
         <li class="main active"><a href="#jpsreport">JPSreport</a></li>
         
     
-        <li class="main "><a href="#quick-usage">Quick usage</a></li>
+        <li class="main "><a href="#get-started">Get started</a></li>
+        
+    
+        <li class="main "><a href="#implemented-methods">Implemented methods</a></li>
         
     
     </ul>
@@ -209,19 +212,44 @@
             <div class="col-md-9" role="main">
 
 <h2 id="jpsreport"><a class="toclink" href="#jpsreport">JPSreport</a></h2>
-<p><strong>JPSreport</strong> is one module in <strong>JuPedSim</strong>. It focuses on the analysis of pedestrian characteristics using trajectories obtained from video recordings as well as simulations. </p>
-<p>In current version, four different measurement methods are integrated in <strong>JPSreport</strong> to analyze pedestrian movement in different aspects and scales. These methods are mainly based on the PhD-thesis: </p>
-<p><a href="http://juser.fz-juelich.de/record/128157">Pedestrian fundamental diagrams: Comparative analysis of experiments in different geometries</a>.</p>
-<p>The architecture of <strong>JPSreport</strong> can be shown as the figure below. </p>
+<p>Analysis module of trajectories obtained from video recordings as well as from simulations. 
+<img alt="JuPedSim" title="Logo by Nadine" src="img/logo.png" width="100px"  align="right"></p>
+<hr />
+<p><strong>Note</strong>: When reporting bugs, please make sure to use the development branch <em>develop</em>.  </p>
+<hr />
+<p>Jülich Pedestrian Simulator (<code>JuPedSim</code>) is an open source framework for simulating pedestrian dynamics. </p>
+<p>The primary goal of <code>JuPedSim</code> is to provide a framework to ease  the development, calibration, and validation of new models or models for pedestrian dynamics.</p>
+<p><code>JuPedSim</code> is currently focusing on evacuation, but easily extendable to cover other areas e.g. passengers exchange, commuter traffic in railway stations etc.</p>
+<p>JuPedSim comes with four loosely coupled modules: </p>
+<ol>
+<li><a href="https://cst.version.fz-juelich.de/jupedsim/core">JPScore</a>: The simulation core</li>
+<li><a href="https://cst.version.fz-juelich.de/jupedsim/jpsrevis">JPSvis</a>: Geometry and trajectories visualization tool</li>
+<li><a href="http://jupedsim.github.io/jpsreport/">JPSreport</a>: Implementation of different measurement methods to evaluate out of trajectories the density, the velocity and the flow.</li>
+<li><a href="https://cst.version.fz-juelich.de/jupedsim/jpseditor">JPSreditor</a>: Geometry editor.</li>
+</ol>
+<h2 id="get-started"><a class="toclink" href="#get-started">Get started</a></h2>
+<p>The organization of <strong>JPSreport</strong> is as follows</p>
 <p><img src="img/usage_JPSreport.png" width="800" height="478"/></p>
-<h2 id="quick-usage"><a class="toclink" href="#quick-usage">Quick usage</a></h2>
 <p>Three input files are required to run <strong>JPSreport</strong>:</p>
 <ul>
 <li><strong>Trajectory file</strong>: Pedestrians&rsquo;s 2D position information over time. <em>.xml</em> and <em>.txt</em> format are adopted.</li>
 <li><strong>Geometry file</strong>: Geometry information for a certain trajectory data. This file should be in <em>.xml</em> format.</li>
-<li><strong>Configuration file</strong>: This inifile give some information related to each measurement method. For example, the information of measurement area et al. This file should be in <em>.xml</em> format.</li>
+<li><strong>Configuration file</strong>: This inifile give some information related to each measurement method. e. g. 
+  the location of measurement areas, the chosen method etc. This file should be in <em>.xml</em> format.</li>
 </ul>
-<p>Further information for the three input files will be described in other pages in more detail.  Possible output of <strong>JPSreport</strong> includes data for plotting fundamental diagrams, Voronoi diagrams and profiles of pedestrians etc. in a given geometry. All the output data, e.g. density and speed, are stored in different folders as plain text in ASCII format.</p></div>
+<p>Further information for the three input files are described in other pages in more detail. </p>
+<p>Possible output of <strong>JPSreport</strong> includes data for plotting fundamental diagrams, 
+Voronoi diagrams and profiles of pedestrians etc. in a given geometry. 
+All the output data, e.g. density and speed, are stored in different folders as plain text in ASCII format.</p>
+<h2 id="implemented-methods"><a class="toclink" href="#implemented-methods">Implemented methods</a></h2>
+<p>In current version, four different measurement methods are implemented in <strong>JPSreport</strong> 
+to analyze pedestrian movement in different aspects and scales. For more details see <a href="http://juser.fz-juelich.de/record/128157">Pedestrian fundamental diagrams: Comparative analysis of<code></code>experiments in different geometries</a>.</p>
+<ul>
+<li><a href="http://jupedsim.github.io/jpsreport/methods/method_A/">Methode A</a></li>
+<li><a href="http://jupedsim.github.io/jpsreport/methods/method_B/">Methode B</a></li>
+<li><a href="http://jupedsim.github.io/jpsreport/methods/method_C/">Methode C</a></li>
+<li><a href="http://jupedsim.github.io/jpsreport/methods/method_D/">Methode D</a></li>
+</ul></div>
         </div>
 
 	<footer class="col-md-12">

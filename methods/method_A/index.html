@@ -187,23 +187,30 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
+        <li class="main active"><a href="#method-a">Method A</a></li>
+        
+    
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<p><code>Method A</code> calculates mean value of flow and density over time. A
-reference line is taken and studied over a
-fixed period of time <script type="math/tex">\Delta {t}</script>. Using this method we can obtain the pedestrian flow <code>J</code> and the velocity <script type="math/tex">v_i</script> of each pedestrian passing the reference line directly. Thus, the flow over time
-<script type="math/tex">\langle J \rangle_{\Delta t}</script> and the time mean velocity <script type="math/tex">\langle v \rangle_{\Delta t}</script> can be calculated as</p>
+<h1 id="method-a"><a class="toclink" href="#method-a">Method A</a></h1>
+<p>This method calculates the mean value of flow and density over time. </p>
+<p>A reference line is taken and studied over a
+fixed period of time <script type="math/tex">\Delta {t}</script>. Using this method we can obtain the pedestrian flow <script type="math/tex">J4 and the velocity </script>v_i<script type="math/tex"> of each pedestrian passing the reference line directly. 
+Thus, the flow over time </script>\langle J \rangle_{\Delta t}<script type="math/tex"> and the time mean velocity </script>\langle v \rangle_{\Delta t}$ 
+can be calculated as</p>
 <p>
-<script type="math/tex">\langle J \rangle_{\Delta t}=\frac{N_{\Delta t}}{t_{N_{\Delta t}}}\qquad {\rm and} \qquad \langle v \rangle_{\Delta t}=\frac{1}{N_{\Delta t}}\sum_{i=1}^{N_{\Delta t}} v_i(t)</script>
+<script type="math/tex; mode=display">\langle J \rangle_{\Delta t}=\frac{N_{\Delta t}}{t_{N_{\Delta t}}}\qquad {\rm and} \qquad \langle v \rangle_{\Delta t}=\frac{1}{N_{\Delta t}}\sum_{i=1}^{N_{\Delta t}} v_i(t),</script>
 </p>
-<p>where <script type="math/tex; mode=display">N_{\Delta t}</script> is the number of persons passing the reference line during the time interval <script type="math/tex; mode=display">\Delta {t}</script>. <script type="math/tex">N_{\Delta t}</script> is the
-time between the first and the last of the <script type="math/tex; mode=display">N_{\Delta t}</script> pedestrians. <script type="math/tex">t_{N_{\Delta t}}</script> is the actual time
-that the <script type="math/tex; mode=display">N_{\Delta t}</script> pedestrians used for passing the line. It can be different from <script type="math/tex; mode=display">\Delta {t}</script>. The time mean velocity <script type="math/tex">\langle v \rangle_{\Delta t}</script> is defined as the mean value of the
-instantaneous velocities <script type="math/tex; mode=display">N_{\Delta t}</script> pedestrians. <script type="math/tex">v_i(t)</script> is calculated by use of the displacement of pedestrian <code>i</code> in a small time interval <script type="math/tex">\Delta t^\prime </script> around <code>t</code>:</p>
+<p>where <script type="math/tex">N_{\Delta t}</script> is the number of persons passing the reference line during the time interval <script type="math/tex">\Delta {t}</script>. 
+<script type="math/tex">N_{\Delta t}</script> is the time between the first and the last of the <script type="math/tex">N_{\Delta t}</script> pedestrians. 
+<script type="math/tex">t_{N_{\Delta t}}</script> is the actual time that the <script type="math/tex">N_{\Delta t}</script> pedestrians used for passing the line. </p>
+<p>It can be different from <script type="math/tex">\Delta {t}</script>. The time mean velocity <script type="math/tex">\langle v \rangle_{\Delta t}</script> is defined as the mean value of the
+instantaneous velocities <script type="math/tex">N_{\Delta t}</script> pedestrians. 
+<script type="math/tex">v_i(t)</script> is calculated by use of the displacement of pedestrian <script type="math/tex">i</script> in a small time interval <script type="math/tex">\Delta t^\prime </script> around <script type="math/tex">t</script>:</p>
 <p>
-<script type="math/tex">v_i(t)=\frac{\vec{x_i}(t+\Delta t^\prime/2)-\vec{x_i}(t-\Delta t^\prime/2))}{\Delta t^\prime}</script>
+<script type="math/tex; mode=display">v_i(t)=\frac{\vec{x_i}(t+\Delta t^\prime/2)-\vec{x_i}(t-\Delta t^\prime/2))}{\Delta t^\prime}.</script>
 </p></div>
         </div>
 

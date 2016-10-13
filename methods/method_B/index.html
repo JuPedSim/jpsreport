@@ -187,26 +187,30 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
+        <li class="main active"><a href="#method-b">Method B</a></li>
+        
+    
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<p><code>Method B</code> measures the mean value of velocity and density
+<h1 id="method-b"><a class="toclink" href="#method-b">Method B</a></h1>
+<p>This method measures the mean value of velocity and density
 over space and time. The spatial mean velocity and density are
 calculated by taking a segment <script type="math/tex">\Delta x</script> in a corridor as the
-measurement area. The velocity <script type="math/tex">\langle v \rangle_i</script> of each person
+measurement area. </p>
+<p>The velocity <script type="math/tex">\langle v \rangle_i</script> of each person
 is defined as the length <script type="math/tex">\Delta x</script> of the measurement area divided
-by the time he or she needs to cross the area,</p>
+by the time he or she needs to cross the area:</p>
 <p>
-<script type="math/tex">\langle v \rangle_i=\frac{\Delta x}{t_{\rm out}-t_{\rm in}}</script>
+<script type="math/tex; mode=display">\langle v \rangle_i=\frac{\Delta x}{t_{\rm out}-t_{\rm in}},</script>
 </p>
-<p>where <script type="math/tex">t_{in}</script> and <script type="math/tex">t_{out}</script> are the times a person enters and exits the measurement area, respectively.
-The density <script type="math/tex">\rho_i</script> for each person is calculated with equation </p>
+<p>where <script type="math/tex">t_{in}</script> and <script type="math/tex">t_{out}</script> are the times a person enters and exits the measurement area, respectively.</p>
+<p>The density <script type="math/tex">\rho_i</script> for each person <script type="math/tex">i</script> is calculated as:</p>
 <p>
-<script type="math/tex">\langle \rho \rangle_i=\frac{1}{t_{\rm out}-t_{\rm in}}\cdot\int_{t_{\rm in}}^{t_{\rm out}} \frac{N^\prime(t)}{b_{\rm cor}\cdot\Delta x}dt</script>
+<script type="math/tex; mode=display">\langle \rho \rangle_i=\frac{1}{t_{\rm out}-t_{\rm in}}\cdot\int_{t_{\rm in}}^{t_{\rm out}} \frac{N^\prime(t)}{b_{\rm cor}\cdot\Delta x}dt,</script>
 </p>
-<p>
-<script type="math/tex">b_{cor}</script> is the width of the measurement area while <script type="math/tex">N^\prime(t)</script> is the number of person in this area at a time <code>t</code>.</p></div>
+<p>where <script type="math/tex">b_{cor}</script> is the width of the measurement area while <script type="math/tex">N^\prime(t)</script> is the number of person in this area at a time <script type="math/tex">t</script>.</p></div>
         </div>
 
 	<footer class="col-md-12">

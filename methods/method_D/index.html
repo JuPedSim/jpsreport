@@ -187,25 +187,33 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
+        <li class="main active"><a href="#method-d">Method D</a></li>
+        
+    
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<p><code>Method D</code> is based on the use of Voronoi diagrams which are a special kind of decomposition of a metric space determined by distances to a specified discrete set of objects in the space. At any time the positions of the pedestrians
+<h1 id="method-d"><a class="toclink" href="#method-d">Method D</a></h1>
+<p>this method calculates the density based on Voronoi diagrams, 
+which are a special kind of decomposition of a metric space determined by distances to a specified discrete set of objects in the space. </p>
+<p>At any time the positions of the pedestrians
 can be represented as a set of points, from which the Voronoi
-diagram can be generated. The Voronoi cell area, <script type="math/tex">A_i</script>, for each person <code>i</code> can be obtained. Then, the
-density and velocity distribution of the space <script type="math/tex">\rho_{xy}</script>  and <script type="math/tex">v_{xy}</script> can be defined as</p>
+diagram can be generated. </p>
+<p>The Voronoi cell area, <script type="math/tex">A_i</script>, for each person <script type="math/tex">i</script> can be obtained. </p>
+<p>Then, the density and velocity distribution of the space <script type="math/tex">\rho_{xy}</script>  and <script type="math/tex">v_{xy}</script> can be defined as</p>
 <p>
-<script type="math/tex">\rho_{xy} = 1/A_i \quad and \quad v_{xy}={v_i(t)}\qquad \mbox{if </script>(x,y)\in A_i<script type="math/tex">} </script>
+<script type="math/tex; mode=display">\rho_{xy} = 1/A_i \quad and \quad v_{xy}={v_i(t)}\qquad \mbox{if <script type="math/tex">(x,y)\in A_i</script>},</script>
 </p>
-<p>where <script type="math/tex">v_i(t)</script> is the instantaneous velocity of each person. The Voronoi density and velocity for the
+<p>where <script type="math/tex">v_i(t)</script> is the instantaneous velocity of each person. </p>
+<p>The Voronoi density for the
 measurement area is defined as:</p>
 <p>
-<script type="math/tex">\langle \rho \rangle_v=\frac{\iint{\rho_{xy}dxdy}}{b_{\rm cor}\cdot\Delta x}</script>
+<script type="math/tex; mode=display">\langle \rho \rangle_v=\frac{\iint{\rho_{xy}dxdy}}{b_{\rm cor}\cdot\Delta x}.</script>
 </p>
 <p>Similarly, the Voronoi velocity is defined as:</p>
 <p>
-<script type="math/tex">\langle v \rangle_v=\frac{\iint{v_{xy}dxdy}}{b_{\rm cor}\cdot\Delta x}</script>
+<script type="math/tex; mode=display">\langle v \rangle_v=\frac{\iint{v_{xy}dxdy}}{b_{\rm cor}\cdot\Delta x}.</script>
 </p></div>
         </div>
 

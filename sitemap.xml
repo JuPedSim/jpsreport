@@ -12,25 +12,19 @@
     
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//running/get_start/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//user_guide/quickstart/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//running/IDE/Build_in_eclipse_platform/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//user_guide/requirements/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//running/runJPSreport/</loc>
-     <lastmod>2016-10-13</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>http://jupedsim.github.io/jpsreport//running/user_support/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//user_guide/configuration/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -104,21 +98,29 @@
     
 
     
+    <url>
+     <loc>http://jupedsim.github.io/jpsreport//contributing/</loc>
+     <lastmod>2016-10-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//contributing/code-Style-Conventions/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//about/disclaimer/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//contributing/workflow/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//about/LICENSE/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://jupedsim.github.io/jpsreport//contributing/utest/</loc>
+     <loc>http://jupedsim.github.io/jpsreport//about/contributors/</loc>
      <lastmod>2016-10-13</lastmod>
      <changefreq>daily</changefreq>
     </url>

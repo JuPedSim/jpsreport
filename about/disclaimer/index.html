@@ -6,11 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Jun Zhang">
-        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/contributing/workflow/">
+        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/about/disclaimer/">
         <link rel="shortcut icon" href="../../favicon.icon">
         
 
-	<title>Workflow - JuPedSim/jpsreport</title>
+	<title>Disclaimer - JuPedSim/jpsreport</title>
 
         <link href="../../css/bootstrap-3.0.3.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -62,19 +62,15 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../running/get_start/">Getting started</a>
+                            <a href="../../user_guide/quickstart/">Quickstart</a>
                         </li>
                     
                         <li >
-                            <a href="../../running/IDE/Build_in_eclipse_platform/">Eclipse</a>
+                            <a href="../../user_guide/requirements/">Requirements</a>
                         </li>
                     
                         <li >
-                            <a href="../../running/runJPSreport/">Running JPSreport</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../running/user_support/">User Support</a>
+                            <a href="../../user_guide/configuration/">Configuration</a>
                         </li>
                     
                     </ul>
@@ -145,20 +141,26 @@
             
             
             
+                <li >
+                    <a href="../../contributing/">Contributing</a>
+                </li>
+            
+            
+            
                 <li class="dropdown active">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li >
-                            <a href="../code-Style-Conventions/">Code Style</a>
-                        </li>
-                    
                         <li class="active">
-                            <a href="./">Workflow</a>
+                            <a href="./">Disclaimer</a>
                         </li>
                     
                         <li >
-                            <a href="../utest/">Unit testing</a>
+                            <a href="../LICENSE/">License</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../contributors/">Contributors</a>
                         </li>
                     
                     </ul>
@@ -170,12 +172,12 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 <li >
-                    <a rel="next" href="../code-Style-Conventions/">
+                    <a rel="next" href="../../contributing/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../utest/">
+                    <a rel="prev" href="../LICENSE/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -198,76 +200,33 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#workflow">Workflow</a></li>
-        
-            <li><a href="#tips-working-with-git">Tips Working with Git</a></li>
-        
-            <li><a href="#keywords-for-closing-issues">Keywords for closing issues</a></li>
+        <li class="main active"><a href="#disclaimer">Disclaimer</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="workflow"><a class="toclink" href="#workflow">Workflow</a></h1>
-<p>This is a git-specific workflow that helps you contribute flawlessly you JuPedSim.</p>
-<ul>
-<li>Clone the project (for the first time)</li>
-</ul>
-<pre><code class="python">    git clone https://cst.version.fz-juelich.de/jupedsim/jpscore.git
-</code></pre>
-
-<ul>
-<li>Change to the developement branch and create a branch with your feature.</li>
-</ul>
-<pre><code class="python">    git checkout developement 
-    git checkout -b feature_name
-</code></pre>
-
-<ul>
-<li>Write code and Commit changes</li>
-</ul>
-<pre><code class="python">    git commit -m &quot;Describe here your changes&quot;
-</code></pre>
-
-<ul>
-<li>Push your branch to GitLab. But before doing so, <a href="../pushing">test</a> your code.</li>
-</ul>
-<pre><code class="python">    git push origin feature_name
-</code></pre>
-
-<ul>
-<li>
-<p>Create a merge request</p>
-<p>a <em>Master</em> will review your code &amp; merge it to the developement branch (maybe).</p>
-</li>
-</ul>
-<h2 id="tips-working-with-git"><a class="toclink" href="#tips-working-with-git">Tips Working with Git</a></h2>
-<ol>
-<li>Pull frequently.</li>
-<li>Commit often, but don’t push every commit.</li>
-<li>Create one commit per unit of work. Break your changes down into multiple commits, e.g. &ldquo;fix bug&rdquo;, &ldquo;add documentation&rdquo;, etc.</li>
-<li>Push when changes are tested.</li>
-</ol>
-<p>See also <a href="https://about.gitlab.com/2015/02/19/8-tips-to-help-you-work-better-with-git/">8 Tips to help you work better with Git</a>.</p>
-<h2 id="keywords-for-closing-issues"><a class="toclink" href="#keywords-for-closing-issues">Keywords for closing issues</a></h2>
-<p>The following keywords will close an issue via commit message:</p>
-<ul>
-<li>close</li>
-<li>closes</li>
-<li>closed</li>
-<li>fix</li>
-<li>fixes</li>
-<li>fixed</li>
-</ul>
-<p><a href="http://doc.gitlab.com/ce/customization/issue_closing.html">The closing-pattern</a> is as follows:</p>
-<pre><code>((?:[Cc]los(?:e[sd]?|ing)|[Ff]ix(?:e[sd]|ing)?) +(?:(?:issues? +)?%{issue_ref}(?:(?:, *| +and +)?))+)
-</code></pre>
-
-<hr />
-<p><strong>Top Tip</strong>: Your code is maybe fine if you see on the repository&rsquo;s front page this symbol<br />
-<img alt="symbol" src="../img/success.png" /><br />
-before your commit.</p></div>
+<h1 id="disclaimer"><a class="toclink" href="#disclaimer">Disclaimer</a></h1>
+<p>In no event shall JuPedSim be liable to any party for direct, indirect,
+special, incidental, or consequential damages, including lost profits,
+arising out of the use of this software and its documentation, even if
+JuPedSim has been advised of the possibility of such damage.</p>
+<p>JuPedSim specifically disclaims any warranties, including, but not
+limited to, the implied warranties of merchantability and fitness for a
+particular purpose. The software and accompanying documentation, if any,
+provided hereunder is provided &ldquo;as is&rdquo;. JuPedSim has no obligation to
+provide maintenance, support, updates, enhancements, or modifications.</p>
+<p>Forschungszentrum Jülich GmbH makes no warranty, expressed or implied,
+to users of JuPedSim, and accepts no responsibility for its use. Users
+of JuPedSim assume sole responsibility for determining the
+appropriateness of its use; and for any actions taken or not taken as a
+result of analyses performed using this tool.</p>
+<p>Users are warned that JuPedSim is intended for <strong>academic</strong> use only. This
+tool is an implementation of several computer models that may or may not
+have predictive capability when applied to a specific set of factual
+circumstances. Lack of accurate predictions by the models could lead to
+erroneous conclusions with regard of life safety.</p></div>
         </div>
 
 	<footer class="col-md-12">

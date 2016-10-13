@@ -62,19 +62,15 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../running/get_start/">Getting started</a>
+                            <a href="../../user_guide/quickstart/">Quickstart</a>
                         </li>
                     
                         <li >
-                            <a href="../../running/IDE/Build_in_eclipse_platform/">Eclipse</a>
+                            <a href="../../user_guide/requirements/">Requirements</a>
                         </li>
                     
                         <li >
-                            <a href="../../running/runJPSreport/">Running JPSreport</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../running/user_support/">User Support</a>
+                            <a href="../../user_guide/configuration/">Configuration</a>
                         </li>
                     
                     </ul>
@@ -145,20 +141,26 @@
             
             
             
+                <li >
+                    <a href="../../contributing/">Contributing</a>
+                </li>
+            
+            
+            
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../contributing/code-Style-Conventions/">Code Style</a>
+                            <a href="../../about/disclaimer/">Disclaimer</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/workflow/">Workflow</a>
+                            <a href="../../about/LICENSE/">License</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/utest/">Unit testing</a>
+                            <a href="../../about/contributors/">Contributors</a>
                         </li>
                     
                     </ul>
@@ -294,7 +296,7 @@
 <p>Output data (in the folder: &lsquo;./Output/Fundamental_Diagram/FlowVelocity/&rsquo;) See <code>Example-Method-A</code>:</p>
 <p>File1: data for plotting N-t Diagram. (the accumlative number of pedestrians passing the reference line and the corresponding time) </p>
 <p>File2: The mean flow and velocity over the given time interval.</p>
-<p><img src="../img/Figue4-1.png" width="917" height="781"/>
+<p><img src="img/Figue4-1.png" width="917" height="781"/>
 Figure-Example-Method-A</p>
 </li>
 </ul>
@@ -314,7 +316,7 @@ Figure-Example-Method-A</p>
 <li>
 <p>Output data: </p>
 <p>mean density and velocity of each pedestrian (<script type="math/tex">rho_i</script> and <script type="math/tex">v_i</script>).</p>
-<p><img src="../img/Figue4-2.png" width="941" height="434"/>
+<p><img src="img/Figue4-2.png" width="941" height="434"/>
 Figure-Example-Method-B</p>
 </li>
 </ul>
@@ -334,7 +336,7 @@ Figure-Example-Method-B</p>
 <li>
 <p>Output data: </p>
 <p>mean density and velocity of over time (<script type="math/tex">rho(t)</script> and <script type="math/tex">v(t)</script>).</p>
-<p><img src="../img/Figue4-3.png" width="988" height="858"/>
+<p><img src="img/Figue4-3.png" width="988" height="858"/>
 Figure-Example-Method-C</p>
 </li>
 </ul>
@@ -353,14 +355,14 @@ Figure-Example-Method-C</p>
 <li>
 <p>Parameters:</p>
 <p>a) For each <code>measurement_area</code>, its id should be given and several ids can be set in one inifile.  <code>start_frame</code> and <code>stop_frame</code> give the starting and ending frame for data analysis.  The default values of these two parameters are <code>None</code>. If you plan to analysis the whole run from beginning to the end, set both of <code>start_frame</code> and <code>stop_frame</code> as <code>None</code>; If <code>start_frame =None</code> but <code>stop_frame</code> is not, then it analyze from beginning of the trajectory to the <code>stop_frame</code>. if <code>start_frame</code> is not <code>None</code> but <code>stop_frame = None</code>, it will analyze from the <code>start_frame</code> to the end of the movement.  <code>plot_time_series</code> specifies whether output the rho-t and v-t Diagram. <code>get_individual_FD</code> determines whether or not to output the data for individual fundamental diagram in the given measurement area, which is based on the Voronoi density <script type="math/tex">rho_i</script> and velocity <script type="math/tex">v_i</script> of each pedestrian <script type="math/tex">i</script> in a given measurement area but not mean value over space. If true, the related data will be written in the folder <em>./Output/Fundamental_Diagram/IndividualFD/</em></p>
-<p><img src="../img/Figue4-4-4.png" width="822" height="750"/></p>
+<p><img src="img/Figue4-4-4.png" width="822" height="750"/></p>
 <p>c) <code>one_dimensional</code> should be used when pedestrians move on a line (for example, trajectories from <a href="http://www.asim.uni-wuppertal.de/datenbank/own-experiments/corridor/1d-single-file-no-2.html">single-file experiment</a>)</p>
-<p><img src="../img/Figue4-4-1.png" width="852" height="651"/></p>
+<p><img src="img/Figue4-4-1.png" width="852" height="651"/></p>
 <p>d) <code>cut_by_circle</code> determines whether to cut each cell by circle or not. Two options <code>radius</code> of the circle and the number of <code>edges</code> have to be supplied for approximating the circle if <code>enabled</code> is <em>true</em>.</p>
 <p>e) <code>output_voronoi_cells</code> specifies whether or not to output data for visualizing the Voronoi diagram. Two options <code>enabled</code> and <code>plot_graphs</code> have to be set. If both of them are <em>true</em>, files including Voronoi cells, speed and the coordinates of pedestrian corresponding to each cell as well as the figures of Voronoi cells will be created in the folder <em>./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/</em>. If the latter is <em>false</em>, only the datas will be created but the figures will not be plotted. When <code>enable</code> is <em>false</em>, nothing will be created.</p>
-<p><img src="../img/Figue4-4-2.png" width="653" height="495"/></p>
+<p><img src="img/Figue4-4-2.png" width="653" height="495"/></p>
 <p>f) <code>profiles</code> indicates whether to calculate the profiles over time and space. If <code>enabled</code> is true, the resolution which is decided by the parameters <code>grid_size_x</code> and <code>grid_size_x</code> should be set. The data will be in the folder +./Output/Fundamental_ Diagram/Classical_Voronoi/field/.</p>
-<p><img src="../img/Figue4-4-3.png" width="935" height="325"/></p>
+<p><img src="img/Figue4-4-3.png" width="935" height="325"/></p>
 </li>
 <li>
 <p>Output data:</p>

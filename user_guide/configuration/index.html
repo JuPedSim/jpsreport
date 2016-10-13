@@ -6,11 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Jun Zhang">
-        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/running/runJPSreport/">
+        <link rel="canonical" href="http://jupedsim.github.io/jpsreport/user_guide/configuration/">
         <link rel="shortcut icon" href="../../favicon.icon">
         
 
-	<title>Running JPSreport - JuPedSim/jpsreport</title>
+	<title>Configuration - JuPedSim/jpsreport</title>
 
         <link href="../../css/bootstrap-3.0.3.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -62,19 +62,15 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../get_start/">Getting started</a>
+                            <a href="../quickstart/">Quickstart</a>
                         </li>
                     
                         <li >
-                            <a href="../IDE/Build_in_eclipse_platform/">Eclipse</a>
+                            <a href="../requirements/">Requirements</a>
                         </li>
                     
                         <li class="active">
-                            <a href="./">Running JPSreport</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../user_support/">User Support</a>
+                            <a href="./">Configuration</a>
                         </li>
                     
                     </ul>
@@ -145,20 +141,26 @@
             
             
             
+                <li >
+                    <a href="../../contributing/">Contributing</a>
+                </li>
+            
+            
+            
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../../contributing/code-Style-Conventions/">Code Style</a>
+                            <a href="../../about/disclaimer/">Disclaimer</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/workflow/">Workflow</a>
+                            <a href="../../about/LICENSE/">License</a>
                         </li>
                     
                         <li >
-                            <a href="../../contributing/utest/">Unit testing</a>
+                            <a href="../../about/contributors/">Contributors</a>
                         </li>
                     
                     </ul>
@@ -170,12 +172,12 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 <li >
-                    <a rel="next" href="../IDE/Build_in_eclipse_platform/">
+                    <a rel="next" href="../requirements/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../user_support/">
+                    <a rel="prev" href="../../inputs/geometry/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -198,34 +200,79 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#for-linux-users">For Linux Users:</a></li>
+        <li class="main active"><a href="#installation">Installation</a></li>
         
-    
-        <li class="main "><a href="#for-windows-users">For Windows Users:</a></li>
+            <li><a href="#using-an-ide">Using an IDE</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<p>After succesfully <a href="../get_start">compiling</a> the code, then users can start to run <code>JPSreport</code> and analyze your trajectories.</p>
-<p>Sample input files are provided with the program for new users who are encouraged to first run a sample calculation before attempting to write an input file. You can find sample files in the folder <code>demos</code>. Assuming that an input file called infile.xml exists in some directory *../demos/corridor/inifile.xml, run the program either in different operating systems as follows:</p>
-<h2 id="for-linux-users"><a class="toclink" href="#for-linux-users">For Linux Users:</a></h2>
-<p>You can just run <code>JPSreport</code> in a Terminal as follows:</p>
-<pre><code class="bash">./bin/JPSreport ../demos/corridor/inifile.xml
+<h1 id="installation"><a class="toclink" href="#installation">Installation</a></h1>
+<p>JuPedSim-modules can not be installed but compiled.</p>
+<p>For all  modules the compilation is fairly straightforward: </p>
+<ul>
+<li>Create a new directory and change to it</li>
+</ul>
+<pre><code class="javascript">mkdir build &amp;&amp; cd build
 </code></pre>
 
-<h2 id="for-windows-users"><a class="toclink" href="#for-windows-users">For Windows Users:</a></h2>
-<p>Open up a Command Prompt window, and change directories (“cd”) to where the executable file (<code>JPSreport.exe)</code> is located, then run the code by typing at the command prompt</p>
-<pre><code class="bash">./bin/JPSreport.exe ../demos/corridor/inifile.xml
+<ul>
+<li>Run <code>CMake</code> to build the project</li>
+</ul>
+<pre><code class="javascript">cmake .. 
 </code></pre>
 
-<p>For Windows users, you can also drag the <em>inifile</em> to the executable file <code>JPSreport</code>.</p>
-<p><code>inifile.xml</code> defines all the needed information to start a analysis with
-<code>JPSreport</code>. See  the specifications of the <a href="../../inputs/inifile">Writing JPSreport Input Files</a>.</p>
-<p>===========</p>
-<p>After a successful analysis additional folder named <code>Output</code> will be created in
-the same directory as the used inifile. It contains the basic data including plain text and figures you planed to obtain.</p></div>
+<p><em>cmake</em> will check if all required  libraries are installed. 
+- Compile the project
+If the previous step terminated successfully run </p>
+<pre><code class="javascript">make -jN
+</code></pre>
+
+<p>(<em>N</em> is the number of your CPUs)</p>
+<ul>
+<li>Run a simulation
+If the compilation succeeded a binary will be produced in
+the direction <em>bin</em>. Run a simulation using one of
+the ini files in the directory <em>initfiles</em></li>
+</ul>
+<p>For example:</p>
+<pre><code class="javascript">./bin/jpscore inputfiles/Bottleneck/1.1_ini-Bottleneck.xml
+</code></pre>
+
+<h2 id="using-an-ide"><a class="toclink" href="#using-an-ide">Using an IDE</a></h2>
+<ul>
+<li>
+<p><a href="https://www.jetbrains.com/clion/">CLion</a> (Windows, Linux, Mac)</p>
+<p><em>CLion</em> has build in <em>CMake</em>-support so you only have to start a new project an set the project root to your <code>jpscore</code> directory.</p>
+</li>
+<li>
+<p><a href="https://eclipse.org/">Eclipse</a> (Windows, Linux, Mac)</p>
+<p>Build an <em>Eclipse Project</em> with <em>CMake</em> or the <em>CMake-gui</em> and open it with <em>Eclipse</em>.</p>
+</li>
+<li>
+<p><a href="http://msdn.microsoft.com/de-de/library/dd831853.aspx">Visual Studio 2013</a> (v0.6+, Windows) </p>
+<p>Run the <em>CMake-gui</em> with the generator <em>Visual Studio 12 (2013)</em> and click on the <code>*.sln</code> file to open it in Visual Studio.</p>
+<p>Then click on <code>build-&gt;build solution</code>.
+This should build your code.</p>
+<p>Current issues are known with the python test cases. Most of them are Unix specific.
+However the compilation of <code>jpscore</code> works fine. </p>
+</li>
+<li>
+<p>XCode (v0.6+ Mac)</p>
+<p>Run the <em>CMake-gui</em> and generate an <em>XCode</em>-Project then open it with <em>XCode</em>.</p>
+<p>On Mac the standard compiler is clang/clang++.
+If the project compiles out of your console via cmake/make that does not mean it also compiles out of <em>XCode</em>.
+<em>XCode</em> forces some more strict rules while compiling.</p>
+<p>For instance, there was one error we could not explain:
+<em>XCode</em> seems not to know that <code>std::unordered_map.embrace(...)</code> is a valid function call
+and returns with an error message.</p>
+<p>However this is an <em>XCode</em>-specific problem. It does not occur if you are using e.g. <code>CLion</code>.</p>
+<p>Even if you compile out of console with the same compiler this throws no error. </p>
+<p>You can avoid this by using the function <code>std::unordered_map.insert(std::make_pair(...))</code> instead.</p>
+</li>
+</ul></div>
         </div>
 
 	<footer class="col-md-12">

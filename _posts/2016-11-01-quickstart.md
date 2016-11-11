@@ -7,6 +7,42 @@ permalink: 2016-11-01-quickstart.html
 ---
 
 
+
+To install `JPSreport` there are three steps to follow: 
+
+# 1. Get the code
+
+```bash
+git clone https://cst.version.fz-juelich.de/jupedsim/jpsreport
+```
+
+# 2. Check the requirements
+
+```bash
+cd jpsreport
+mkdir build && cd build
+cmake ..
+```
+
+
+Some packages and libraries are required to get `jpsreport` compiled. 
+See also [requirements](2016-11-03-requirements.html).
+
+In case something is missing, `CMake` will report an error and point to the missing package.
+
+# 3. Compile the code
+
+If the two first steps succeed then you can proceed with the compilation 
+
+```bash 
+make -j2
+```
+
+In case of a successful compilation, the executables will be located in the directory `bin/`.
+
+# Start analyzing with JPSreport
+
+
 The organization of `JPSreport` is as follows
 
 ![structure]({{ site.baseurl}}/img/usage_JPSreport_scaled.png)

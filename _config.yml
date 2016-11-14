@@ -27,7 +27,8 @@ description: Analysis of trajectories of pedestrians
 
 # List of links in the navigation bar
 navbar-links:
-  Files: 
+  Ressources:
+    - JuPedSim: "http://www.jupedsim.org"      
     - Inifile: "2016-11-01-inifile"
     - Geometry: "2016-11-02-geometry"
     - Trajectory: "2016-11-03-trajectory"

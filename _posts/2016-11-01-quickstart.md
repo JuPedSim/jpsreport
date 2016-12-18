@@ -13,7 +13,7 @@ To install `JPSreport` there are three steps to follow:
 # 1. Get the code
 
 ```bash
-git clone https://cst.version.fz-juelich.de/jupedsim/jpsreport
+git clone https://gitlab.version.fz-juelich.de/jupedsim/jpsreport
 ```
 
 # 2. Check the requirements

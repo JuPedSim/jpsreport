@@ -316,7 +316,7 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
                }
                if(false==IsInBuilding)
                {
-                    Log->Write("Warning:\tAt %dth frame pedestrian at <x=%.4f, y=%.4f> is not in geometry!", frameNr+data.GetMinFrame(), XInFrame[i]*CMtoM, YInFrame[i]*CMtoM );
+                    Log->Write("Warning:\tAt frame=%d pedestrian at <x=%.4f, y=%.4f> is outside the building!", frameNr+data.GetMinFrame(), XInFrame[i]*CMtoM, YInFrame[i]*CMtoM );
                }
           }
      }

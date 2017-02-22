@@ -86,8 +86,8 @@ bool Method_A::Process (const PedData& peddata,const string& scriptsLocation, co
           }
           vector<int> ids=_peds_t[frameNr];
           vector<int> IdInFrame = peddata.GetIdInFrame(frameNr, ids, zPos_measureArea);
-          const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
-          const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
+          // const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
+          // const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
           const vector<double> VInFrame = peddata.GetVInFrame(frameNr, ids, zPos_measureArea);
           if(IdInFrame.size()>0)
           {
@@ -105,7 +105,7 @@ bool Method_A::Process (const PedData& peddata,const string& scriptsLocation, co
      }
      else
      {
-    	 Log->Write("Warning: No any pedestrian exists on the plane of the selected Measurement area!!");
+    	 Log->Write("Warning: No pedestrian exists on the plane of the selected Measurement area!!");
      }
      delete []_passLine;
      return true;

@@ -12,6 +12,19 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 
+
+def write_header(o, fps, geometry_file):
+    o.write("#xml to txt converted simulation file\n")
+    o.write("#framerate: %0.2f\n" % fps)
+    o.write("#geometry: %s\n" % geometry_file)
+    o.write("#ID: the agent ID\n");
+    o.write("#FR: the current frame\n");
+    o.write("#X,Y,Z: the agents coordinates (in meters)\n");
+    o.write("\n");
+    o.write("#ID\tFR\tX\tY\tZ\n");
+
+
+    
 if __name__ == "__main__":
     if len(argv) < 2:
         exit('usage: %s filename' % argv[0])
@@ -22,11 +35,26 @@ if __name__ == "__main__":
     basename = basename.split(".")[0] + ".txt"
     output = os.path.join(dirname, basename)
     o = open(output, "w")
-    o.write("# ID             frame              x             y             z\n\n")
+    #    o.write("# ID             frame              x             y             z\n\n")
     print (">> %s" % output)
 
     tree = ET.parse(filename)
     root = tree.getroot()
+
+    for header in root.iter('header'):
+        fps = header.find('frameRate').text
+
+    try:
+        fps = float(fps)
+    except:
+        print ("ERROR: could not read <fps>")
+        exit()
+
+    for g in root.iter('geometry'):
+        file_location = g.find('file').attrib
+        location = file_location['location']
+        
+    write_header(o, fps, location)
     for node in root.iter():
         tag = node.tag
         if tag == "frame":
@@ -36,6 +64,6 @@ if __name__ == "__main__":
                 y = agent.attrib['y']
                 z = agent.attrib['z']
                 ID = agent.attrib['ID']
-                o.write("%d\t %d\t %.3f\t %.3f\t %.3f\n" % (int(ID), int(frame), float(x), float(y), float(z)))
+                o.write("%d\t %d\t %.5f\t %.5f\t %.5f\n" % (int(ID), int(frame), float(x), float(y), float(z)))
 
     o.close()

@@ -106,7 +106,7 @@ bool PedData::InitializeVariables(const string& filename)
           int pos_vd=0; //velocity direction
           while ( getline(fdata,line) )
           {
-               //looking for the framerate which is suppposed to be at the second position
+               //looking for the framerate which is supposed to be at the second position
                if(line[0] == '#')
                {
                     std::vector<std::string> strs;
@@ -253,7 +253,7 @@ bool PedData::InitializeVariables(const string& filename)
      return true;
 }
 
-// initialize the global variables variables
+// initialize the global variables
 bool PedData::InitializeVariables(TiXmlElement* xRootNode)
 {
      if( ! xRootNode ) {
@@ -347,6 +347,7 @@ bool PedData::InitializeVariables(TiXmlElement* xRootNode)
                _xCor[ID][frameNr] =  x*M2CM;
                _yCor[ID][frameNr] =  y*M2CM;
                _zCor[ID][frameNr] =  z*M2CM;
+               std::cout << "_zcor[ " << ID << "][" << frameNr <<"]=" << z << std::endl;
                if(_vComponent == "F")
                {
             	   if(xAgent->Attribute("VD"))
@@ -421,7 +422,7 @@ vector<double> PedData::GetXInFrame(int frame, const vector<int>& ids, double zP
      {
     	 if(zPos<1000000.0)
 		  {
-    		 if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS_EVENT)
+    		 if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS)
 			  {
 				  XInFrame.push_back(_xCor[id][frame]);
 			  }
@@ -446,23 +447,25 @@ vector<double> PedData::GetXInFrame(int frame, const vector<int>& ids) const
 
 vector<double> PedData::GetYInFrame(int frame, const vector<int>& ids, double zPos) const
 {
-     vector<double> YInFrame;
-     for(unsigned int i=0; i<ids.size();i++)
-     {
-          int id = ids[i];
-          if(zPos<1000000.0)
-          {
-        	  if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS_EVENT)
-			  {
-				  YInFrame.push_back(_yCor[id][frame]);
-			  }
-          }
-          else
-          {
-        	  YInFrame.push_back(_yCor[id][frame]);
-          }
-     }
-     return YInFrame;
+      vector<double> YInFrame;
+      for(unsigned int i=0; i<ids.size();i++)
+      {
+            int id = ids[i];
+            if(zPos<1000000.0) 
+            {
+                  // std::cout << "zPos " << zPos*M2CM <<  ", " << _zCor[id][frame] << ", diff "<< fabs(_zCor[id][frame]-zPos*M2CM) << std::endl;
+                  // getc(stdin);
+                  if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS)
+                  {
+                        YInFrame.push_back(_yCor[id][frame]);
+                  }
+            }
+            else
+            {
+                  YInFrame.push_back(_yCor[id][frame]);
+            }
+      }
+      return YInFrame;
 }
 
 vector<double> PedData::GetYInFrame(int frame, const vector<int>& ids) const
@@ -505,10 +508,10 @@ vector<int> PedData::GetIdInFrame(int frame, const vector<int>& ids, double zPos
      {
           if(zPos<1000000.0)
           {
-			  if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS_EVENT)
-			  {
-				  IdInFrame.push_back(id +_minID);
-			  }
+                if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5)
+                {
+                      IdInFrame.push_back(id +_minID);
+                }
           }
           else
           {

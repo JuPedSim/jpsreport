@@ -347,7 +347,7 @@ bool PedData::InitializeVariables(TiXmlElement* xRootNode)
                _xCor[ID][frameNr] =  x*M2CM;
                _yCor[ID][frameNr] =  y*M2CM;
                _zCor[ID][frameNr] =  z*M2CM;
-               std::cout << "_zcor[ " << ID << "][" << frameNr <<"]=" << z << std::endl;
+               // std::cout << "_zcor[ " << ID << "][" << frameNr <<"]=" << z << std::endl;
                if(_vComponent == "F")
                {
             	   if(xAgent->Attribute("VD"))
@@ -402,7 +402,7 @@ vector<double> PedData::GetVInFrame(int frame, const vector<int>& ids, double zP
 		  double v = GetInstantaneousVelocity1(frame, Tpast, Tfuture, id, _firstFrame, _lastFrame, _xCor, _yCor);
           if(zPos<1000000.0)
           {
-        	  if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS_EVENT)
+        	  if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5*M2CM)
         	  {
         		  VInFrame.push_back(v);
         	  }
@@ -422,7 +422,7 @@ vector<double> PedData::GetXInFrame(int frame, const vector<int>& ids, double zP
      {
     	 if(zPos<1000000.0)
 		  {
-    		 if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS)
+    		 if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5*M2CM)
 			  {
 				  XInFrame.push_back(_xCor[id][frame]);
 			  }
@@ -453,9 +453,7 @@ vector<double> PedData::GetYInFrame(int frame, const vector<int>& ids, double zP
             int id = ids[i];
             if(zPos<1000000.0) 
             {
-                  // std::cout << "zPos " << zPos*M2CM <<  ", " << _zCor[id][frame] << ", diff "<< fabs(_zCor[id][frame]-zPos*M2CM) << std::endl;
-                  // getc(stdin);
-                  if(fabs(_zCor[id][frame]-zPos*M2CM)<J_EPS)
+                  if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5*M2CM)
                   {
                         YInFrame.push_back(_yCor[id][frame]);
                   }
@@ -508,7 +506,7 @@ vector<int> PedData::GetIdInFrame(int frame, const vector<int>& ids, double zPos
      {
           if(zPos<1000000.0)
           {
-                if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5)
+                if(fabs(_zCor[id][frame]-zPos*M2CM)<0.5*M2CM)
                 {
                       IdInFrame.push_back(id +_minID);
                 }

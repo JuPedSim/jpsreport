@@ -1,9 +1,6 @@
-from numpy import *
-import matplotlib
+import numpy as np
 import matplotlib.pyplot as plt
 from Polygon import *         
-import matplotlib.cm as cm
-import pylab
 import argparse
 import sys
 
@@ -29,11 +26,11 @@ if __name__ == '__main__':
    ax1 = fig.add_subplot(111,aspect='auto')
    plt.rc("font", size=30)
    plt.rc('pdf',fonttype = 42)
-   data_NT = loadtxt("%s/%s"%(pathfile,namefile))
+   data_NT = np.loadtxt("%s/%s"%(pathfile,namefile))
    #plt.plot(data_NT[:,0]/fps,data_NT[:,1], 'r-')
    plt.plot(data_NT[:,0],data_NT[:,1], 'r-')
-   plt.xlabel("t [s]")
-   plt.ylabel("N [-]")
+   plt.xlabel("t [s]", size=18)
+   plt.ylabel("N [-]", size=18)
    plt.title("%s"%title)
    plt.savefig("%s/%s.png"%(pathfile,figname))
    plt.close()

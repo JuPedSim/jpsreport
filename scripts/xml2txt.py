@@ -30,10 +30,11 @@ if __name__ == "__main__":
         exit('usage: %s filename' % argv[0])
 
     filename = argv[1]
-    dirname = os.path.dirname(filename)
-    basename = os.path.basename(filename)
-    basename = basename.split(".")[0] + ".txt"
-    output = os.path.join(dirname, basename)
+    filename1, file_extension = os.path.splitext(filename)
+    if file_extension != ".xml":
+        exit('not an xml file')
+        
+    output = filename1 +  ".txt"
     o = open(output, "w")
     #    o.write("# ID             frame              x             y             z\n\n")
     print (">> %s" % output)

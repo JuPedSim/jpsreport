@@ -25,12 +25,14 @@ Tested with
 
 ## Required libraries 
 
-- [Boost library](http://www.boost.org/): necessary for `jpscore` and `jpsreport`
+- [Boost library](http://www.boost.org/): necessary for `jpscore` and `jpsreport`.
 
 
 ## Install Boost (at least v1.57)
 
-You can compile boost as follows: 
+### Linux 
+
+You can compile boost using the following snippet:
 
 ```bash
 boost_version=1.61.0
@@ -42,21 +44,46 @@ rm ${boost_dir}.tar.gz
 cd ${boost_dir}
 ./bootstrap.sh --with-libraries=filesystem,test,system
 sudo ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install
-cd .. && rm -rf ${boost_dir}
+cd ..
+rm -rf ${boost_dir}
 sudo ldconfig
 ```
 
-(download this snippet as a [script](https://cst.version.fz-juelich.de/jupedsim/jpscore/snippets/4))
+(download this snippet as a [script](https://gitlab.version.fz-juelich.de/jupedsim/jpscore/snippets/7)).
 
-or if you are a `brew` user:
-
-````
-brew install boost
-```
-
-***
 
 Note: Debian's and Ubuntu's install manager offer an old version of Boost, which is not supported by `JuPedSim`.
 
+
+### Mac
+
+For `brew` users:
+
+```bash
+brew install boost
+```
+
+And For `port` users
+
+```bash
+sudo port install boost 
+```
+
+### Windows 
+
+```
+bootstrap
+b2  variant=release --build-type=complete 
+```
+
+See also [Getting started on Windows](http://www.boost.org/doc/libs/1_65_1/more/getting_started/windows.html).
+
+This [script](https://gitlab.version.fz-juelich.de/jupedsim/jpscore/snippets/18) can be useful, in case you are using
+Visual Studio.
+
+Download it and put it in the same directory as Boost. Depending on your Boost version and VS, 
+you may want to adapt in the script the variables `boost_dir` and `msvcver`.
+
+## Test Boost installation 
 
 You can test your Boost installation by using this [minimal example](2016-11-04-boost.html).

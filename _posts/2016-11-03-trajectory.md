@@ -101,4 +101,7 @@ A sample trajectory in .txt format is present as below:
 
 The line starting with `#framerate` and `#ID	FR	X	Y	Z` are necessary. 
 
-The order of each column is not so important now. JPSreport will check the meaning of each column from the comments `#ID	FR	X	Y	Z`
+The order of each column is irrelevant. JPSreport will check the meaning of each column from the comments `#ID	FR	X	Y	Z`
+
+**Hint:**
+Use the script scripts/txt2txt.py to format a txt-trajectory according to the  above-mentioned requirements.

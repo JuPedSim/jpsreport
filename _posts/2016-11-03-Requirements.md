@@ -22,6 +22,8 @@ Tested with
 
 - cmake: see this [tutorial](https://www.johnlamp.net/cmake-tutorial-1-getting-started.html) for a brief overview.  
 - Python (highly recommended): needed to plot results of analysis. 
+- [Polygon](https://bitbucket.org/jraedler/polygon3/downloads/): Needed for plotting Voronoi diagrams.
+  Note that Polygon2 is not maintained. So it is recommended to go with Polygon3.
 
 ## Required libraries 
 

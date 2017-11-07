@@ -25,6 +25,8 @@ Tested with
 - [Polygon](https://bitbucket.org/jraedler/polygon3/downloads/): Needed for plotting Voronoi diagrams.
   Note that Polygon2 is not maintained. So it is recommended to go with Polygon3.
 
+- [Pandas](http://pandas.pydata.org/pandas-docs/stable/install.html): To efficiently read some big files. 
+
 ## Required libraries 
 
 - [Boost library](http://www.boost.org/): necessary for `jpscore` and `jpsreport`.

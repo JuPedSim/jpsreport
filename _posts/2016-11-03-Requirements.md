@@ -90,4 +90,4 @@ you may want to adapt in the script the variables `boost_dir` and `msvcver`.
 
 ## Test Boost installation 
 
-You can test your Boost installation by using this [minimal example](2016-11-04-boost.html).
+You can test your Boost installation by using this [minimal example](http://www.jupedsim.org/jpscore/2016-11-04-boost.html).

@@ -81,18 +81,18 @@ The file should include at least two main sections: header and frames.
 A sample trajectory in .txt format is present as below:
 
 ```xml
-#description: optional description
-#framerate: 16
-#geometry: /home/sim/corridor.xml
-#ID: the agent ID
-#FR: the current frame
-#X,Y,Z: the agents coordinates in meters
-				
-#ID	FR	X		Y		Z
-1	0	8.21	131.57	0.00
-2	0	8.41	133.42	0.00
-1	1	8.21	131.57	0.00
-2	1	8.41	133.42	0.00
+ #description: optional description
+ #framerate: 16
+ #geometry: /home/sim/corridor.xml
+ #ID: the agent ID
+ #FR: the current frame
+ #X,Y,Z: the agents coordinates in meters
+ 				
+ #ID	FR	X		Y		Z
+ 1	0	8.21	131.57	0.00
+ 2	0	8.41	133.42	0.00
+ 1	1	8.21	131.57	0.00
+ 2	1	8.41	133.42	0.00
 ```
 
 The line starting with `#framerate` and `#ID	FR	X	Y	Z` are necessary. 
@@ -100,7 +100,7 @@ The line starting with `#framerate` and `#ID	FR	X	Y	Z` are necessary.
 The order of each column is irrelevant. JPSreport will check the meaning of each column from the comments 
 
 ```xml
-#ID	 FR	 X	Y  Z
+ #ID	 FR	 X	Y  Z
 ```
 
 **Hint:**

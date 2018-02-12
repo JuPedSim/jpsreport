@@ -1,9 +1,8 @@
-    ---
+---
 layout: post2
 title: Quickstart 
 subtitle: compile the code
 update: 2018-02-13
-#bigimg: /img/jupedsim_small.png
 permalink: 2016-11-01-quickstart.html
 nav:
 - page: Download

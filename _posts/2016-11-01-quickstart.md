@@ -89,5 +89,3 @@ For example in a terminal run the following:
 - XCode (v0.6+ Mac)
 
     Run the *CMake-gui* and generate an *XCode*-Project then open it with *XCode*.
-
-    

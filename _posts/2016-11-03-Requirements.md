@@ -2,6 +2,7 @@
 layout: post
 title: Requirements
 subtitle: Dependencies of jpsreport
+update: 2018-02-13
 #bigimg: /img/jupedsim_small.png
 permalink: 2016-11-03-requirements.html
 ---
@@ -23,10 +24,8 @@ Tested with
 - cmake: see this [tutorial](https://www.johnlamp.net/cmake-tutorial-1-getting-started.html) for a brief overview.  
 - Python (highly recommended): needed to plot results of analysis. 
 - [Polygon](https://bitbucket.org/jraedler/polygon3/downloads/): Needed for plotting Voronoi diagrams.
-  Note that Polygon2 is not maintained. So it is recommended to go with Polygon3.
-
-- [Pandas](http://pandas.pydata.org/pandas-docs/stable/install.html): To efficiently read some big files. 
-
+  Note that Polygon2 is not maintained. So it is recommended to go with Polygon3.  
+- [Pandas](http://pandas.pydata.org/pandas-docs/stable/install.html): To efficiently read some big files.
 ## Required libraries 
 
 - [Boost library](http://www.boost.org/): necessary for `jpscore` and `jpsreport`.
@@ -39,18 +38,18 @@ Tested with
 You can compile boost using the following snippet:
 
 ```bash
-boost_version=1.61.0
-boost_dir=boost_1_61_0
+ boost_version=1.61.0
+ boost_dir=boost_1_61_0
 
-wget http://downloads.sourceforge.net/project/boost/boost/${boost_version}/${boost_dir}.tar.gz
-tar xfz ${boost_dir}.tar.gz
-rm ${boost_dir}.tar.gz
-cd ${boost_dir}
-./bootstrap.sh --with-libraries=filesystem,test,system
-sudo ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install
-cd ..
-rm -rf ${boost_dir}
-sudo ldconfig
+ wget http://downloads.sourceforge.net/project/boost/boost/${boost_version}/${boost_dir}.tar.gz
+ tar xfz ${boost_dir}.tar.gz
+ rm ${boost_dir}.tar.gz
+ cd ${boost_dir}
+ ./bootstrap.sh --with-libraries=filesystem,test,system
+ sudo ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install
+ cd .. 
+ rm -rf ${boost_dir} 
+ sudo ldconfig
 ```
 
 (download this snippet as a [script](https://gitlab.version.fz-juelich.de/jupedsim/jpscore/snippets/7)).
@@ -64,20 +63,20 @@ Note: Debian's and Ubuntu's install manager offer an old version of Boost, which
 For `brew` users:
 
 ```bash
-brew install boost
+ brew install boost
 ```
 
 And for `port` users
 
 ```bash
-sudo port install boost 
+ sudo port install boost 
 ```
 
 ### Windows 
 
 ```
-bootstrap
-b2  variant=release --build-type=complete 
+ bootstrap
+ b2  variant=release --build-type=complete 
 ```
 
 See also [Getting started on Windows](http://www.boost.org/doc/libs/1_65_1/more/getting_started/windows.html).

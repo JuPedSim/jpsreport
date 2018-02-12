@@ -1,4 +1,4 @@
----
+    ---
 layout: post2
 title: Quickstart 
 subtitle: 
@@ -28,7 +28,7 @@ To use `JPSreport` there are three steps to follow:
 Git-clone the code from the GitLab repository 
 
 ```bash
-git clone https://gitlab.version.fz-juelich.de/jupedsim/jpsreport
+ git clone https://gitlab.version.fz-juelich.de/jupedsim/jpsreport
 ```
 
 Or download a compressed file 
@@ -40,11 +40,10 @@ Or download a compressed file
 Before you get started please check if all [requirements](2016-11-03-requirements.html)  are fulfilled
 
 ```bash
-cd jpsreport
-mkdir build && cd build
-cmake ..
+ cd jpsreport
+ mkdir build && cd build
+ cmake ..
 ```
-
 
 In case a package is missing, `CMake` will report an error.
 
@@ -53,7 +52,7 @@ In case a package is missing, `CMake` will report an error.
 If the two first steps succeed then you can proceed with the compilation 
 
 ```bash 
-make -j2
+ make -j2
 ```
 
 ## 4. Run JPSreport
@@ -65,7 +64,7 @@ Run `JPSreport` using one of the ini files in the `demo` directory.
 For example in a terminal run the following:
 
 ```bash 
-./bin/jpsreport inifile.xml
+ ./bin/jpsreport inifile.xml
 ```
 
 

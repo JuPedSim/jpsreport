@@ -57,7 +57,7 @@ If the two first steps succeed then you can proceed with the compilation
 
 ## 4. Run JPSreport
 
-If the compilation succeeded a binary will be produced in the direction `path/to/jpsreport//bin`.
+If the compilation succeeded a binary will be produced in the direction `path/to/jpsreport/bin`.
 
 Run `JPSreport` using one of the ini files in the `demo` directory.
 

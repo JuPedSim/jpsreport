@@ -36,11 +36,7 @@
 #include <chrono>
 #include <math.h>
 #include <ctime>
-#ifdef _MSC_VER
-#include "../.vs/dirent.h"
-#else
-#include <dirent.h>
-#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #else
@@ -52,7 +48,10 @@
 #include "../IO/OutputHandler.h"
 #include "ArgumentParser.h"
 #include "../Analysis.h"
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
 
+using namespace boost::filesystem;
 using namespace std;
 
 /* https://stackoverflow.com/questions/38530981/output-compiler-version-in-a-c-program#38531037 */
@@ -339,6 +338,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                }
                //hack to find if it is an absolute path
                // ignore the project root in this case
+                           // TODO: use boost::absolute
                if ( (boost::algorithm::contains(_trajectoriesLocation,":")==false) && //windows
                     (boost::algorithm::starts_with(_trajectoriesLocation,"/") ==false)) //linux
                     // &&() osx
@@ -357,24 +357,20 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           // in the case no file was specified, collect all files in the specified directory
           if(_trajectoriesFiles.empty())
           {
-               DIR *dir;
-               struct dirent *ent;
-               if ((dir = opendir (_trajectoriesLocation.c_str())) != NULL)
+               if(exists(_trajectoriesLocation))
                {
                     /* print all the files and directories within directory */
-                    while ((ent = readdir (dir)) != NULL)
+                    path p(GetTrajectoriesLocation());
+                    p = canonical(p);
+                    for (auto& filename : boost::make_iterator_range(directory_iterator(p), {}))
                     {
-                         string filename=ent->d_name;
-
-                         if (boost::algorithm::ends_with(filename, fmt))
-                              //if (filename.find(fmt)!=std::string::npos)
+                         string s = filename.path().string();
+                         if (boost::algorithm::ends_with(s, fmt))
                          {
-                              //_trajectoriesFiles.push_back(_projectRootDir+filename);
-                              _trajectoriesFiles.push_back(filename);
-                              Log->Write("INFO: \tInput trajectory file is\t<"+ (filename)+">");
+                              _trajectoriesFiles.push_back(s);
+                              Log->Write("INFO: \tInput trajectory file is <"+ s + ">");
                          }
                     }
-                    closedir (dir);
                }
                else
                {
@@ -414,7 +410,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           {
                _scriptsLocation=_projectRootDir+_scriptsLocation;
           }
-          if (opendir (_scriptsLocation.c_str()) == NULL)
+          if (!exists(_scriptsLocation))
           {
                /* could not open directory */
                Log->Write("ERROR: \tcould not open the directory <"+_scriptsLocation+">");

@@ -407,16 +407,9 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      if(xMainNode->FirstChild("scripts"))
      {
           _scriptsLocation=xMainNode->FirstChildElement("scripts")->Attribute("location");
-          if(_scriptsLocation.empty())
-          {
-               _scriptsLocation="./";
-          }
-          if ( (boost::algorithm::contains(_scriptsLocation,":")==false) && //windows
-               (boost::algorithm::starts_with(_scriptsLocation,"/") ==false)) //linux
-               // &&() osx
-          {
-               _scriptsLocation=_projectRootDir+_scriptsLocation;
-          }
+          path p(_scriptsLocation);
+          p = canonical(p);
+          _scriptsLocation = p.string(); //TODO: refactor _scriptsLocation -> path not string
           if (!exists(_scriptsLocation))
           {
                /* could not open directory */

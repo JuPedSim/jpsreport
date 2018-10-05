@@ -343,6 +343,8 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                     _trajectoriesLocation = xTrajectories->FirstChildElement("path")->Attribute("location");
 
                }
+               path p(GetTrajectoriesLocation());
+               p = canonical(p);
                //hack to find if it is an absolute path
                // ignore the project root in this case
                            // TODO: use boost::absolute
@@ -358,7 +360,6 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           {
                _trajectoriesLocation=_projectRootDir;
           }
-
           Log->Write("INFO: \tInput directory for loading trajectory is:\t<"+ (_trajectoriesLocation)+">");
 
           // in the case no file was specified, collect all files in the specified directory
@@ -408,6 +409,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      {
           _scriptsLocation=xMainNode->FirstChildElement("scripts")->Attribute("location");
           path p(_scriptsLocation);
+          p = _projectRootDir / p;
           p = canonical(p);
           _scriptsLocation = p.string(); //TODO: refactor _scriptsLocation -> path not string
           if (!exists(_scriptsLocation))

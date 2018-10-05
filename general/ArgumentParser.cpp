@@ -1,8 +1,8 @@
 /**
  * \file        ArgumentParser.cpp
  * \date        Oct 10, 2014
- * \version     v0.7
- * \copyright   <2009-2015> Forschungszentrum Jülich GmbH. All rights reserved.
+ * \version     v0.8.3
+ * \copyright   <2009-2018> Forschungszentrum Jülich GmbH. All rights reserved.
  *
  * \section License
  * This file is part of JuPedSim.
@@ -88,7 +88,29 @@ ver_string(__MINGW32__, __MINGW32_MAJOR_VERSION, __MINGW32_MINOR_VERSION);
 "";
 #endif
 
+void Logs()
+{
+     time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+     std::ostringstream oss;
+     char foo[100];
+     if(0 < std::strftime(foo, sizeof(foo), "%a %b %d %X %Y", std::localtime(&now)))
+          oss << foo;
+     else
+          oss << "No time!";
+     // else  // hack for g++ < 5
+     //      oss << std::put_time(std::localtime(&now), "%a %b %d %X %Y");
+    auto currentTime = oss.str();
 
+     // first logs will go to stdout
+     Log->Write("----\nJuPedSim - JPSreport\n");
+     Log->Write("Current date   : %s", currentTime.c_str());
+     Log->Write("Version        : %s", JPSREPORT_VERSION);
+     Log->Write("Compiler       : %s (%s)", true_cxx.c_str(), true_cxx_ver.c_str());
+     Log->Write("Commit hash    : %s", GIT_COMMIT_HASH);
+     Log->Write("Commit date    : %s", GIT_COMMIT_DATE);
+     Log->Write("Branch         : %s", GIT_BRANCH);
+     Log->Write("Python         : %s (%s)\n----\n", PYTHON, PYTHON_VERSION);
+}
 
 void ArgumentParser::Usage(const std::string file)
 {
@@ -151,7 +173,11 @@ bool ArgumentParser::ParseArgs(int argc, char **argv)
      if (argument == "-h" || argument == "--help")
      {
           Usage(argv[0]);
-          return false;
+     }
+     if (argument == "-v" || argument == "--version")
+     {
+          Logs();
+          exit(EXIT_SUCCESS);
      }
 
      // other special case where a single configuration file is submitted
@@ -187,26 +213,7 @@ const string& ArgumentParser::GetProjectRootDir() const
 
 bool ArgumentParser::ParseIniFile(const string& inifile)
 {
-     time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
-     std::ostringstream oss;
-     char foo[100];
-     if(0 < std::strftime(foo, sizeof(foo), "%a %b %d %X %Y", std::localtime(&now)))
-          oss << foo;
-     else
-          oss << "No time!";
-     // else  // hack for g++ < 5
-     //      oss << std::put_time(std::localtime(&now), "%a %b %d %X %Y");
-    auto currentTime = oss.str();
-
-     // first logs will go to stdout
-     Log->Write("----\nJuPedSim - JPSreport\n");
-     Log->Write("Current date   : %s", currentTime.c_str());
-     Log->Write("Version        : %s", JPSREPORT_VERSION);
-     Log->Write("Compiler       : %s (%s)", true_cxx.c_str(), true_cxx_ver.c_str());
-     Log->Write("Commit hash    : %s", GIT_COMMIT_HASH);
-     Log->Write("Commit date    : %s", GIT_COMMIT_DATE);
-     Log->Write("Branch         : %s", GIT_BRANCH);
-     Log->Write("Python         : %s (%s)\n----\n", PYTHON, PYTHON_VERSION);
+     Logs();
      Log->Write("INFO: \tParsing the ini file <%s>",inifile.c_str());
 
      //extract and set the project root dir

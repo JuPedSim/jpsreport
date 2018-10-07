@@ -2,7 +2,7 @@
  * \file        Method_A.cpp
  * \date        Oct 10, 2014
  * \version     v0.7
- * \copyright   <2009-2015> Forschungszentrum J��lich GmbH. All rights reserved.
+ * \copyright   <2009-2015> Forschungszentrum Jülich GmbH. All rights reserved.
  *
  * \section License
  * This file is part of JuPedSim.
@@ -54,7 +54,7 @@ Method_A::~Method_A()
 
 }
 
-bool Method_A::Process (const PedData& peddata,const string& scriptsLocation, const double& zPos_measureArea)
+bool Method_A::Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea)
 {
      _trajName = peddata.GetTrajName();
      _projectRootDir = peddata.GetProjectRootDir();

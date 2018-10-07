@@ -48,7 +48,6 @@
 #include "../IO/OutputHandler.h"
 #include "ArgumentParser.h"
 #include "../Analysis.h"
-#include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 
 using namespace boost::filesystem;
@@ -200,12 +199,12 @@ bool ArgumentParser::ParseArgs(int argc, char **argv)
      return false;
 }
 
-const vector<string>& ArgumentParser::GetTrajectoriesFiles() const
+const vector<path>& ArgumentParser::GetTrajectoriesFiles() const
 {
      return _trajectoriesFiles;
 }
 
-const string& ArgumentParser::GetProjectRootDir() const
+const path& ArgumentParser::GetProjectRootDir() const
 {
      return _projectRootDir;
 }
@@ -217,10 +216,8 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      Log->Write("INFO: \tParsing the ini file <%s>",inifile.c_str());
 
      //extract and set the project root dir
-     size_t found = inifile.find_last_of("/\\");
-     if (found != string::npos)
-          _projectRootDir = inifile.substr(0, found) + "/";
-
+     path p(inifile);
+     _projectRootDir = canonical(p.parent_path());
 
      TiXmlDocument doc(inifile);
      if (!doc.LoadFile()) {
@@ -243,10 +240,11 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      }
 
      if (xMainNode->FirstChild("logfile")) {
-          this->SetErrorLogFile(
-               this->GetProjectRootDir()+xMainNode->FirstChild("logfile")->FirstChild()->Value());
+           path logfile(xMainNode->FirstChild("logfile")->FirstChild()->Value());
+           logfile =  GetProjectRootDir() / logfile;
+          this->SetErrorLogFile(logfile);
           this->SetLog(2);
-          Log->Write("INFO:\tlogfile <%s>", this->GetErrorLogFile().c_str());
+          Log->Write("INFO:\tlogfile <%s>", GetErrorLogFile().string().c_str());
      }
      switch (this->GetLog()) {
      case 0:
@@ -259,7 +257,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           break;
      case 2: {
           char name[CLENGTH]="";
-          sprintf(name,"%s", this->GetErrorLogFile().c_str());
+          sprintf(name,"%s", GetErrorLogFile().string().c_str());
           if(Log) delete Log;
           Log = new FileHandler(name);
      }
@@ -271,21 +269,16 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      // from this point if case 2, the logs will go to a logfile
      if(this->GetLog() == 2)
      {
-          Log->Write("----\nJuPedSim - JPSreport\n");
-          Log->Write("Current date   : %s %s", __DATE__, __TIME__);
-          Log->Write("Version        : %s", JPSREPORT_VERSION);
-          Log->Write("Compiler       : %s (%s)", true_cxx.c_str(), true_cxx_ver.c_str());
-          Log->Write("Commit hash    : %s", GIT_COMMIT_HASH);
-          Log->Write("Commit date    : %s", GIT_COMMIT_DATE);
-          Log->Write("Branch         : %s\n----\n", GIT_BRANCH);
+           Logs();
      }
 
 
      //geometry
      if(xMainNode->FirstChild("geometry"))
      {
-          _geometryFileName=_projectRootDir+xMainNode->FirstChildElement("geometry")->Attribute("file");
-          Log->Write("INFO: \tGeometry File is: <"+_geometryFileName+">");
+           path p(xMainNode->FirstChildElement("geometry")->Attribute("file"));
+           _geometryFileName = GetProjectRootDir() / p;
+           Log->Write("INFO: \tGeometry File is: <%s>",  _geometryFileName.string().c_str());
      }
 
      //trajectories
@@ -320,47 +313,36 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                xFile; xFile = xFile->NextSiblingElement("file"))
           {
                //collect all the files given
-               _trajectoriesFilename =
-                    + xFile->Attribute("name");
+                _trajectoriesFilename = path(xFile->Attribute("name"));
                _trajectoriesFiles.push_back(_trajectoriesFilename);
 
                //check if the given file match the format
-               if(boost::algorithm::ends_with(_trajectoriesFilename,fmt))
+               if(boost::algorithm::ends_with(_trajectoriesFilename.string(),fmt))
                {
-                    Log->Write("INFO: \tInput trajectory file is\t<"+ (_trajectoriesFilename)+">");
+                     Log->Write("INFO: \tInput trajectory file is <%s>", _trajectoriesFilename.string().c_str());
                }
                else
                {
-                    Log->Write("ERROR: \tWrong file extension\t<%s> for file <%s>",fmt.c_str(),_trajectoriesFilename.c_str());
+                     Log->Write("ERROR: \tWrong file extension\t<%s> for file <%s>",fmt.c_str(),_trajectoriesFilename.string().c_str());
                     return false;
                }
           }
-
-          if (xTrajectories->FirstChildElement("path"))
+          auto xmlpath = xTrajectories->FirstChildElement("path");
+          if (xmlpath)
           {
-               if(xTrajectories->FirstChildElement("path")->Attribute("location"))
+               if(xmlpath->Attribute("location"))
                {
-                    _trajectoriesLocation = xTrajectories->FirstChildElement("path")->Attribute("location");
-
-               }
-               path p(GetTrajectoriesLocation());
-               p = canonical(p);
-               //hack to find if it is an absolute path
-               // ignore the project root in this case
-                           // TODO: use boost::absolute
-               if ( (boost::algorithm::contains(_trajectoriesLocation,":")==false) && //windows
-                    (boost::algorithm::starts_with(_trajectoriesLocation,"/") ==false)) //linux
-                    // &&() osx
-               {
-                    Log->Write(_trajectoriesLocation);
-                    _trajectoriesLocation=_projectRootDir+_trajectoriesLocation;
+                     _trajectoriesLocation = GetProjectRootDir() / path(xmlpath->Attribute("location"));
+                     // _trajectoriesLocation = canonical(_trajectoriesLocation);
                }
           }
           else
           {
-               _trajectoriesLocation=_projectRootDir;
+                path p(GetProjectRootDir());
+                p = canonical(p);
+                _trajectoriesLocation=p.string();
           }
-          Log->Write("INFO: \tInput directory for loading trajectory is:\t<"+ (_trajectoriesLocation)+">");
+          Log->Write("INFO: \tInput directory for loading trajectory is <%s>", _trajectoriesLocation.string().c_str());
 
           // in the case no file was specified, collect all files in the specified directory
           if(_trajectoriesFiles.empty())
@@ -376,14 +358,14 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                          if (boost::algorithm::ends_with(s, fmt))
                          {
                               _trajectoriesFiles.push_back(s);
-                              Log->Write("INFO: \tInput trajectory file is <"+ s + ">");
+                              Log->Write("INFO: \tInput trajectory file is <%s>", s.c_str());
                          }
                     }
                }
                else
                {
                     /* could not open directory */
-                    Log->Write("ERROR: \tcould not open the directory <"+_trajectoriesLocation+">");
+                     Log->Write("ERROR: \tcould not open the directory <%s>", _trajectoriesLocation.string().c_str());
                     return false;
                }
           }
@@ -407,20 +389,18 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      //scripts
      if(xMainNode->FirstChild("scripts"))
      {
-          _scriptsLocation=xMainNode->FirstChildElement("scripts")->Attribute("location");
-          path p(_scriptsLocation);
-          p = _projectRootDir / p;
-          p = canonical(p);
-          _scriptsLocation = p.string(); //TODO: refactor _scriptsLocation -> path not string
+           _scriptsLocation=path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
+          _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
+          _scriptsLocation = canonical(_scriptsLocation);
           if (!exists(_scriptsLocation))
           {
                /* could not open directory */
-               Log->Write("ERROR: \tcould not open the directory <"+_scriptsLocation+">");
-               return false;
+                Log->Write("ERROR: \tcould not open the directory <%s>", _scriptsLocation.string().c_str());
+                return false;
           }
           else
           {
-               Log->Write("INFO: \tInput directory for loading scripts is:\t<"+_scriptsLocation+">");
+                Log->Write("INFO: \tInput directory for loading scripts is:\t<%s>", _scriptsLocation.string().c_str());
           }
      }
 
@@ -878,7 +858,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
 }
 
 
-const string& ArgumentParser::GetErrorLogFile() const
+const fs::path& ArgumentParser::GetErrorLogFile() const
 {
      return _errorLogFile;
 }
@@ -888,7 +868,7 @@ int ArgumentParser::GetLog() const
      return _log;
 }
 
-const string& ArgumentParser::GetGeometryFilename() const
+const fs::path& ArgumentParser::GetGeometryFilename() const
 {
      return _geometryFileName;
 }
@@ -898,17 +878,17 @@ const FileFormat& ArgumentParser::GetFileFormat() const
      return _fileFormat;
 }
 
-const string& ArgumentParser::GetTrajectoriesLocation() const
+const fs::path& ArgumentParser::GetTrajectoriesLocation() const
 {
      return _trajectoriesLocation;
 }
 
-const string& ArgumentParser::GetScriptsLocation() const
+const fs::path& ArgumentParser::GetScriptsLocation() const
 {
      return _scriptsLocation;
 }
 
-const string& ArgumentParser::GetTrajectoriesFilename() const
+const fs::path& ArgumentParser::GetTrajectoriesFilename() const
 {
      return _trajectoriesFilename;
 }
@@ -1077,9 +1057,9 @@ MeasurementArea* ArgumentParser::GetMeasurementArea(int id)
 
 }
 
-void ArgumentParser::SetErrorLogFile(std::string errorLogFile)
+void ArgumentParser::SetErrorLogFile(fs::path errorLogFile)
 {
-     _errorLogFile = errorLogFile;
+      _errorLogFile = errorLogFile;
 };
 
 void ArgumentParser::SetLog(int log) {

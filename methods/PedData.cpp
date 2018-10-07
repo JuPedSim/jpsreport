@@ -29,7 +29,9 @@
 #include "PedData.h"
 #include <cmath>
 #include <string>
+#include <boost/filesystem.hpp>
 
+namespace fs = boost::filesystem;
 using std::string;
 using std::map;
 using std::vector;
@@ -44,7 +46,7 @@ PedData::~PedData()
 
 }
 
-bool PedData::ReadData(const string& projectRootDir, const string& path, const string& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
+bool PedData::ReadData(const fs::path& projectRootDir, const fs::path& path, const fs::path& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
 {
      _minID = INT_MAX;
      _minFrame = INT_MAX;
@@ -53,21 +55,22 @@ bool PedData::ReadData(const string& projectRootDir, const string& path, const s
      _IgnoreBackwardMovement=IgnoreBackwardMovement;
      _projectRootDir = projectRootDir;
      _trajName = filename;
-
-     string fullTrajectoriesPathName= path+ "/" +_trajName;
-     Log->Write("INFO:\tthe name of the trajectory is: <%s>",_trajName.c_str());
-     Log->Write("INFO:\tfull name of the trajectory is: <%s>",fullTrajectoriesPathName.c_str());
+     fs::path p(path);
+     p /= _trajName;
+     fs::path fullTrajectoriesPathName= path / _trajName;
+     Log->Write("INFO:\tthe name of the trajectory is: <%s>", _trajName.string().c_str());
+     Log->Write("INFO:\tfull name of the trajectory is: <%s>", fullTrajectoriesPathName.string());
      bool result=true;
      if(trajformat == FORMAT_XML_PLAIN)
      {
-          TiXmlDocument docGeo(fullTrajectoriesPathName);
+           TiXmlDocument docGeo(fullTrajectoriesPathName.string());
           if (!docGeo.LoadFile()) {
                Log->Write("ERROR: \t%s", docGeo.ErrorDesc());
-               Log->Write("ERROR: \tcould not parse the trajectories file <%s>",fullTrajectoriesPathName.c_str());
+               Log->Write("ERROR: \tcould not parse the trajectories file <%s>",fullTrajectoriesPathName.string());
                return false;
           }
           TiXmlElement* xRootNode = docGeo.RootElement();
-          result=InitializeVariables(xRootNode);	//initialize some global variables
+          result=InitializeVariables(fs::path(xRootNode));	//initialize some global variables
      }
 
      else if(trajformat == FORMAT_PLAIN)
@@ -78,7 +81,7 @@ bool PedData::ReadData(const string& projectRootDir, const string& path, const s
 }
 
 // init _xCor, _yCor and _zCor
-bool PedData::InitializeVariables(const string& filename)
+bool PedData::InitializeVariables(const fs::path& filename)
 {
      vector<double> xs;
      vector<double> ys;
@@ -88,10 +91,10 @@ bool PedData::InitializeVariables(const string& filename)
      vector<int> _FramesTXT;  // the Frame data from txt format trajectory data
      //string fullTrajectoriesPathName= _projectRootDir+"./"+_trajName;
      ifstream  fdata;
-     fdata.open(filename.c_str());
+     fdata.open(filename.string());
      if (fdata.is_open() == false)
      {
-          Log->Write("ERROR: \t could not parse the trajectories file <%s>",filename.c_str());
+          Log->Write("ERROR: \t could not parse the trajectories file <%s>",filename.string());
           return false;
      }
      else

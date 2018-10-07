@@ -43,6 +43,10 @@ typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<dou
 #include <boost/numeric/ublas/io.hpp>
 namespace ub=boost::numeric::ublas;
 
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
 class Method_A
 {
 public:
@@ -50,15 +54,15 @@ public:
      virtual ~Method_A();
      void SetMeasurementArea (MeasurementArea_L* area);
      void SetTimeInterval(int deltaT);
-     bool Process (const PedData& peddata,const std::string& scriptsLocation, const double& zPos_measureArea);
+     bool Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea);
      void SetPlotTimeSeries(bool plotTimeseries);
 
 private:
-     std::string _trajName;
+     fs::path _trajName;
      std::string _measureAreaId;
      MeasurementArea_L* _areaForMethod_A;
-     std::string _projectRootDir;
-     std::string _scriptsLocation;
+     fs::path _projectRootDir;
+     fs::path _scriptsLocation;
 
      std::vector<int> _accumPedsPassLine; // the accumulative pedestrians pass a line with time
      std::vector<double> _accumVPassLine; // the accumulative instantaneous velocity of the pedestrians pass a line

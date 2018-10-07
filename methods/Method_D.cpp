@@ -387,18 +387,27 @@ void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& poly
 void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<polygon_2d, int> >& polygons_id, int numPedsInFrame, vector<double>& XInFrame, vector<double>& YInFrame,const vector<double>& VInFrame)
 {
      //string voronoiLocation=_projectRootDir+"./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/id_"+_measureAreaId;
-     string voronoiLocation=_projectRootDir+VORO_LOCATION+"VoronoiCell/";
+
+     fs::path  voronoiLocation(_projectRootDir);
+     voronoiLocation = voronoiLocation /  (VORO_LOCATION + "VoronoiCell");
      polygon_2d poly;
 
-
+// TODO: use boost::filesystem::create_directory()
 #if defined(_WIN32)
      mkdir(voronoiLocation.c_str());
 #else
      mkdir(voronoiLocation.c_str(), 0777);
 #endif
 
-     string polygon=voronoiLocation+"/polygon"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
-     ofstream polys (polygon.c_str());
+     fs::path polygon(voronoiLocation);
+     polygon = polygon/
+          "polygon"/
+          _trajName/
+          "_id_"/
+          _measureAreaId/
+          ("_"+frameId+".dat");
+
+     ofstream polys (polygon.string());
      if(polys.is_open())
      {
           //for(vector<polygon_2d> polygon_iterator=polygons.begin(); polygon_iterator!=polygons.end(); polygon_iterator++)
@@ -460,10 +469,10 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
 
      if(_plotVoronoiCellData)
      {
-          string parameters_rho=" " + _scriptsLocation+"/_Plot_cell_rho.py -f \""+ voronoiLocation + "\" -n "+ _trajName+"_id_"+_measureAreaId+"_"+frameId+
-               " -g "+_geometryFileName+" -p "+_trajectoryPath;
-          string parameters_v=" " + _scriptsLocation+"/_Plot_cell_v.py -f \""+ voronoiLocation + "\" -n "+ _trajName+"_id_"+_measureAreaId+"_"+frameId+
-               " -g "+_geometryFileName+" -p "+_trajectoryPath;
+          string parameters_rho=" " + _scriptsLocation.string()+"/_Plot_cell_rho.py -f \""+ voronoiLocation.string() + "\" -n "+ _trajName.string()+"_id_"+_measureAreaId+"_"+frameId+
+               " -g "+_geometryFileName.string()+" -p "+_trajectoryPath.string();
+          string parameters_v=" " + _scriptsLocation.string()+"/_Plot_cell_v.py -f \""+ voronoiLocation.string() + "\" -n "+ _trajName.string() + "_id_"+_measureAreaId+"_"+frameId+
+               " -g "+_geometryFileName.string()+" -p "+_trajectoryPath.string();
 
           if(_plotVoronoiIndex)
                parameters_rho += " -i";

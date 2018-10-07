@@ -33,6 +33,10 @@
 #include "VoronoiDiagram.h"
 #include <algorithm>
 
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
 #ifdef __linux__
 #include <sys/stat.h>
 #include <dirent.h>
@@ -53,11 +57,11 @@ class Method_D
 public:
      Method_D();
      virtual ~Method_D();
-     bool Process (const PedData& peddata,const std::string& scriptsLocation, const double& zPos_measureArea);
+      bool Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea);
      void SetCalculateIndividualFD(bool individualFD);
      void Setcutbycircle(double radius,int edges);
      void SetGeometryPolygon(polygon_2d geometryPolygon);
-     void SetGeometryFileName(const std::string& geometryFile);
+      void SetGeometryFileName(const fs::path& geometryFile);
      void SetGeometryBoundaries(double minX, double minY, double maxX, double maxY);
      void SetGridSize(double x, double y);
      void SetCalculateProfiles(bool calcProfile);
@@ -66,17 +70,17 @@ public:
      void SetPlotVoronoiIndex(bool plotVoronoiIndex);
      void SetMeasurementArea (MeasurementArea_B* area);
      void SetDimensional (bool dimension);
-     void SetTrajectoriesLocation(const std::string& trajectoryPath);
+      void SetTrajectoriesLocation(const fs::path& trajectoryPath);
      void SetStartFrame(int startFrame);
      void SetStopFrame(int stopFrame);
 
 private:
-     std::map<int , std::vector<int> > _peds_t;
-     std::string _measureAreaId;
-     MeasurementArea_B* _areaForMethod_D;
-     std::string _trajName;
-     std::string _projectRootDir;
-     std::string _scriptsLocation;
+      std::map<int , std::vector<int> > _peds_t;
+      std::string _measureAreaId;
+      MeasurementArea_B* _areaForMethod_D;
+      fs::path _trajName;
+      fs::path _projectRootDir;
+      fs::path _scriptsLocation;
      bool _calcIndividualFD;
      polygon_2d _areaIndividualFD;
      bool _getProfile;
@@ -99,8 +103,8 @@ private:
      float _fps;
      bool OpenFileMethodD();
      bool OpenFileIndividualFD();
-     std::string _geometryFileName;
-     std::string _trajectoryPath;
+      fs::path _geometryFileName;
+      fs::path _trajectoryPath;
      int _startFrame;
      int _stopFrame;
 

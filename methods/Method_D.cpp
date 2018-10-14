@@ -388,27 +388,26 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
 {
      //string voronoiLocation=_projectRootDir+"./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/id_"+_measureAreaId;
 
-     fs::path  voronoiLocation(_projectRootDir);
-     std::string tmpString = VORO_LOCATION;
-     voronoiLocation = voronoiLocation /  (tmpString + "VoronoiCell");
+     fs::path voronoiLocation(_projectRootDir);
+     fs::path voro_location_path (VORO_LOCATION); // TODO: convert
+                                                  // this MACRO to
+                                                  // path. Maybe
+                                                  // remove the MACRO?
+     voronoiLocation = voronoiLocation / voro_location_path /  "VoronoiCell";
      polygon_2d poly;
 
-// TODO: use boost::filesystem::create_directory()
-#if defined(_WIN32)
-     mkdir(voronoiLocation.c_str());
-#else
-     mkdir(voronoiLocation.c_str(), 0777);
-#endif
+     if(fs::create_directories(voronoiLocation))
+          std::cout << "Success creating " << voronoiLocation << "\n";
 
      fs::path polygon(voronoiLocation);
-     polygon = polygon/
-          "polygon"/
-          _trajName/
-          "_id_"/
-          _measureAreaId/
-          ("_"+frameId+".dat");
+     fs::path filename(_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat");
+     polygon = polygon/"polygon";
+     if(fs::create_directory(polygon))
+          std::cout << "Success creating " << polygon << "\n";
 
-     ofstream polys (polygon.string());
+     fs::path polygonfile = polygon/filename;
+
+     ofstream polys (polygonfile.string());
      if(polys.is_open())
      {
           //for(vector<polygon_2d> polygon_iterator=polygons.begin(); polygon_iterator!=polygons.end(); polygon_iterator++)
@@ -437,9 +436,14 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
           Log->Write("ERROR:\tcannot create the file <%s>",polygon.c_str());
           exit(EXIT_FAILURE);
      }
+     //TODO convert to path
+     fs::path speed_dir(voronoiLocation);
+     speed_dir = speed_dir/"speed";
+     if(fs::create_directory(speed_dir))
+          std::cout << "Success creating " << speed_dir << "\n";
 
-     string v_individual=voronoiLocation.string()+"/speed"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
-     ofstream velo (v_individual.c_str());
+     fs::path velocityfile = speed_dir / filename;
+     ofstream velo (velocityfile.string());
      if(velo.is_open())
      {
           for(int pts=0; pts<numPedsInFrame; pts++)
@@ -449,7 +453,7 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
      }
      else
      {
-          Log->Write("ERROR:\tcannot create the file <%s>",v_individual.c_str());
+          Log->Write("ERROR:\tcannot create the file <%s>",velocityfile.string().c_str());
           exit(EXIT_FAILURE);
      }
 

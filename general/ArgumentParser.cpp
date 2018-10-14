@@ -390,8 +390,9 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      if(xMainNode->FirstChild("scripts"))
      {
            _scriptsLocation=path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
-          _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
-          _scriptsLocation = canonical(_scriptsLocation);
+            if(! _scriptsLocation.is_absolute())
+                _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
+
           if (!exists(_scriptsLocation))
           {
                /* could not open directory */

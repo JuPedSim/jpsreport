@@ -113,17 +113,17 @@ bool Method_A::Process (const PedData& peddata,const fs::path& scriptsLocation, 
 
 void Method_A::WriteFile_N_t(string data)
 {
-     string fN_t= _projectRootDir+"./Output/Fundamental_Diagram/FlowVelocity/Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string fN_t= _projectRootDir.string()+"./Output/Fundamental_Diagram/FlowVelocity/Flow_NT_"+_trajName.string()+"_id_"+_measureAreaId+".dat";
      ofstream file(fN_t);
      if(file.is_open())
      {
           file<<data;
           file.close();
-          string METHOD_A_LOCATION =_projectRootDir+"./Output/Fundamental_Diagram/FlowVelocity/";
-          string file_N_t ="Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+          string METHOD_A_LOCATION =_projectRootDir.string()+"./Output/Fundamental_Diagram/FlowVelocity/";
+          string file_N_t ="Flow_NT_"+_trajName.string()+"_id_"+_measureAreaId+".dat";
           if(_plotTimeSeries)
           {
-               string parameters_N_t=" " + _scriptsLocation+"/_Plot_N_t.py\" -p \""+ METHOD_A_LOCATION + "\" -n "+file_N_t;
+               string parameters_N_t=" " + _scriptsLocation.string()+"/_Plot_N_t.py\" -p \""+ METHOD_A_LOCATION + "\" -n "+file_N_t;
                parameters_N_t = PYTHON + parameters_N_t;
                int res = system(parameters_N_t.c_str());
                Log->Write("INFO:\tPlotting N-t diagram! Status: %d", res);
@@ -178,7 +178,7 @@ void Method_A::FlowRate_Velocity(int fps, const vector<int>& AccumPeds, const ve
 {
 
      FILE *fFD_FlowVelocity;
-     string fdFlowVelocity =  _projectRootDir+"./Output/Fundamental_Diagram/FlowVelocity/FDFlowVelocity_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string fdFlowVelocity =  _projectRootDir.string()+"./Output/Fundamental_Diagram/FlowVelocity/FDFlowVelocity_"+_trajName.string()+"_id_"+_measureAreaId+".dat";
      if((fFD_FlowVelocity=Analysis::CreateFile(fdFlowVelocity))==NULL) {
           Log->Write("cannot open the file to write the Flow-Velocity data\n");
           exit(0);

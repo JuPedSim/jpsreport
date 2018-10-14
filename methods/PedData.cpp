@@ -59,18 +59,19 @@ bool PedData::ReadData(const fs::path& projectRootDir, const fs::path& path, con
      p /= _trajName;
      fs::path fullTrajectoriesPathName= path / _trajName;
      Log->Write("INFO:\tthe name of the trajectory is: <%s>", _trajName.string().c_str());
-     Log->Write("INFO:\tfull name of the trajectory is: <%s>", fullTrajectoriesPathName.string());
+     Log->Write("INFO:\tfull name of the trajectory is: <%s>", fullTrajectoriesPathName.string().c_str());
      bool result=true;
      if(trajformat == FORMAT_XML_PLAIN)
      {
            TiXmlDocument docGeo(fullTrajectoriesPathName.string());
           if (!docGeo.LoadFile()) {
                Log->Write("ERROR: \t%s", docGeo.ErrorDesc());
-               Log->Write("ERROR: \tcould not parse the trajectories file <%s>",fullTrajectoriesPathName.string());
+               Log->Write("ERROR: \tcould not parse the trajectories file <%s>",fullTrajectoriesPathName.string().c_str());
                return false;
           }
           TiXmlElement* xRootNode = docGeo.RootElement();
-          result=InitializeVariables(fs::path(xRootNode));	//initialize some global variables
+          fs::path filename(xRootNode->ValueStr());
+          result=InitializeVariables(filename);	//initialize some global variables
      }
 
      else if(trajformat == FORMAT_PLAIN)
@@ -94,7 +95,7 @@ bool PedData::InitializeVariables(const fs::path& filename)
      fdata.open(filename.string());
      if (fdata.is_open() == false)
      {
-          Log->Write("ERROR: \t could not parse the trajectories file <%s>",filename.string());
+           Log->Write("ERROR: \t could not parse the trajectories file <%s>",filename.string().c_str());
           return false;
      }
      else
@@ -782,7 +783,7 @@ float PedData::GetFps() const
      return _fps;
 }
 
-string PedData::GetTrajName() const
+fs::path PedData::GetTrajName() const
 {
      return _trajName;
 }
@@ -815,7 +816,7 @@ int* PedData::GetLastFrame() const
      return _lastFrame;
 }
 
-string PedData::GetProjectRootDir() const
+fs::path PedData::GetProjectRootDir() const
 {
      return _projectRootDir;
 }

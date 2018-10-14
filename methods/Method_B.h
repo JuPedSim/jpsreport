@@ -47,8 +47,8 @@ public:
      void SetMeasurementArea (MeasurementArea_B* area);
 
 private:
-     std::string _trajName;
-     std::string _projectRootDir;
+      fs::path  _trajName;
+      fs::path  _projectRootDir;
      std::string _measureAreaId;
      std::map<int , std::vector<int> > _peds_t;
      MeasurementArea_B* _areaForMethod_B;

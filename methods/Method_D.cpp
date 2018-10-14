@@ -71,7 +71,7 @@ Method_D::~Method_D()
 // {
 //      return (number < start || number > end);
 // };
-bool Method_D::Process (const PedData& peddata,const std::string& scriptsLocation, const double& zPos_measureArea)
+bool Method_D::Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea)
 {
      bool return_value = true;
      _scriptsLocation = scriptsLocation;
@@ -225,7 +225,7 @@ bool Method_D::Process (const PedData& peddata,const std::string& scriptsLocatio
 
 bool Method_D::OpenFileMethodD()
 {
-     string results_V=  _projectRootDir+VORO_LOCATION+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string results_V=  _projectRootDir.string()+VORO_LOCATION+"rho_v_Voronoi_"+_trajName.string()+"_id_"+_measureAreaId+".dat";
      if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==NULL)
      {
           Log->Write("ERROR: \tcannot open the file to write Voronoi density and velocity\n");
@@ -247,7 +247,7 @@ bool Method_D::OpenFileMethodD()
 
 bool Method_D::OpenFileIndividualFD()
 {
-     string Individualfundment=_projectRootDir+"./Output/Fundamental_Diagram/Individual_FD/IndividualFD"+_trajName+"_id_"+_measureAreaId+".dat";
+     string Individualfundment=_projectRootDir.string()+"./Output/Fundamental_Diagram/Individual_FD/IndividualFD"+_trajName.string()+"_id_"+_measureAreaId+".dat";
      if((_fIndividualFD=Analysis::CreateFile(Individualfundment))==nullptr)
      {
           Log->Write("ERROR:\tcannot open the file individual\n");
@@ -340,10 +340,10 @@ std::tuple<double,double> Method_D::GetVoronoiDensityVelocity(const vector<polyg
 // and velocity is calculated for every frame
 void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
 {
-     string voronoiLocation=_projectRootDir+VORO_LOCATION+"field/";
+     string voronoiLocation=_projectRootDir.string()+VORO_LOCATION+"field/";
 
-     string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
-     string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
 
      FILE *Prf_velocity;
      if((Prf_velocity=Analysis::CreateFile(Prfvelocity))==NULL) {
@@ -389,7 +389,8 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
      //string voronoiLocation=_projectRootDir+"./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/id_"+_measureAreaId;
 
      fs::path  voronoiLocation(_projectRootDir);
-     voronoiLocation = voronoiLocation /  (VORO_LOCATION + "VoronoiCell");
+     std::string tmpString = VORO_LOCATION;
+     voronoiLocation = voronoiLocation /  (tmpString + "VoronoiCell");
      polygon_2d poly;
 
 // TODO: use boost::filesystem::create_directory()
@@ -437,7 +438,7 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
           exit(EXIT_FAILURE);
      }
 
-     string v_individual=voronoiLocation+"/speed"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string v_individual=voronoiLocation.string()+"/speed"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
      ofstream velo (v_individual.c_str());
      if(velo.is_open())
      {
@@ -545,12 +546,12 @@ void Method_D::SetGeometryBoundaries(double minX, double minY, double maxX, doub
      _geoMaxY = maxY;
 }
 
-void Method_D::SetGeometryFileName(const std::string& geometryFile)
+void Method_D::SetGeometryFileName(const fs::path& geometryFile)
 {
      _geometryFileName=geometryFile;
 }
 
-void Method_D::SetTrajectoriesLocation(const std::string& trajectoryPath)
+void Method_D::SetTrajectoriesLocation(const fs::path& trajectoryPath)
 {
      _trajectoryPath=trajectoryPath;
 }

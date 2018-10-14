@@ -77,7 +77,7 @@ bool Method_C::Process (const PedData& peddata, const double& zPos_measureArea)
 
 void Method_C::OpenFileMethodC()
 {
-     string results_C= _projectRootDir+"./Output/Fundamental_Diagram/Classical_Voronoi/rho_v_Classic_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string results_C= _projectRootDir.string()+"./Output/Fundamental_Diagram/Classical_Voronoi/rho_v_Classic_"+_trajName.string()+"_id_"+_measureAreaId+".dat";
      if((_fClassicRhoV=Analysis::CreateFile(results_C))==NULL) {
           Log->Write("Warning:\tcannot open file %s to write classical density and velocity\n", results_C.c_str());
           exit(EXIT_FAILURE);

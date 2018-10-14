@@ -61,8 +61,8 @@ public:
       int GetNumFrames() const;
       int GetNumPeds() const;
       float GetFps() const;
-      std::string GetTrajName() const;
-      std::string GetProjectRootDir() const;
+      fs::path GetTrajName() const;
+      fs::path GetProjectRootDir() const;
       std::map<int , std::vector<int>> GetPedsFrame() const;
       ub::matrix<double> GetXCor() const;
       ub::matrix<double> GetYCor() const;

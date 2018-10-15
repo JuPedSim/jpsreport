@@ -278,6 +278,11 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      {
            path p(xMainNode->FirstChildElement("geometry")->Attribute("file"));
            _geometryFileName = GetProjectRootDir() / p;
+           if(!fs::exists(_geometryFileName)){
+                Log->Write("ERROR: \tGeometry File <%s> does not exist",  _geometryFileName.string().c_str());
+                return false;
+           }
+           _geometryFileName = fs::canonical(_geometryFileName);
            Log->Write("INFO: \tGeometry File is: <%s>",  _geometryFileName.string().c_str());
      }
 
@@ -389,19 +394,27 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      //scripts
      if(xMainNode->FirstChild("scripts"))
      {
-           _scriptsLocation=path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
-            if(! _scriptsLocation.is_absolute())
-                _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
+        _scriptsLocation=path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
+        if(!fs::exists(_scriptsLocation))
+        {
+             Log->Write("ERROR: \tcould not find the directory <%s>", _scriptsLocation.string().c_str());
+             return false;
+        }
+        if(! _scriptsLocation.is_absolute())
+        {
+             _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
+             _scriptsLocation = fs::canonical(_scriptsLocation);
+        }
 
-          if (!exists(_scriptsLocation))
+        if (!exists(_scriptsLocation))
+        {
+             /* could not open directory */
+             Log->Write("ERROR: \tcould not open the directory <%s>", _scriptsLocation.string().c_str());
+             return false;
+        }
+        else
           {
-               /* could not open directory */
-                Log->Write("ERROR: \tcould not open the directory <%s>", _scriptsLocation.string().c_str());
-                return false;
-          }
-          else
-          {
-                Log->Write("INFO: \tInput directory for loading scripts is:\t<%s>", _scriptsLocation.string().c_str());
+               Log->Write("INFO: \tInput directory for loading scripts is:\t<%s>", _scriptsLocation.string().c_str());
           }
      }
 

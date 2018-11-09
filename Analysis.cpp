@@ -264,9 +264,9 @@ std::map<int, polygon_2d> Analysis::ReadGeometry(const std::string& geometryFile
 int Analysis::RunAnalysis(const string& filename, const string& path)
 {
      PedData data;
-     if(data.ReadData(_projectRootDir, path, filename, _trajFormat, _deltaF, _vComponent, _IgnoreBackwardMovement)==false)
+     if(data.ReadData(_projectRootDir, _outputLocation, path, filename, _trajFormat, _deltaF, _vComponent, _IgnoreBackwardMovement)==false)
      {
-          Log->Write("ERROR:\tCould not parse the file");
+          Log->Write("ERROR:\tCould not parse the file %d", filename.c_str());
           return -1;
      }
 
@@ -314,7 +314,7 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
                method_A.SetMeasurementArea(_areaForMethod_A[i]);
                method_A.SetTimeInterval(_deltaT[i]);
                method_A.SetPlotTimeSeries(_plotTimeseriesA[i]);
-               bool result_A=method_A.Process(data,_scriptsLocation, _outputLocation,_areaForMethod_A[i]->_zPos);
+               bool result_A=method_A.Process(data,_scriptsLocation,_areaForMethod_A[i]->_zPos);
                if(result_A)
                {
                     Log->Write("INFO:\tSuccess with Method A using measurement area id %d!\n",_areaForMethod_A[i]->_id);

@@ -50,7 +50,7 @@ public:
      virtual ~Method_A();
      void SetMeasurementArea (MeasurementArea_L* area);
      void SetTimeInterval(int deltaT);
-     bool Process (const PedData& peddata,const std::string& scriptsLocation,const std::string& outputLocation, const double& zPos_measureArea);
+     bool Process (const PedData& peddata,const std::string& scriptsLocation,const double& zPos_measureArea);
      void SetPlotTimeSeries(bool plotTimeseries);
 
 private:

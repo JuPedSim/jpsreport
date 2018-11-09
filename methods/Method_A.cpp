@@ -54,12 +54,12 @@ Method_A::~Method_A()
 
 }
 
-bool Method_A::Process (const PedData& peddata,const string& scriptsLocation, const string& outputLocation, const double& zPos_measureArea)
+bool Method_A::Process (const PedData& peddata,const string& scriptsLocation, const double& zPos_measureArea)
 {
      _trajName = peddata.GetTrajName();
      _projectRootDir = peddata.GetProjectRootDir();
      _scriptsLocation=scriptsLocation;
-     _outputLocation=outputLocation;
+     _outputLocation=peddata.GetOutputLocation();
      _peds_t = peddata.GetPedsFrame();
      _xCor = peddata.GetXCor();
      _yCor = peddata.GetYCor();
@@ -130,6 +130,7 @@ void Method_A::WriteFile_N_t(string data)
 
                int res = system(parameters_N_t.c_str());
                Log->Write("INFO:\tPlotting N-t diagram! Status: %d", res);
+               /// todo: return value of this function: true or false
           }
      }
      else

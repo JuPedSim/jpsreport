@@ -44,7 +44,7 @@ PedData::~PedData()
 
 }
 
-bool PedData::ReadData(const string& projectRootDir, const string& path, const string& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
+bool PedData::ReadData(const string& projectRootDir, const string& outputLocation, const string& path, const string& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
 {
      _minID = INT_MAX;
      _minFrame = INT_MAX;
@@ -52,6 +52,7 @@ bool PedData::ReadData(const string& projectRootDir, const string& path, const s
      _vComponent = vComponent;
      _IgnoreBackwardMovement=IgnoreBackwardMovement;
      _projectRootDir = projectRootDir;
+     _outputLocation = outputLocation;
      _trajName = filename;
 
      string fullTrajectoriesPathName= path+ "/" +_trajName;
@@ -815,4 +816,9 @@ int* PedData::GetLastFrame() const
 string PedData::GetProjectRootDir() const
 {
      return _projectRootDir;
+}
+
+string PedData::GetOutputLocation() const
+{
+     return _outputLocation;
 }

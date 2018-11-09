@@ -57,6 +57,8 @@ bool Method_B::Process (const PedData& peddata)
      Log->Write("------------------------Analyzing with Method B-----------------------------");
      _trajName = peddata.GetTrajName();
      _projectRootDir = peddata.GetProjectRootDir();
+     _outputLocation = peddata.GetOutputLocation();
+
      _fps =peddata.GetFps();
      _peds_t = peddata.GetPedsFrame();
      _NumPeds = peddata.GetNumPeds();

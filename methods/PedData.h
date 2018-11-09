@@ -60,6 +60,7 @@ public:
      float GetFps() const;
      std::string GetTrajName() const;
      std::string GetProjectRootDir() const;
+     std::string GetOutputLocation() const;
      std::map<int , std::vector<int>> GetPedsFrame() const;
      ub::matrix<double> GetXCor() const;
      ub::matrix<double> GetYCor() const;
@@ -74,7 +75,7 @@ public:
      std::vector<double> GetYInFrame(int frame, const std::vector<int>& ids) const;
      std::vector<double> GetZInFrame(int frame, const std::vector<int>& ids) const;
      std::vector<double> GetVInFrame(int frame, const std::vector<int>& ids, double zPos) const;
-     bool ReadData(const std::string& projectRootDir, const std::string& path, const std::string& filename, const FileFormat& _trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement);
+     bool ReadData(const std::string& projectRootDir, const std::string& outputDir, const std::string& path, const std::string& filename, const FileFormat& _trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement);
 
 
 private:
@@ -88,6 +89,7 @@ private:
 
      std::string _trajName="";
      std::string _projectRootDir="";
+     std::string _outputLocation="";
      int _minFrame=0;
      int _minID=1;
      int _numFrames=0;  // total number of frames
@@ -105,7 +107,7 @@ private:
      ub::matrix<double> _yCor;
      ub::matrix<double> _zCor;
      ub::matrix<std::string> _vComp;
-     
+
 };
 
 #endif /* PEDDATA_H_ */

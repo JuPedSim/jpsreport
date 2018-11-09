@@ -53,10 +53,10 @@ Method_D::Method_D()
      _cutByCircle = false;
      _cutRadius = -1;
      _circleEdges = -1;
-     _fIndividualFD = NULL;
+     _fIndividualFD = nullptr;
      _calcIndividualFD = false;
-     _fVoronoiRhoV = NULL;
-     _areaForMethod_D = NULL;
+     _fVoronoiRhoV = nullptr;
+     _areaForMethod_D = nullptr;
      _plotVoronoiCellData=false;
      _isOneDimensional=false;
      _startFrame =-1;
@@ -75,6 +75,7 @@ bool Method_D::Process (const PedData& peddata,const std::string& scriptsLocatio
 {
      bool return_value = true;
      _scriptsLocation = scriptsLocation;
+     _outputLocation = peddata.GetOutputLocation();
      _peds_t = peddata.GetPedsFrame();
      _trajName = peddata.GetTrajName();
      _projectRootDir = peddata.GetProjectRootDir();
@@ -225,8 +226,9 @@ bool Method_D::Process (const PedData& peddata,const std::string& scriptsLocatio
 
 bool Method_D::OpenFileMethodD()
 {
-     string results_V=  _projectRootDir+VORO_LOCATION+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
-     if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==NULL)
+     std::string voroLocation(VORO_LOCATION);
+     string results_V=  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+     if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==nullptr)
      {
           Log->Write("ERROR: \tcannot open the file to write Voronoi density and velocity\n");
           return false;
@@ -247,7 +249,7 @@ bool Method_D::OpenFileMethodD()
 
 bool Method_D::OpenFileIndividualFD()
 {
-     string Individualfundment=_projectRootDir+"./Output/Fundamental_Diagram/Individual_FD/IndividualFD"+_trajName+"_id_"+_measureAreaId+".dat";
+     string Individualfundment=_outputLocation+"Fundamental_Diagram/Individual_FD/IndividualFD"+_trajName+"_id_"+_measureAreaId+".dat";
      if((_fIndividualFD=Analysis::CreateFile(Individualfundment))==nullptr)
      {
           Log->Write("ERROR:\tcannot open the file individual\n");
@@ -340,7 +342,8 @@ std::tuple<double,double> Method_D::GetVoronoiDensityVelocity(const vector<polyg
 // and velocity is calculated for every frame
 void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
 {
-     string voronoiLocation=_projectRootDir+VORO_LOCATION+"field/";
+     std::string voroLocation(VORO_LOCATION);
+     string voronoiLocation=voroLocation+"field/";
 
      string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
      string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";

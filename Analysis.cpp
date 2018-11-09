@@ -359,7 +359,7 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
                     if(_plotTimeseriesC[i])
                     {
                          string parameters_Timeseries=" " + _scriptsLocation+
-"/_Plot_timeseries_rho_v.py -p "+ _projectRootDir+VORO_LOCATION + " -n "+filename+
+"/_Plot_timeseries_rho_v.py -p "+ VORO_LOCATION + " -n "+filename+
                               " -f "+boost::lexical_cast<std::string>(data.GetFps());
                          parameters_Timeseries = PYTHON + parameters_Timeseries;
                          int res=system(parameters_Timeseries.c_str());

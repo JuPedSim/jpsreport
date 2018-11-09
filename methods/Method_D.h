@@ -76,6 +76,7 @@ private:
      MeasurementArea_B* _areaForMethod_D;
      std::string _trajName;
      std::string _projectRootDir;
+     std::string _outputLocation;
      std::string _scriptsLocation;
      bool _calcIndividualFD;
      polygon_2d _areaIndividualFD;

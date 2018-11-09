@@ -54,6 +54,7 @@ private:
      std::string _trajectoriesLocation;
      std::string _trajectoriesFilename;
      std::string _projectRootDir;
+     std::string _outputDir;
      FileFormat _fileFormat;
      std::vector<std::string> _trajectoriesFiles;
 
@@ -109,6 +110,7 @@ public:
      const std::string& GetGeometryFilename() const;
      const std::string& GetErrorLogFile() const;
      const std::string& GetProjectRootDir() const;
+     const std::string& GetOutputLocation() const;
 
      double GetLengthMeasurementArea() const;
      polygon_2d GetMeasureArea() const;

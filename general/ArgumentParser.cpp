@@ -426,6 +426,32 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           }
      }
 
+     // output directory
+     if(xMainNode->FirstChild("output"))
+     {
+          _outputDir=xMainNode->FirstChildElement("output")->Attribute("location");
+          if(_outputDir.empty())
+          {
+               _scriptsLocation="./Output/";
+          }
+          if ( (boost::algorithm::contains(_outputDir,":")==false) && //windows
+               (boost::algorithm::starts_with(_outputDir,"/") ==false)) //linux
+               // &&() osx
+          {
+               _outputDir=_projectRootDir+_outputDir;
+          }
+          if (opendir (_outputDir.c_str()) == nullptr)
+          {
+               /* could not open directory */
+               Log->Write("ERROR: \tcould not open the directory <"+_outputDir+">");
+               return false;
+          }
+          else
+          {
+               Log->Write("INFO: \tOutput directory for results is:\t<"+_outputDir+">");
+          }
+     }
+
      //measurement area
      if(xMainNode->FirstChild("measurement_areas"))
      {
@@ -908,6 +934,10 @@ const string& ArgumentParser::GetTrajectoriesLocation() const
 const string& ArgumentParser::GetScriptsLocation() const
 {
      return _scriptsLocation;
+}
+const string& ArgumentParser::GetOutputLocation() const
+{
+     return _outputDir;
 }
 
 const string& ArgumentParser::GetTrajectoriesFilename() const

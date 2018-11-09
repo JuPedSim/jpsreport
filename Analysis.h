@@ -147,6 +147,7 @@ private:
      bool _IgnoreBackwardMovement;
      std::string _projectRootDir;
      std::string _scriptsLocation;
+     std::string _outputLocation;
      std::string _geometryFileName;
      FileFormat _trajFormat;  // format of the trajectory file
 

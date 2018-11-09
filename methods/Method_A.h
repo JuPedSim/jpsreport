@@ -50,7 +50,7 @@ public:
      virtual ~Method_A();
      void SetMeasurementArea (MeasurementArea_L* area);
      void SetTimeInterval(int deltaT);
-     bool Process (const PedData& peddata,const std::string& scriptsLocation, const double& zPos_measureArea);
+     bool Process (const PedData& peddata,const std::string& scriptsLocation,const std::string& outputLocation, const double& zPos_measureArea);
      void SetPlotTimeSeries(bool plotTimeseries);
 
 private:
@@ -59,6 +59,7 @@ private:
      MeasurementArea_L* _areaForMethod_A;
      std::string _projectRootDir;
      std::string _scriptsLocation;
+     std::string _outputLocation;
 
      std::vector<int> _accumPedsPassLine; // the accumulative pedestrians pass a line with time
      std::vector<double> _accumVPassLine; // the accumulative instantaneous velocity of the pedestrians pass a line

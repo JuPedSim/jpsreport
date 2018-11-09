@@ -180,6 +180,7 @@ void Analysis::InitArgs(ArgumentParser* args)
      _cutRadius=args->GetCutRadius();
      _circleEdges=args->GetCircleEdges();
      _scriptsLocation=args->GetScriptsLocation();
+     _outputLocation=args->GetOutputLocation();
 }
 
 
@@ -313,7 +314,7 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
                method_A.SetMeasurementArea(_areaForMethod_A[i]);
                method_A.SetTimeInterval(_deltaT[i]);
                method_A.SetPlotTimeSeries(_plotTimeseriesA[i]);
-               bool result_A=method_A.Process(data,_scriptsLocation, _areaForMethod_A[i]->_zPos);
+               bool result_A=method_A.Process(data,_scriptsLocation, _outputLocation,_areaForMethod_A[i]->_zPos);
                if(result_A)
                {
                     Log->Write("INFO:\tSuccess with Method A using measurement area id %d!\n",_areaForMethod_A[i]->_id);

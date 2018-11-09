@@ -432,7 +432,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           _outputDir=xMainNode->FirstChildElement("output")->Attribute("location");
           if(_outputDir.empty())
           {
-               _scriptsLocation="./Output/";
+               _outputDir=_projectRootDir+"/Output/";
           }
           if ( (boost::algorithm::contains(_outputDir,":")==false) && //windows
                (boost::algorithm::starts_with(_outputDir,"/") ==false)) //linux

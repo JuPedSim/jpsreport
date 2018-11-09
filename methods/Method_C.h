@@ -46,6 +46,7 @@ private:
      MeasurementArea_B* _areaForMethod_C;
      std::string _trajName;
      std::string _projectRootDir;
+     std::string _outputLocation;
      float _fps;
      FILE *_fClassicRhoV;
      void OpenFileMethodC();

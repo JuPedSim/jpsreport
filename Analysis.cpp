@@ -307,6 +307,11 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
 
      if(_DoesUseMethodA) //Method A
      {
+          if(_areaForMethod_A.empty())
+          {
+               Log->Write("ERROR: Method A selected with no measurement area!");
+               exit(EXIT_FAILURE);
+          }
 #pragma omp parallel for
           for(signed int i=0; i<_areaForMethod_A.size(); i++)
           {
@@ -328,6 +333,12 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
 
      if(_DoesUseMethodB) //Method_B
      {
+          if(_areaForMethod_B.empty())
+          {
+               Log->Write("ERROR: Method B selected with no measurement area!");
+               exit(EXIT_FAILURE);
+          }
+
 #pragma omp parallel for
           for(signed int i=0; i<_areaForMethod_B.size(); i++)
           {
@@ -347,6 +358,11 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
 
      if(_DoesUseMethodC) //Method C
      {
+          if(_areaForMethod_C.empty())
+          {
+               Log->Write("ERROR: Method C selected with no measurement area!");
+               exit(EXIT_FAILURE);
+          }
 #pragma omp parallel for
           for(signed int i=0; i<_areaForMethod_C.size(); i++)
           {
@@ -375,6 +391,12 @@ int Analysis::RunAnalysis(const string& filename, const string& path)
 
      if(_DoesUseMethodD) //method_D
      {
+          if(_areaForMethod_D.empty())
+          {
+               Log->Write("ERROR: Method D selected with no measurement area!");
+               exit(EXIT_FAILURE);
+          }
+
 #pragma omp parallel for
           for(signed int i=0; i<_areaForMethod_D.size(); i++)
           {

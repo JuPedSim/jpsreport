@@ -666,8 +666,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                Log->Write("INFO: \tThe instantaneous velocity in the direction of <"+MovementDirection+">  will be calculated over <"+FrameSteps+" frames>" );
           }
      }
-
-     // method A
+     // Method A
      TiXmlElement* xMethod_A=xMainNode->FirstChildElement("method_A");
      if(xMethod_A)
      {
@@ -916,6 +915,11 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           }
      }
      Log->Write("INFO: \tFinish parsing inifile");
+     if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD))
+     {
+          Log->Write("WARNING: No measurement method enabled. Nothing to do.");
+          exit(EXIT_SUCCESS);
+     }
      return true;
 }
 

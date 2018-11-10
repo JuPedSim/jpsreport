@@ -36,6 +36,7 @@
 #include <chrono>
 #include <math.h>
 #include <ctime>
+
 #ifdef _MSC_VER
 #include "../.vs/dirent.h"
 #else
@@ -429,28 +430,41 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      // output directory
      if(xMainNode->FirstChild("output"))
      {
-          _outputDir=xMainNode->FirstChildElement("output")->Attribute("location");
+          _outputDir = xMainNode->FirstChildElement("output")->Attribute("location");
+          fs::path PathOutputDir(_outputDir); // todo: this is quick
+                                              // and dirty. waiting
+                                              // for MR 10 to
+                                              // generalize the use of boost:fs
           if(_outputDir.empty())
           {
-               _outputDir=_projectRootDir+"/Output/";
+               _outputDir = GetProjectRootDir() + "/Output/";
           }
-          if ( (boost::algorithm::contains(_outputDir,":")==false) && //windows
-               (boost::algorithm::starts_with(_outputDir,"/") ==false)) //linux
-               // &&() osx
+          if (! PathOutputDir.is_absolute())
           {
-               _outputDir=_projectRootDir+_outputDir;
+               // _outputDir=_projectRootDir + _outputDir;
+               PathOutputDir = _projectRootDir / PathOutputDir;
+               _outputDir = PathOutputDir.string();
           }
-          if (opendir (_outputDir.c_str()) == nullptr)
+          if (!exists(PathOutputDir))
           {
-               /* could not open directory */
-               Log->Write("ERROR: \tcould not open the directory <"+_outputDir+">");
-               return false;
+               // does not exist yet. mkdir
+               bool res = fs::create_directory(PathOutputDir);
+               if (res == false)
+               {
+                    Log->Write("ERROR: \tcould not create the directory <"+_outputDir+">");
+                    return false;
+               }
+               else
+                    Log->Write("INFO: \t created directory <"+_outputDir+">");
           }
           else
           {
                Log->Write("INFO: \tOutput directory for results is:\t<"+_outputDir+">");
           }
      }
+     else{
+          // we should create output here not in the methods
+          }
 
      //measurement area
      if(xMainNode->FirstChild("measurement_areas"))

@@ -213,7 +213,7 @@ bool PedData::InitializeVariables(const string& filename)
           if(fps_found == 0)
           {
                Log->Write("ERROR:\tFrame rate fps not defined ");
-               exit(1);
+               exit(EXIT_FAILURE);
           }
           Log->Write("INFO:\t Finished reading the data");
 

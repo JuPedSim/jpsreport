@@ -250,7 +250,7 @@ bool Method_D::OpenFileMethodD()
 
 bool Method_D::OpenFileIndividualFD()
 {
-     string Individualfundment=_outputLocation+"Fundamental_Diagram/Individual_FD/IndividualFD/"+_trajName+"_id_"+_measureAreaId+".dat";
+     string Individualfundment=_outputLocation+"Fundamental_Diagram/IndividualFD/"+_trajName+"_id_"+_measureAreaId+".dat";
      if((_fIndividualFD=Analysis::CreateFile(Individualfundment))==nullptr)
      {
           Log->Write("ERROR:\tcannot open the file individual\n");

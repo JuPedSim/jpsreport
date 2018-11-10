@@ -142,7 +142,11 @@ void Method_B::GetFundamentalTinTout(double *DensityPerFrame,double LengthMeasur
 
      FILE *fFD_TinTout;
      Log->Write("---------Fundamental diagram from Method B will be calculated!------------------");
-     string fdTinTout=_outputLocation.string()+"Fundamental_Diagram/TinTout/FDTinTout_"+_trajName+"_id_"+_measureAreaId+".dat";;
+     fs::path tmp("_id_"+_measureAreaId+".dat");
+     tmp = _outputLocation / "Fundamental_Diagram" / "TinTout" / "FDTinTout_" / _trajName / tmp;
+//     string fdTinTout=_outputLocation.string()+"Fundamental_Diagram/TinTout/FDTinTout_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string fdTinTout = tmp.string();
+
      if((fFD_TinTout=Analysis::CreateFile(fdTinTout))==nullptr)
      {
           Log->Write("ERROR:\tcannot open the file to write the TinTout data\n");

@@ -228,7 +228,11 @@ bool Method_D::OpenFileMethodD()
 {
 
      std::string voroLocation(VORO_LOCATION);
-     string results_V=  _outputLocation.string() +  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+     fs::path tmp("_id_"+_measureAreaId+".dat");
+     tmp =  _outputLocation / voroLocation / "rho_v_Voronoi_" / _trajName / tmp;
+// _outputLocation.string() +  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string results_V= tmp.string();
+
 
      if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==nullptr)
      {
@@ -251,7 +255,8 @@ bool Method_D::OpenFileMethodD()
 
 bool Method_D::OpenFileIndividualFD()
 {
-     fs::path trajFileName(_trajName+"_id_"+_measureAreaId+".dat")
+     fs::path trajFileName("_id_"+_measureAreaId+".dat");
+     trajFileName = _trajName / trajFileName;
      fs::path indFDPath("Fundamental_Diagram");
      indFDPath = _outputLocation / indFDPath / "IndividualFD" / trajFileName;
      string Individualfundment=indFDPath.string();
@@ -497,9 +502,9 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
 
      if(_plotVoronoiCellData)
      {
-          string parameters_rho=" " + _scriptsLocation.string()+"/_Plot_cell_rho.py -f \""+ vorLocPath.string() + "\" -n "+ _trajName.string()+"_id_"+_measureAreaId+"_"+frameId+
+          string parameters_rho=" " + _scriptsLocation.string()+"/_Plot_cell_rho.py -f \""+ voroLocPath.string() + "\" -n "+ _trajName.string()+"_id_"+_measureAreaId+"_"+frameId+
                " -g "+_geometryFileName.string()+" -p "+_trajectoryPath.string();
-          string parameters_v=" " + _scriptsLocation.string()+"/_Plot_cell_v.py -f \""+ vorLocPath.string() + "\" -n "+ _trajName.string() + "_id_"+_measureAreaId+"_"+frameId+
+          string parameters_v=" " + _scriptsLocation.string()+"/_Plot_cell_v.py -f \""+ voroLocPath.string() + "\" -n "+ _trajName.string() + "_id_"+_measureAreaId+"_"+frameId+
                " -g "+_geometryFileName.string()+" -p "+_trajectoryPath.string();
 
           if(_plotVoronoiIndex)

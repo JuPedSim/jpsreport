@@ -114,14 +114,21 @@ bool Method_A::Process (const PedData& peddata,const fs::path& scriptsLocation, 
 
 void Method_A::WriteFile_N_t(string data)
 {
-     string fN_t= _outputLocation.string()+"Fundamental_Diagram/FlowVelocity/Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+     fs::path tmp = ("_id_"+_measureAreaId+".dat");
+     fs::path FD_FlowVelocity ("Fundamental_Diagram/FlowVelocity");
+     tmp = _outputLocation / FD_FlowVelocity / "Flow_NT_" / _trajName / tmp;
+     // _outputLocation.string()+"Fundamental_Diagram/FlowVelocity/Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string fN_t = tmp.string();
      ofstream file(fN_t);
      if(file.is_open())
      {
           file<<data;
           file.close();
-          string METHOD_A_LOCATION =_outputLocation.string()+"Fundamental_Diagram/FlowVelocity/";
-          string file_N_t ="Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+          fs::path tmp2 = _outputLocation / FD_FlowVelocity;
+// _outputLocation.string()+"Fundamental_Diagram/FlowVelocity/";
+          string METHOD_A_LOCATION =tmp2.string();
+          //string file_N_t ="Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+          string file_N_t = fN_t; //@todo: this is redundant
           if(_plotTimeSeries)
           {
                string parameters_N_t=" " + _scriptsLocation.string()+"/_Plot_N_t.py -p  \""+ METHOD_A_LOCATION + "\" -n "+file_N_t;
@@ -182,7 +189,10 @@ void Method_A::FlowRate_Velocity(int fps, const vector<int>& AccumPeds, const ve
 {
 
      FILE *fFD_FlowVelocity;
-     string fdFlowVelocity = _outputLocation.string() + "Fundamental_Diagram/FlowVelocity/FDFlowVelocity_"+_trajName+"_id_"+_measureAreaId+".dat";
+     fs::path tmp ("_id_"+_measureAreaId+".dat");
+     tmp = _outputLocation / "Fundamental_Diagram" / "FlowVelocity" / "FDFlowVelocity_" / _trajName / tmp;
+     //string fdFlowVelocity = _outputLocation.string() + "Fundamental_Diagram/FlowVelocity/FDFlowVelocity_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string fdFlowVelocity = tmp.string();
 
      if((fFD_FlowVelocity=Analysis::CreateFile(fdFlowVelocity))==nullptr) {
           Log->Write("cannot open the file to write the Flow-Velocity data\n");

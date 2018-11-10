@@ -344,20 +344,20 @@ std::tuple<double,double> Method_D::GetVoronoiDensityVelocity(const vector<polyg
 void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
 {
      std::string voroLocation(VORO_LOCATION);
-     string voronoiLocation=voroLocation+"field/";
+     string voronoiLocation=_outputLocation + voroLocation+"field/";
 
      string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
      string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
 
      FILE *Prf_velocity;
-     if((Prf_velocity=Analysis::CreateFile(Prfvelocity))==NULL) {
+     if((Prf_velocity=Analysis::CreateFile(Prfvelocity))==nullptr) {
           Log->Write("cannot open the file <%s> to write the field data\n",Prfvelocity.c_str());
-          exit(0);
+          exit(EXIT_FAILURE);
      }
      FILE *Prf_density;
-     if((Prf_density=Analysis::CreateFile(Prfdensity))==NULL) {
+     if((Prf_density=Analysis::CreateFile(Prfdensity))==nullptr) {
           Log->Write("cannot open the file to write the field density\n");
-          exit(0);
+          exit(EXIT_FAILURE);
      }
 
      int NRow = (int)ceil((_geoMaxY-_geoMinY)/_grid_size_Y); // the number of rows that the geometry will be discretized for field analysis

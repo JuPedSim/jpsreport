@@ -227,7 +227,8 @@ bool Method_D::Process (const PedData& peddata,const std::string& scriptsLocatio
 bool Method_D::OpenFileMethodD()
 {
      std::string voroLocation(VORO_LOCATION);
-     string results_V=  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+     string results_V=  _outputLocation +  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
+
      if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==nullptr)
      {
           Log->Write("ERROR: \tcannot open the file to write Voronoi density and velocity\n");
@@ -249,7 +250,7 @@ bool Method_D::OpenFileMethodD()
 
 bool Method_D::OpenFileIndividualFD()
 {
-     string Individualfundment=_outputLocation+"Fundamental_Diagram/Individual_FD/IndividualFD"+_trajName+"_id_"+_measureAreaId+".dat";
+     string Individualfundment=_outputLocation+"Fundamental_Diagram/Individual_FD/IndividualFD/"+_trajName+"_id_"+_measureAreaId+".dat";
      if((_fIndividualFD=Analysis::CreateFile(Individualfundment))==nullptr)
      {
           Log->Write("ERROR:\tcannot open the file individual\n");
@@ -390,17 +391,35 @@ void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& poly
 void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<polygon_2d, int> >& polygons_id, int numPedsInFrame, vector<double>& XInFrame, vector<double>& YInFrame,const vector<double>& VInFrame)
 {
      //string voronoiLocation=_projectRootDir+"./Output/Fundamental_Diagram/Classical_Voronoi/VoronoiCell/id_"+_measureAreaId;
-     string voronoiLocation=_projectRootDir+VORO_LOCATION+"VoronoiCell/";
+
+     string voronoiLocation=_outputLocation+VORO_LOCATION+"VoronoiCell";
      polygon_2d poly;
 
+     fs::path voroLocPath(voronoiLocation);
+     if(!fs::exists(voroLocPath))
+     {
+        if(!fs::create_directories(voroLocPath))
+        {
+             Log->Write("ERROR:\tcan not create directory <%s>", voroLocPath.string().c_str());
+             std::cout << "can not create directory "<< voroLocPath.string().c_str() << "\n";
+             exit(EXIT_FAILURE);
+        }
+        else
+             std::cout << "create directory "<< voroLocPath.string().c_str() << "\n";
+     }
 
-#if defined(_WIN32)
-     mkdir(voronoiLocation.c_str());
-#else
-     mkdir(voronoiLocation.c_str(), 0777);
-#endif
+     fs::path polygonPath=voroLocPath / "polygon";
+     if(!fs::exists(polygonPath))
+     {
+          if(!fs::create_directory(polygonPath))
+          {
+               Log->Write("ERROR:\tcan not create directory <%s>", polygonPath.string().c_str());
+               exit(EXIT_FAILURE);
+          }
+     }
 
-     string polygon=voronoiLocation+"/polygon"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string polygon=polygonPath.string()+"/"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
+
      ofstream polys (polygon.c_str());
      if(polys.is_open())
      {
@@ -430,8 +449,15 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
           Log->Write("ERROR:\tcannot create the file <%s>",polygon.c_str());
           exit(EXIT_FAILURE);
      }
+     fs::path speedPath=voroLocPath / "speed/";
+     if(!fs::exists(speedPath))
+          if(!fs::create_directory(speedPath))
+          {
+               Log->Write("ERROR:\tcan not create directory <%s>", speedPath.string().c_str());
+               exit(EXIT_FAILURE);
+          }
 
-     string v_individual=voronoiLocation+"/speed"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string v_individual=speedPath.string()+"/"+_trajName+"_id_"+_measureAreaId+"_"+frameId+".dat";
      ofstream velo (v_individual.c_str());
      if(velo.is_open())
      {

@@ -139,10 +139,8 @@ if __name__ == '__main__':
     divider = make_axes_locatable(ax1)
     cax = divider.append_axes("right", size="2.5%", pad=0.3)
     cb = plt.colorbar(im, cax=cax)
-    cb.set_label('Specific flow [$1/m \cdot s$]')
-    figname = "%s/profile_flux_%s.png" % (pathfile, nametraj)
+    cb.set_label(r'Specific flow [$1/m \cdot s$]')
     flux_figname = os.path.join(pathfile, "profile_flux_%s.png" % nametraj)
-
     plt.savefig(flux_figname)
     plt.close()
 

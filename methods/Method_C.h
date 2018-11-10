@@ -44,8 +44,11 @@ private:
      int _minFrame;
      std::string _measureAreaId;
      MeasurementArea_B* _areaForMethod_C;
-      fs::path _trajName;
-      fs::path _projectRootDir;
+
+     fs::path _trajName;
+     fs::path _projectRootDir;
+     fs::path _outputLocation;
+
      float _fps;
      FILE *_fClassicRhoV;
      void OpenFileMethodC();

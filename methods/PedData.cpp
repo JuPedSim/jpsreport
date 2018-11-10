@@ -45,8 +45,7 @@ PedData::~PedData()
 {
 
 }
-
-bool PedData::ReadData(const fs::path& projectRootDir, const fs::path& path, const fs::path& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
+bool PedData::ReadData(const fs::path& projectRootDir, const fs::path&outputLocation, const fs::path& path, const fs::path& filename, const FileFormat& trajformat, int deltaF, std::string vComponent, const bool IgnoreBackwardMovement)
 {
      _minID = INT_MAX;
      _minFrame = INT_MAX;
@@ -54,6 +53,7 @@ bool PedData::ReadData(const fs::path& projectRootDir, const fs::path& path, con
      _vComponent = vComponent;
      _IgnoreBackwardMovement=IgnoreBackwardMovement;
      _projectRootDir = projectRootDir;
+     _outputLocation = outputLocation;
      _trajName = filename;
      fs::path p(path);
      p /= _trajName;
@@ -216,7 +216,7 @@ bool PedData::InitializeVariables(const fs::path& filename)
           if(fps_found == 0)
           {
                Log->Write("ERROR:\tFrame rate fps not defined ");
-               exit(1);
+               exit(EXIT_FAILURE);
           }
           Log->Write("INFO:\t Finished reading the data");
 
@@ -819,4 +819,9 @@ int* PedData::GetLastFrame() const
 fs::path PedData::GetProjectRootDir() const
 {
      return _projectRootDir;
+}
+
+fs::path PedData::GetOutputLocation() const
+{
+     return _outputLocation;
 }

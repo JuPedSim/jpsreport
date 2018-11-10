@@ -148,8 +148,10 @@ private:
      bool _calcIndividualFD;  //Adjust whether analyze the individual density and velocity of each pedestrian in stationary state (ALWAYS VORONOI-BASED)
      std::string _vComponent;        // to mark whether x, y or x and y coordinate are used when calculating the velocity
      bool _IgnoreBackwardMovement;
+
      fs::path _projectRootDir;
      fs::path _scriptsLocation;
+     fs::path _outputLocation;
      fs::path _geometryFileName;
      FileFormat _trajFormat;  // format of the trajectory file
 

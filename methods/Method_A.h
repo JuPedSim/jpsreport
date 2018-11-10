@@ -61,8 +61,10 @@ private:
      fs::path _trajName;
      std::string _measureAreaId;
      MeasurementArea_L* _areaForMethod_A;
+
      fs::path _projectRootDir;
      fs::path _scriptsLocation;
+     fs::path _outputLocation;
 
      std::vector<int> _accumPedsPassLine; // the accumulative pedestrians pass a line with time
      std::vector<double> _accumVPassLine; // the accumulative instantaneous velocity of the pedestrians pass a line

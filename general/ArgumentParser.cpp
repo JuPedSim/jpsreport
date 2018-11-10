@@ -418,6 +418,44 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           }
      }
 
+     // output directory
+     _outputDir = GetProjectRootDir() + "Output/";
+     fs::path PathOutputDir(_outputDir);
+     if(xMainNode->FirstChild("output"))
+     {
+          _outputDir = xMainNode->FirstChildElement("output")->Attribute("location");
+          PathOutputDir = _outputDir;
+          // todo: this is quick
+          // and dirty. waiting
+          // for MR 10 to
+          // generalize the use of boost:fs
+          if(_outputDir.empty())
+          {
+               _outputDir = GetProjectRootDir() + "Output/";
+          }
+          if (! PathOutputDir.is_absolute())
+          {
+               // _outputDir=_projectRootDir + _outputDir;
+               PathOutputDir = _projectRootDir / PathOutputDir;
+               _outputDir = PathOutputDir.string();
+          }
+     }
+     else
+          Log->Write("INFO: \tDefault output directory");
+     if (!exists(PathOutputDir))
+     {
+          // does not exist yet. mkdir
+          bool res = fs::create_directory(PathOutputDir);
+          if (res == false)
+          {
+               Log->Write("ERROR: \tcould not create the directory <"+_outputDir+">");
+               return false;
+          }
+          else
+               Log->Write("INFO: \tcreated directory <"+_outputDir+">");
+     }
+     Log->Write("INFO: \tOutput directory for results is:\t<"+_outputDir+">");
+
      //measurement area
      if(xMainNode->FirstChild("measurement_areas"))
      {
@@ -618,8 +656,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                Log->Write("INFO: \tThe instantaneous velocity in the direction of <"+MovementDirection+">  will be calculated over <"+FrameSteps+" frames>" );
           }
      }
-
-     // method A
+     // Method A
      TiXmlElement* xMethod_A=xMainNode->FirstChildElement("method_A");
      if(xMethod_A)
      {
@@ -868,6 +905,11 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           }
      }
      Log->Write("INFO: \tFinish parsing inifile");
+     if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD))
+     {
+          Log->Write("WARNING: No measurement method enabled. Nothing to do.");
+          exit(EXIT_SUCCESS);
+     }
      return true;
 }
 
@@ -900,6 +942,10 @@ const fs::path& ArgumentParser::GetTrajectoriesLocation() const
 const fs::path& ArgumentParser::GetScriptsLocation() const
 {
      return _scriptsLocation;
+}
+const string& ArgumentParser::GetOutputLocation() const
+{
+     return _outputDir;
 }
 
 const fs::path& ArgumentParser::GetTrajectoriesFilename() const

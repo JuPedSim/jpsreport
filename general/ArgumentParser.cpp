@@ -428,16 +428,19 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      }
 
      // output directory
+     _outputDir = GetProjectRootDir() + "Output/";
+     fs::path PathOutputDir(_outputDir);
      if(xMainNode->FirstChild("output"))
      {
           _outputDir = xMainNode->FirstChildElement("output")->Attribute("location");
-          fs::path PathOutputDir(_outputDir); // todo: this is quick
-                                              // and dirty. waiting
-                                              // for MR 10 to
-                                              // generalize the use of boost:fs
+          PathOutputDir = _outputDir;
+          // todo: this is quick
+          // and dirty. waiting
+          // for MR 10 to
+          // generalize the use of boost:fs
           if(_outputDir.empty())
           {
-               _outputDir = GetProjectRootDir() + "/Output/";
+               _outputDir = GetProjectRootDir() + "Output/";
           }
           if (! PathOutputDir.is_absolute())
           {
@@ -445,26 +448,22 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                PathOutputDir = _projectRootDir / PathOutputDir;
                _outputDir = PathOutputDir.string();
           }
-          if (!exists(PathOutputDir))
+     }
+     else
+          Log->Write("INFO: \tDefault output directory");
+     if (!exists(PathOutputDir))
+     {
+          // does not exist yet. mkdir
+          bool res = fs::create_directory(PathOutputDir);
+          if (res == false)
           {
-               // does not exist yet. mkdir
-               bool res = fs::create_directory(PathOutputDir);
-               if (res == false)
-               {
-                    Log->Write("ERROR: \tcould not create the directory <"+_outputDir+">");
-                    return false;
-               }
-               else
-                    Log->Write("INFO: \t created directory <"+_outputDir+">");
+               Log->Write("ERROR: \tcould not create the directory <"+_outputDir+">");
+               return false;
           }
           else
-          {
-               Log->Write("INFO: \tOutput directory for results is:\t<"+_outputDir+">");
-          }
+               Log->Write("INFO: \tcreated directory <"+_outputDir+">");
      }
-     else{
-          // we should create output here not in the methods
-          }
+     Log->Write("INFO: \tOutput directory for results is:\t<"+_outputDir+">");
 
      //measurement area
      if(xMainNode->FirstChild("measurement_areas"))

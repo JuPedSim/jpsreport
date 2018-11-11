@@ -116,7 +116,7 @@ void Method_A::WriteFile_N_t(string data)
 {
      fs::path tmp = ("_id_"+_measureAreaId+".dat");
      fs::path FD_FlowVelocity ("Fundamental_Diagram/FlowVelocity");
-     tmp = _outputLocation / FD_FlowVelocity / "Flow_NT_" / _trajName / tmp;
+     tmp = _outputLocation / FD_FlowVelocity / ("Flow_NT_" + _trajName.string() + tmp.string());
      // _outputLocation.string()+"Fundamental_Diagram/FlowVelocity/Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
      string fN_t = tmp.string();
      ofstream file(fN_t);
@@ -190,7 +190,7 @@ void Method_A::FlowRate_Velocity(int fps, const vector<int>& AccumPeds, const ve
 
      FILE *fFD_FlowVelocity;
      fs::path tmp ("_id_"+_measureAreaId+".dat");
-     tmp = _outputLocation / "Fundamental_Diagram" / "FlowVelocity" / "FDFlowVelocity_" / _trajName / tmp;
+     tmp = _outputLocation / "Fundamental_Diagram" / "FlowVelocity" / ("FDFlowVelocity_" + _trajName.string() + tmp.string());
      //string fdFlowVelocity = _outputLocation.string() + "Fundamental_Diagram/FlowVelocity/FDFlowVelocity_"+_trajName+"_id_"+_measureAreaId+".dat";
      string fdFlowVelocity = tmp.string();
 

@@ -229,7 +229,7 @@ bool Method_D::OpenFileMethodD()
 
      std::string voroLocation(VORO_LOCATION);
      fs::path tmp("_id_"+_measureAreaId+".dat");
-     tmp =  _outputLocation / voroLocation / "rho_v_Voronoi_" / _trajName / tmp;
+     tmp =  _outputLocation / voroLocation / ("rho_v_Voronoi_" + _trajName.string() + tmp.string());
 // _outputLocation.string() +  voroLocation+"rho_v_Voronoi_"+_trajName+"_id_"+_measureAreaId+".dat";
      string results_V= tmp.string();
 
@@ -256,9 +256,8 @@ bool Method_D::OpenFileMethodD()
 bool Method_D::OpenFileIndividualFD()
 {
      fs::path trajFileName("_id_"+_measureAreaId+".dat");
-     trajFileName = _trajName / trajFileName;
      fs::path indFDPath("Fundamental_Diagram");
-     indFDPath = _outputLocation / indFDPath / "IndividualFD" / trajFileName;
+     indFDPath = _outputLocation / indFDPath / "IndividualFD" / (_trajName.string() + trajFileName.string());
      string Individualfundment=indFDPath.string();
      if((_fIndividualFD=Analysis::CreateFile(Individualfundment))==nullptr)
      {
@@ -353,10 +352,18 @@ std::tuple<double,double> Method_D::GetVoronoiDensityVelocity(const vector<polyg
 void Method_D::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
 {
      std::string voroLocation(VORO_LOCATION);
-     string voronoiLocation=_outputLocation.string() + voroLocation+"field/";
+     fs::path tmp("field");
+     fs::path vtmp ("velocity");
+     fs::path dtmp("density");
+     tmp = _outputLocation / voroLocation / tmp;
+     vtmp = tmp / vtmp / ("Prf_v_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat");
+     dtmp = tmp / dtmp / ("Prf_d_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat");
+     //string voronoiLocation=_outputLocation.string() + voroLocation+"field/";
 
-     string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
-     string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     // string Prfvelocity=voronoiLocation+"/velocity/Prf_v_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     // string Prfdensity=voronoiLocation+"/density/Prf_d_"+_trajName.string()+"_id_"+_measureAreaId+"_"+frameId+".dat";
+     string Prfvelocity = vtmp.string();
+     string Prfdensity = dtmp.string();
 
      FILE *Prf_velocity;
      if((Prf_velocity=Analysis::CreateFile(Prfvelocity))==nullptr) {
@@ -502,6 +509,7 @@ void Method_D::OutputVoroGraph(const string & frameId,  std::vector<std::pair<po
 
      if(_plotVoronoiCellData)
      {
+          //@todo: use fs::path
           string parameters_rho=" " + _scriptsLocation.string()+"/_Plot_cell_rho.py -f \""+ voroLocPath.string() + "\" -n "+ _trajName.string()+"_id_"+_measureAreaId+"_"+frameId+
                " -g "+_geometryFileName.string()+" -p "+_trajectoryPath.string();
           string parameters_v=" " + _scriptsLocation.string()+"/_Plot_cell_v.py -f \""+ voroLocPath.string() + "\" -n "+ _trajName.string() + "_id_"+_measureAreaId+"_"+frameId+

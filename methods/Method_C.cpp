@@ -79,7 +79,7 @@ bool Method_C::Process (const PedData& peddata, const double& zPos_measureArea)
 void Method_C::OpenFileMethodC()
 {
      fs::path tmp("_id_"+_measureAreaId+".dat");
-     tmp = _outputLocation / "Fundamental_Diagram" / "Classical_Voronoi" / "rho_v_Classic_" / _trajName / tmp;
+     tmp = _outputLocation / "Fundamental_Diagram" / "Classical_Voronoi" / ("rho_v_Classic_" + _trajName.string() + tmp.string());
 //_outputLocation.string()+"Fundamental_Diagram/Classical_Voronoi/rho_v_Classic_"+_trajName+"_id_"+_measureAreaId+".dat";
      string results_C= tmp.string();
      if((_fClassicRhoV=Analysis::CreateFile(results_C))==nullptr) {

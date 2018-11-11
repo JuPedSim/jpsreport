@@ -143,7 +143,7 @@ void Method_B::GetFundamentalTinTout(double *DensityPerFrame,double LengthMeasur
      FILE *fFD_TinTout;
      Log->Write("---------Fundamental diagram from Method B will be calculated!------------------");
      fs::path tmp("_id_"+_measureAreaId+".dat");
-     tmp = _outputLocation / "Fundamental_Diagram" / "TinTout" / "FDTinTout_" / _trajName / tmp;
+     tmp = _outputLocation / "Fundamental_Diagram" / "TinTout" / ("FDTinTout_" + _trajName.string() + tmp.string());
 //     string fdTinTout=_outputLocation.string()+"Fundamental_Diagram/TinTout/FDTinTout_"+_trajName+"_id_"+_measureAreaId+".dat";
      string fdTinTout = tmp.string();
 

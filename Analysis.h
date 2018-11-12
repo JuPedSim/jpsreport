@@ -44,9 +44,6 @@
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/geometries/adapted/c_array.hpp>
 #include <boost/geometry/geometries/ring.hpp>
-#include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
 
 
 using namespace boost::geometry;

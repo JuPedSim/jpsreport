@@ -28,24 +28,19 @@
 #ifndef METHOD_A_H_
 #define METHOD_A_H_
 
-#include <string>
 #include "MeasurementArea.h"
 #include "PedData.h"
-#include <vector>
 #include "../general/Macros.h"
 #include "../tinyxml/tinyxml.h"
 #include "../IO/OutputHandler.h"
 
-using namespace boost::geometry;
-typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double> > segment;
-
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
+
+typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double> > segment;
+
 namespace ub=boost::numeric::ublas;
-
-#include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
+using namespace boost::geometry;
 
 class Method_A
 {

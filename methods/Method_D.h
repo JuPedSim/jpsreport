@@ -27,25 +27,12 @@
 
 #ifndef METHOD_D_H_
 #define METHOD_D_H_
-#include <vector>
+
 #include "PedData.h"
 #include "../Analysis.h"
 #include "VoronoiDiagram.h"
-#include <algorithm>
 
-#include <boost/filesystem.hpp>
 
-namespace fs = boost::filesystem;
-
-// #ifdef __linux__
-// #include <sys/stat.h>
-// #include <dirent.h>
-// #elif   __APPLE__
-// #include <sys/stat.h>
-// #include <dirent.h>
-// #else
-// #include <direct.h>
-// #endif
 
 //handle more than two person are in one line
 #define dmin 200

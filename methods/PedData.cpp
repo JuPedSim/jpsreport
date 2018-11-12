@@ -29,9 +29,6 @@
 #include "PedData.h"
 #include <cmath>
 #include <string>
-#include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
 using std::string;
 using std::map;
 using std::vector;

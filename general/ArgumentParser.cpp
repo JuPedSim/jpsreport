@@ -50,7 +50,6 @@
 #include "../Analysis.h"
 #include <boost/range/iterator_range.hpp>
 
-using namespace boost::filesystem;
 using namespace std;
 
 /* https://stackoverflow.com/questions/38530981/output-compiler-version-in-a-c-program#38531037 */
@@ -63,7 +62,7 @@ std::string ver_string(int a, int b, int c) {
 std::string true_cxx =
 #ifdef __clang__
       "clang++";
-#elif defined(__GNU__)
+#elif defined(__GNUC__)
 "g++";
 #elif defined(__MINGW32__)
    "MinGW";
@@ -73,11 +72,10 @@ std::string true_cxx =
 "Compiler not identified";
 #endif
 
-
 std::string true_cxx_ver =
 #ifdef __clang__
     ver_string(__clang_major__, __clang_minor__, __clang_patchlevel__);
-#elif defined(__GNU__)
+#elif defined(__GNUC__)
     ver_string(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #elif defined(__MINGW32__)
 ver_string(__MINGW32__, __MINGW32_MAJOR_VERSION, __MINGW32_MINOR_VERSION);
@@ -199,12 +197,12 @@ bool ArgumentParser::ParseArgs(int argc, char **argv)
      return false;
 }
 
-const vector<path>& ArgumentParser::GetTrajectoriesFiles() const
+const vector<fs::path>& ArgumentParser::GetTrajectoriesFiles() const
 {
      return _trajectoriesFiles;
 }
 
-const path& ArgumentParser::GetProjectRootDir() const
+const fs::path& ArgumentParser::GetProjectRootDir() const
 {
      return _projectRootDir;
 }
@@ -216,7 +214,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      Log->Write("INFO: \tParsing the ini file <%s>",inifile.c_str());
 
      //extract and set the project root dir
-     path p(inifile);
+     fs::path p(inifile);
      _projectRootDir = canonical(p.parent_path());
 
      TiXmlDocument doc(inifile);
@@ -240,8 +238,8 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      }
 
      if (xMainNode->FirstChild("logfile")) {
-           path logfile(xMainNode->FirstChild("logfile")->FirstChild()->Value());
-           logfile =  GetProjectRootDir() / logfile;
+          fs::path logfile(xMainNode->FirstChild("logfile")->FirstChild()->Value());
+          logfile =  GetProjectRootDir() / logfile;
           this->SetErrorLogFile(logfile);
           this->SetLog(2);
           Log->Write("INFO:\tlogfile <%s>", GetErrorLogFile().string().c_str());
@@ -276,7 +274,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      //geometry
      if(xMainNode->FirstChild("geometry"))
      {
-           path p(xMainNode->FirstChildElement("geometry")->Attribute("file"));
+          fs::path p(xMainNode->FirstChildElement("geometry")->Attribute("file"));
            _geometryFileName = GetProjectRootDir() / p;
            if(!fs::exists(_geometryFileName)){
                 Log->Write("ERROR: \tGeometry File <%s> does not exist",  _geometryFileName.string().c_str());
@@ -318,7 +316,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                xFile; xFile = xFile->NextSiblingElement("file"))
           {
                //collect all the files given
-                _trajectoriesFilename = path(xFile->Attribute("name"));
+               _trajectoriesFilename = fs::path(xFile->Attribute("name"));
                _trajectoriesFiles.push_back(_trajectoriesFilename);
 
                //check if the given file match the format
@@ -337,13 +335,13 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           {
                if(xmlpath->Attribute("location"))
                {
-                     _trajectoriesLocation = GetProjectRootDir() / path(xmlpath->Attribute("location"));
+                    _trajectoriesLocation = GetProjectRootDir() / fs::path(xmlpath->Attribute("location"));
                      // _trajectoriesLocation = canonical(_trajectoriesLocation);
                }
           }
           else
           {
-                path p(GetProjectRootDir());
+               fs::path p(GetProjectRootDir());
                 p = canonical(p);
                 _trajectoriesLocation=p.string();
           }
@@ -355,9 +353,9 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                if(exists(_trajectoriesLocation))
                {
                     /* print all the files and directories within directory */
-                    path p(GetTrajectoriesLocation());
+                    fs::path p(GetTrajectoriesLocation());
                     p = canonical(p);
-                    for (auto& filename : boost::make_iterator_range(directory_iterator(p), {}))
+                    for (auto& filename : boost::make_iterator_range(fs::directory_iterator(p), {}))
                     {
                          string s = filename.path().string();
                          if (boost::algorithm::ends_with(s, fmt))
@@ -394,7 +392,7 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      //scripts
      if(xMainNode->FirstChild("scripts"))
      {
-        _scriptsLocation=path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
+          _scriptsLocation=fs::path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
         if(!fs::exists(_scriptsLocation))
         {
              Log->Write("ERROR: \tcould not find the directory <%s>", _scriptsLocation.string().c_str());

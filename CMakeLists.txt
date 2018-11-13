@@ -11,7 +11,7 @@ set(JPSREPORT_VERSION
   ${JPSREPORT_MAJOR_VERSION}.${JPSREPORT_MINOR_VERSION}.${JPSREPORT_PATCH_VERSION})
 message( STATUS "JPSREPORT_VERSION: " ${JPSREPORT_VERSION} )
 project(JPSreport VERSION ${JPSREPORT_VERSION} LANGUAGES CXX)
-set (CMAKE_CXX_STANDARD 17)
+#set (CMAKE_CXX_STANDARD 17)
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
   cmake_policy(SET CMP0025 NEW)
@@ -256,8 +256,8 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   message( STATUS "Set compiler flags (g++)" )
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-unused-local-typedefs  -std=c++17 -lstdc++fs")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wno-unused-local-typedefs  -std=c++17 -lstdc++fs")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-unused-local-typedefs")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wno-unused-local-typedefs")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   message(STATUS "Debug flags: " ${CMAKE_CXX_FLAGS_DEBUG} )
@@ -314,6 +314,12 @@ add_library ( geometrycore STATIC ${source_files} )
 add_executable(
         jpsreport main.cpp ${methods}
 )
+
+set_property(TARGET jpsreport PROPERTY CXX_STANDARD 17)
+set_property(TARGET jpsreport PROPERTY CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+target_link_libraries(jpsreport  stdc++fs)
+
 if (Boost_FOUND)
 target_link_libraries(geometrycore ${Boost_LIBRARIES})
 endif()

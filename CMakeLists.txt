@@ -311,6 +311,11 @@ endif()
 #endif()
 
 add_library ( geometrycore STATIC ${source_files} )
+set_property(TARGET geometrycore PROPERTY CXX_STANDARD 17)
+set_property(TARGET geometrycore PROPERTY CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+target_link_libraries(geometrycore  stdc++fs)
+
 add_executable(
         jpsreport main.cpp ${methods}
 )

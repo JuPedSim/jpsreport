@@ -1,5 +1,6 @@
 # todo https://stackoverflow.com/questions/12881848/draw-polygons-more-efficiently-with-matplotlib
 import os
+import re
 import sys
 import logging
 import argparse
@@ -54,6 +55,26 @@ def get_polygon(poly):
         Y.append(float(p.attrib['py']))
 
     return X, Y
+
+
+def str_to_array(p):
+    """
+    convert jpsreport polygon into <np.array>
+    --> can be converted to <Polygon.Polygon>
+    """
+
+    if not isinstance(p, str):
+        raise TypeError('str_to_Array argument must be str')
+
+    pat = re.compile(r'''(-*\d+\.?\d*, -*\d+\.?\d*),*''')
+    matches = pat.findall(p)
+    lst = []
+    if matches:
+        lst = [tuple(map(float, m.split(","))) for m in matches]
+    else:
+        print("WARNING: could not convert str to list")
+
+    return np.array(lst)
 
 def get_geometry_boundary(geometry):
     tree = ET.parse(geometry)
@@ -207,13 +228,26 @@ def main():
     #polys = open("%s/polygon%s.dat"%(filepath,namefile)).readlines()
     poly_index = []
     areas = []
+
+    print("---")
+    print(type(polys))
+    print(polys)
+    print("---")
+
+    # ToDo: Korrektur der Schleife erforderlich.
+
     for poly in polys:
         poly = poly.split("|")
         poly_index.append(poly[0].strip())
         Poly = poly[1].strip()
-        exec("p = %s"%Poly)
-        pp = locals()['p']
-        polygons.append(pp)
+
+        pp = str_to_array(Poly)
+
+        # print("---")
+        # print(type(pp))
+        # print(pp)
+        # print("---")
+
         area = pol.Polygon(pp).area()
         xx = 1.0/area
         if xx > rho_max:
@@ -233,14 +267,15 @@ def main():
     sm.set_clim(vmin=0, vmax=10)
     maxArea = np.max(areas)
     meanArea = np.mean(areas)
+
     for j, poly in enumerate(polys):
-        ax1.add_patch(pgon(polygons[j], fc=sm.to_rgba(density_orig[j]), ec='white', lw=2))
+        # ax1.add_patch(pgon(pp[j], fc=sm.to_rgba(density_orig[j]), ec='white', lw=2))
         bcolor = sm.to_rgba(density_orig[j]) #inverse background color
         icolor = [1 - c for c in bcolor]
         icolor[-1] = bcolor[-1] # alpha
         if plotIndex:
-            ax1.text(pol.Polygon(polygons[j]).center()[0],
-                     pol.Polygon(polygons[j]).center()[1],
+            ax1.text(pol.Polygon(pp[j]).center()[0],
+                     pol.Polygon(pp[j]).center()[1],
                      poly_index[j],
                      fontsize=25*areas[j]/maxArea, color=icolor)
 

@@ -213,19 +213,15 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
 {
      Logs();
      Log->Write("INFO: \tParsing the ini file <%s>",inifile.c_str());
-
      //extract and set the project root dir
      fs::path p(inifile);
-     _projectRootDir = canonical(p.parent_path());
-
+     _projectRootDir = canonical(p).parent_path();
      TiXmlDocument doc(inifile);
      if (!doc.LoadFile()) {
           Log->Write("ERROR: \t%s", doc.ErrorDesc());
           Log->Write("ERROR: \tCould not parse the ini file");
           return false;
      }
-
-
      TiXmlElement* xMainNode = doc.RootElement();
      if( ! xMainNode ) {
           Log->Write("ERROR:\tRoot element does not exist");
@@ -237,7 +233,6 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
           Log->Write("ERROR:\tRoot element value is not 'JPSreport'.");
           return false;
      }
-
      if (xMainNode->FirstChild("logfile")) {
           fs::path logfile(xMainNode->FirstChild("logfile")->FirstChild()->Value());
           logfile =  GetProjectRootDir() / logfile;
@@ -270,8 +265,6 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
      {
            Logs();
      }
-
-
      //geometry
      if(xMainNode->FirstChild("geometry"))
      {

@@ -701,8 +701,21 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
                for(TiXmlElement* xMeasurementArea=xMainNode->FirstChildElement("method_A")->FirstChildElement("measurement_area");
                    xMeasurementArea; xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area"))
                {
-                    _areaIDforMethodA.push_back(xmltoi(xMeasurementArea->Attribute("id")));
-                    Log->Write("INFO: \tMeasurement area id <%d> will be used for analysis", xmltoi(xMeasurementArea->Attribute("id")));
+                    int id = xmltoi(xMeasurementArea->Attribute("id"));
+
+                    if( _measurementAreas[id]->_type == "Line")
+                    {
+                         _areaIDforMethodA.push_back(id);
+                         Log->Write("INFO: \tMeasurement area id <%d> will be used for analysis", id);
+                    }
+                    else
+                    {
+                         Log->Write("WARNING: \tMeasurement area id <%d> will NOT be used for analysis (Type <%s> is not Line)", id, _measurementAreas[id]->_type.c_str());
+                    }
+
+
+
+
 
                     if(xMeasurementArea->Attribute("frame_interval"))
                     {

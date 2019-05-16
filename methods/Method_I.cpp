@@ -189,7 +189,7 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
                          if(!_isOneDimensional)
                          {
                               // GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid); // TODO polygons_id
-                              GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid, XInFrame, YInFrame); //
+                              GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid, XInFrame, YInFrame, zPos_measureArea); //
                          }
                     }
                     if(_getProfile)
@@ -266,7 +266,7 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
                }
                else
                {
-                    fprintf(_fIndividualFD,"#framerate (fps):\t%.2f\n\n#Frame	\t	PersID	\t	x/m \t y/m \t Individual density(m^(-2)) \t   Individual velocity(m/s)  \t Voronoi Polygon\n",_fps);
+                    fprintf(_fIndividualFD,"#framerate (fps):\t%.2f\n\n#Frame	\t	PersID	\t	x/m \t y/m \t z/m \t Individual density(m^(-2)) \t   Individual velocity(m/s)  \t Voronoi Polygon\n",_fps);
                }
                return true;
           }
@@ -547,11 +547,11 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
           }
      }
 
-void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame)
+void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame, double ZInFrame)
 {
      double uniquedensity=0;
      double uniquevelocity=0;
-     double x, y;
+     double x, y, z;
      int uniqueId=0;
      int temp=0;
      for (const auto & polygon_iterator:polygon)
@@ -562,11 +562,13 @@ void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<d
           uniqueId=Id[temp];
           x = XInFrame[temp]*CMtoM;
           y = YInFrame[temp]*CMtoM;
-          fprintf(_fIndividualFD,"%s\t %d\t %.4f\t %.4f\t %.4f\t %.4f\t %s\n",
+          z = ZInFrame*CMtoM;
+          fprintf(_fIndividualFD,"%s\t %d\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %s\n",
                   frid.c_str(),
                   uniqueId,
                   x,
                   y,
+                  z,
                   uniquedensity,
                   uniquevelocity,
                   polygon_str.c_str()

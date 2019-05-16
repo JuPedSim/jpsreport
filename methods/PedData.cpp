@@ -430,7 +430,7 @@ bool PedData::InitializeVariables(TiXmlElement* xRootNode)
           for(TiXmlElement* xAgent = xFrame->FirstChildElement("agent"); xAgent;
               xAgent = xAgent->NextSiblingElement("agent"))
           {
-               //get agent id, x, y
+               //get agent id, x, y, z
                double x= atof(xAgent->Attribute("x"));
                double y= atof(xAgent->Attribute("y"));
                double z= atof(xAgent->Attribute("z"));

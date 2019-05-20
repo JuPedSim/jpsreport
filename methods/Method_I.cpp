@@ -136,6 +136,7 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
           vector<int> IdInFrame = peddata.GetIdInFrame(frameNr, ids, zPos_measureArea);
           vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
           vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
+          vector<double> ZInFrame = peddata.GetZInFrame(frameNr, ids, zPos_measureArea);
           vector<double> VInFrame = peddata.GetVInFrame(frameNr, ids, zPos_measureArea);
           //vector int to_remove
           //------------------------------Remove peds outside geometry------------------------------------------
@@ -143,10 +144,11 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
           {
                if(false==within(point_2d(round(XInFrame[i]), round(YInFrame[i])), _geoPoly))
                {
-                    Log->Write("Warning:\tPedestrian at <x=%.4f, y=%.4f> is not in geometry and not considered in analysis!", XInFrame[i]*CMtoM, YInFrame[i]*CMtoM );
+                    Log->Write("Warning:\tPedestrian at <x=%.4f, y=%.4f, , z=%.4f> is not in geometry and not considered in analysis!", XInFrame[i]*CMtoM, YInFrame[i]*CMtoM, ZInFrame[i]*CMtoM );
                     IdInFrame.erase(IdInFrame.begin() + i);
                     XInFrame.erase(XInFrame.begin() + i);
                     YInFrame.erase(YInFrame.begin() + i);
+                    ZInFrame.erase(ZInFrame.begin() + i);
                     VInFrame.erase(VInFrame.begin() + i);
                     Log->Write("Warning:\t Pedestrian removed");
                     i--;
@@ -189,7 +191,7 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
                          if(!_isOneDimensional)
                          {
                               // GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid); // TODO polygons_id
-                              GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid, XInFrame, YInFrame, zPos_measureArea); //
+                              GetIndividualFD(polygons,VInFrame, IdInFrame,  str_frid, XInFrame, YInFrame, ZInFrame); //
                          }
                     }
                     if(_getProfile)
@@ -547,7 +549,7 @@ bool Method_I::Process(const PedData& peddata,const fs::path& scriptsLocation, c
           }
      }
 
-void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame, double ZInFrame)
+void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame, vector<double>& ZInFrame)
 {
      double uniquedensity=0;
      double uniquevelocity=0;
@@ -562,7 +564,7 @@ void Method_I::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<d
           uniqueId=Id[temp];
           x = XInFrame[temp]*CMtoM;
           y = YInFrame[temp]*CMtoM;
-          z = ZInFrame*CMtoM;
+          z = ZInFrame[temp]*CMtoM;
           fprintf(_fIndividualFD,"%s\t %d\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %s\n",
                   frid.c_str(),
                   uniqueId,

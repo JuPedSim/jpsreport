@@ -587,6 +587,27 @@ vector<double> PedData::GetZInFrame(int frame, const vector<int>& ids) const
      }
      return ZInFrame;
 }
+vector<double> PedData::GetZInFrame(int frame, const vector<int>& ids, double zPos) const
+{
+     vector<double> ZInFrame;
+     for(unsigned int i=0; i<ids.size();i++)
+     {
+          int id = ids[i];
+          if(zPos<1000000.0)
+          {
+               if(fabs(_zCor(id,frame)-zPos*M2CM)<J_EPS_EVENT)
+               {
+                    ZInFrame.push_back(_zCor(id,frame));
+               }
+          }
+          else
+          {
+               ZInFrame.push_back(_zCor(id,frame));
+          }
+
+     }
+     return ZInFrame;
+}
 
 vector<int> PedData::GetIdInFrame(int frame, const vector<int>& ids) const
 {

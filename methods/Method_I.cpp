@@ -54,7 +54,7 @@ Method_I::Method_I()
      _cutRadius = -1;
      _circleEdges = -1;
      _fIndividualFD = nullptr;
-     _calcIndividualFD = false;
+     _calcIndividualFD = true;
      _areaForMethod_I = nullptr;
      _plotVoronoiCellData=false;
      _isOneDimensional=false;

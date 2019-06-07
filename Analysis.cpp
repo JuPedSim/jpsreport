@@ -475,10 +475,10 @@ int Analysis::RunAnalysis(const fs::path& filename, const fs::path& path)
                method_I.SetGeometryBoundaries(_lowVertexX, _lowVertexY, _highVertexX, _highVertexY);
                method_I.SetGridSize(_grid_size_X, _grid_size_Y);
                method_I.SetOutputVoronoiCellData(_outputGraph);
-               method_I.SetPlotVoronoiGraph(_plotGraph);
+               // method_I.SetPlotVoronoiGraph(_plotGraph);
                method_I.SetPlotVoronoiIndex(_plotIndex);
                method_I.SetDimensional(_isOneDimensional);
-               method_I.SetCalculateProfiles(_getProfile);
+               // method_I.SetCalculateProfiles(_getProfile);
                method_I.SetTrajectoriesLocation(path);
                if(_cutByCircle)
                {

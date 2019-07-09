@@ -1,8 +1,8 @@
 ---
 layout: post2
-title: Quickstart 
+title: Quickstart
 subtitle: compile the code
-update: 2018-02-13
+update: 2019-07-09
 permalink: 2016-11-01-quickstart.html
 nav:
 - page: Download
@@ -21,17 +21,17 @@ nav:
 
 
 
-To use `JPSreport` there are three steps to follow: 
+To use `JPSreport` there are three steps to follow:
 
 ## 1. Get the code
 
-Git-clone the code from the GitLab repository 
+Git-clone the code from the GitHub repository
 
 ```bash
- git clone https://gitlab.version.fz-juelich.de/jupedsim/jpsreport
+ git clone https://github.com/JuPedSim/jpsreport.git
 ```
 
-Or download a compressed file 
+Or download a compressed file
 
 ![structure]({{ site.baseurl}}/img/download.png)
 
@@ -49,9 +49,9 @@ In case a package is missing, `CMake` will report an error.
 
 ## 3. Compile the code
 
-If the two first steps succeed then you can proceed with the compilation 
+If the two first steps succeed then you can proceed with the compilation
 
-```bash 
+```bash
  make -j2
 ```
 
@@ -63,7 +63,7 @@ Run `JPSreport` using one of the ini files in the `demo` directory.
 
 For example in a terminal run the following:
 
-```bash 
+```bash
  ./bin/jpsreport inifile.xml
 ```
 
@@ -76,7 +76,7 @@ For example in a terminal run the following:
     Check this [tutorial](https://www.youtube.com/watch?v=Achsd2EpJbI)
 
 
-- [Visual Studio 2013](http://msdn.microsoft.com/de-de/library/dd831853.aspx) (v0.6+, Windows) 
+- [Visual Studio 2013](http://msdn.microsoft.com/de-de/library/dd831853.aspx) (v0.6+, Windows)
 
     Run the *CMake-gui* with the generator *Visual Studio 12 (2013)* and click on the `*.sln` file to open it in Visual Studio.
 
@@ -84,7 +84,7 @@ For example in a terminal run the following:
     This should build your code.
 
     Current issues are known with the python test cases. Most of them are Unix specific.
-    However the compilation of `jpscore` works fine. 
+    However the compilation of `jpscore` works fine.
 
 - XCode (v0.6+ Mac)
 

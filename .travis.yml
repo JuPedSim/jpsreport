@@ -16,7 +16,7 @@ matrix:
        - make -j $(nproc)
        - cd ../Utest/Methods
        - ../../bin/jpsreport ini_Methods.xml
-       - python3 runtest_Methods_C.py
+       - python runtest_Methods_C.py
 
     - name: linux (gcc9)
       os: linux

@@ -16,7 +16,7 @@ matrix:
        - make -j $(nproc)
        - cd ../Utest/Methods
        - ../../bin/jpsreport ini_Methods.xml
-       - python runtest_Methods_C.py
+       - python3 runtest_Methods_C.py
 
     - name: linux (gcc9)
       os: linux
@@ -30,13 +30,13 @@ matrix:
 
 before_install:
     - source .travis_before_install.bash
-    - sudo apt-get update
-    - sudo apt-get install python3
-    - python3 --version
+    - choco install python -- version 3.7.4
+    - python -m pip install --upgrade pip
+    env: PATH=/c/Python37:/c/Python37/Scripts:%PATH
+
+install:
+    - source .travis_install.bash
     - pip install --user --upgrade pip
     - pip install --user numpy
     - pip install --user scipy
     - pip install --user logging
-
-install:
-    - source .travis_install.bash

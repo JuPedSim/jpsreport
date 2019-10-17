@@ -16,7 +16,7 @@ matrix:
        - make -j $(nproc)
        - cd ../Utest/Methods
        - ../../bin/jpsreport ini_Methods.xml
-       - python runtest_Methods_C.py
+       - python3 runtest_Methods_C.py
 
     - name: linux (gcc9)
       os: linux
@@ -30,10 +30,11 @@ matrix:
 
 before_install:
     - source .travis_before_install.bash
-    - python --version
-    - pip install -U numpy
-    - pip install -U scipy
-    - pip install -U logging
+    - python3 --version
+    - pip3 install --upgrade pip
+    - pip3 install --user numpy
+    - pip3 install --user scipy
+    - pip3 install --user logging
 
 install:
     - source .travis_install.bash

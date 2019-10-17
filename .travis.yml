@@ -30,6 +30,10 @@ matrix:
 
 before_install:
     - source .travis_before_install.bash
+    - python --version
+    - pip install numpy
+    - pip install scipy
+    - pip install logging
 
 install:
     - source .travis_install.bash

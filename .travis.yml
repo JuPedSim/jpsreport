@@ -30,6 +30,8 @@ matrix:
 
 before_install:
     - source .travis_before_install.bash
+    - sudo apt-get update
+    - sudo apt-get install python3
     - python3 --version
     - pip3 install --upgrade pip
     - pip3 install --user numpy

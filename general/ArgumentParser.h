@@ -73,12 +73,6 @@ private:
      bool _isCutByCircle;
      double _cutRadius;
      int _circleEdges;
-     bool _isOutputGraph;
-     bool _isPlotGraph;
-     bool _isPlotIndex;
-     /*bool _isPlotTimeSeriesA;
-       bool _isPlotTimeSeriesC;
-       bool _isPlotTimeSeriesD;*/
      bool _isOneDimensional;
      bool _isGetProfile;
      double _steadyStart;
@@ -98,10 +92,6 @@ private:
      std::vector<int> _start_frames_MethodI;
      std::vector<int> _stop_frames_MethodI;
      std::vector<bool> _individual_FD_flags;
-     std::vector<bool> _isPlotTimeSeriesA;
-     std::vector<bool> _isPlotTimeSeriesC;
-     std::vector<bool> _isPlotTimeSeriesD;
-     std::vector<bool> _isPlotTimeSeriesI;
      std::vector<int> _timeIntervalA;
 
 
@@ -151,12 +141,6 @@ public:
      double GetCutRadius() const;
      int GetCircleEdges() const;
      bool GetIsOutputGraph() const;
-     bool GetIsPlotGraph() const;
-     bool GetIsPlotIndex() const;
-     std::vector<bool> GetIsPlotTimeSeriesA() const;
-     std::vector<bool> GetIsPlotTimeSeriesC() const;
-     std::vector<bool> GetIsPlotTimeSeriesD() const;
-     std::vector<bool> GetIsPlotTimeSeriesI() const;
      bool GetIsOneDimensional() const;
      bool GetIsIndividualFD() const;
      polygon_2d GetAreaIndividualFD() const;

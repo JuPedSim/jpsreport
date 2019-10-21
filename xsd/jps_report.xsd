@@ -186,7 +186,6 @@
                   </xs:simpleContent>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="plot_time_series"/>
             </xs:sequence>
             <xs:attribute type="xs:string" name="enabled"/>
           </xs:complexType>
@@ -221,7 +220,6 @@
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
                       <xs:attribute type="xs:int" name="id"  use="required"/>
-                      <xs:attribute type="xs:string" name="plot_time_series"/>
                     </xs:extension>
                   </xs:simpleContent>
                 </xs:complexType>
@@ -243,7 +241,6 @@
                       <xs:attribute type="xs:int" name="id"  use="required"/>
                       <xs:attribute type="xs:int" name="start_frame"  use="required"/>
                       <xs:attribute type="xs:int" name="stop_frame"  use="required"/>
-                      <xs:attribute type="xs:string" name="plot_time_series" use="required"/>
                       <xs:attribute type="xs:string" name="get_individual_FD"  use="required"/>
                     </xs:extension>
                   </xs:simpleContent>
@@ -265,16 +262,6 @@
                       <xs:attribute type="xs:string" name="enabled"   use="required"/>
                       <xs:attribute type="xs:double" name="radius"  use="required"/>
                       <xs:attribute type="xs:int" name="edges"  use="required"/>
-                    </xs:extension>
-                  </xs:simpleContent>
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="output_voronoi_cells">
-                <xs:complexType>
-                  <xs:simpleContent>
-                    <xs:extension base="xs:string">
-                      <xs:attribute type="xs:string" name="enabled"   use="required"/>
-                      <xs:attribute type="xs:int" name="plot_graphs"  use="required"/>
                     </xs:extension>
                   </xs:simpleContent>
                 </xs:complexType>
@@ -307,7 +294,6 @@
                       <xs:attribute type="xs:int" name="id"  use="required"/>
                       <xs:attribute type="xs:int" name="start_frame"  use="required"/>
                       <xs:attribute type="xs:int" name="stop_frame"  use="required"/>
-                      <xs:attribute type="xs:string" name="plot_time_series"/>
                       <xs:attribute type="xs:string" name="get_individual_FD"  use="required"/>
                     </xs:extension>
                   </xs:simpleContent>
@@ -343,7 +329,7 @@
       <xs:attribute name="version" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="0.8.4" />
+            <xs:enumeration value="0.8.5" />
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

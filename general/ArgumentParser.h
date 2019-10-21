@@ -53,7 +53,6 @@ class ArgumentParser {
 private:
 
      fs::path _geometryFileName;
-     fs::path _scriptsLocation;
      fs::path _errorLogFile;
      fs::path _trajectoriesLocation;
      fs::path _trajectoriesFilename;
@@ -104,7 +103,6 @@ public:
      const fs::path& GetTrajectoriesFilename() const;
      const std::vector<fs::path>& GetTrajectoriesFiles() const;
      const fs::path& GetTrajectoriesLocation() const;
-     const fs::path& GetScriptsLocation() const;
      const FileFormat& GetFileFormat() const;
      const fs::path& GetGeometryFilename() const;
      const fs::path& GetErrorLogFile() const;

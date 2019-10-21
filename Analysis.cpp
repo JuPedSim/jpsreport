@@ -190,7 +190,6 @@ void Analysis::InitArgs(ArgumentParser* args)
      _trajFormat=args->GetFileFormat();
      _cutRadius=args->GetCutRadius();
      _circleEdges=args->GetCircleEdges();
-     _scriptsLocation=args->GetScriptsLocation();
      _outputLocation=args->GetOutputLocation();
 }
 

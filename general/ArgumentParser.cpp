@@ -142,7 +142,6 @@ ArgumentParser::ArgumentParser()
      _trajectoriesLocation="./";
      _trajectoriesFilename="";
      _projectRootDir="./";
-     _scriptsLocation="./";
      _fileFormat=FORMAT_XML_PLAIN;
      _cutRadius =50;
      _circleEdges=6;
@@ -381,29 +380,6 @@ bool ArgumentParser::ParseIniFile(const string& inifile)
 
           }
           Log->Write("INFO: \t Using <%d> threads", omp_get_max_threads());
-     }
-
-     //scripts
-     if(xMainNode->FirstChild("scripts"))
-     {
-          _scriptsLocation= fs::path(xMainNode->FirstChildElement("scripts")->Attribute("location"));
-
-        if(! _scriptsLocation.is_absolute())
-        {
-             _scriptsLocation = GetProjectRootDir() / _scriptsLocation;
-             _scriptsLocation = fs::canonical(_scriptsLocation);
-        }
-
-        if (!exists(_scriptsLocation))
-        {
-             /* could not open directory */
-             Log->Write("ERROR: \tcould not open the directory <%s>", _scriptsLocation.string().c_str());
-             return false;
-        }
-        else
-          {
-               Log->Write("INFO: \tInput directory for loading scripts is:\t<%s>", _scriptsLocation.string().c_str());
-          }
      }
 
      // output directory
@@ -928,10 +904,6 @@ const fs::path& ArgumentParser::GetTrajectoriesLocation() const
      return _trajectoriesLocation;
 }
 
-const fs::path& ArgumentParser::GetScriptsLocation() const
-{
-     return _scriptsLocation;
-}
 const fs::path& ArgumentParser::GetOutputLocation() const
 {
      return _outputDir;

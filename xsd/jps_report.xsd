@@ -63,18 +63,6 @@
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-		<xs:element name="scripts">
-          <xs:annotation>
-            <xs:documentation>give relative path based on the location inifile or give the absolute path.</xs:documentation>
-          </xs:annotation>
-          <xs:complexType>
-            <xs:simpleContent>
-              <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="location" use="required"/>
-              </xs:extension>
-            </xs:simpleContent>
-          </xs:complexType>
-        </xs:element>
         <xs:element name="measurement_areas">
           <xs:annotation>
             <xs:documentation>Define the measurement areas will be used.</xs:documentation>

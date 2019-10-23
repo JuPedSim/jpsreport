@@ -8,7 +8,7 @@ from scipy.stats import ks_2samp
 import logging
 
 logging.basicConfig(
-    filename = "Utest_Method.log",
+    filename = "Utest_Methods.log",
     level    = logging.DEBUG,
     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')

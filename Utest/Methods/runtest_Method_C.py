@@ -31,25 +31,26 @@ velocity_ks_statistic, velocity_p_value = ks_2samp(data_2[:,2],data_1[:,2])
 
 if density_p_value > alpha:
     logging.info('--> density: same dist (fail to reject H0) -- p-value: {0:.4f}'.format(density_p_value))
-    density_exit = 0
+    density_exit = True
 else:
     logging.info('--> density: different dist (reject H0) -- p-value: {0:.4f}'.format(density_p_value))
-    density_exit = 1
+    density_exit = False
 
 if velocity_p_value > alpha:
     logging.info('--> velocity: same dist (fail to reject H0) -- p-value: {0:.4f}'.format(velocity_p_value))
-    velocity_exit = 0
+    velocity_exit = True
 else:
     logging.info('--> velocity: different dist (reject H0) -- p-value: {0:.4f}'.format(velocity_p_value))
-    velocity_exit = 1
+    velocity_exit = False
 
-if (velocity_exit == 0) and (density_exit == 0):
+if (velocity_exit == True) and (density_exit == True):
     logging.info('Method C: Test passed successfully.')
+    logging.info("========================================")
+    logging.shutdown()
     sys.exit(0)
 else:
-    logging.info('Method C: Test passed successfully.')
+    logging.info('Method C: Test passed not successfully.')
+    logging.info("========================================")
+    logging.shutdown()
     sys.exit(1)
 
-logging.info("========================================")
-
-logging.shutdown()

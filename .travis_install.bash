@@ -20,6 +20,6 @@ then
     echo "not yet implemented"
 fi
 
-pip3 install --user numpy
-pip3 install --user scipy
-pip3 install --user logging
+pip install --user numpy
+pip install --user scipy
+pip install --user logging

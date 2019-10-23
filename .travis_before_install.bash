@@ -14,4 +14,4 @@ then
     echo "not yet implemented."
 fi
 
-pip3 install --user --upgrade pip
+pip install --user --upgrade pip

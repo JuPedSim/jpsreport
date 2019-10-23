@@ -17,6 +17,7 @@ matrix:
        - cd ../Utest/Methods
        - ../../bin/jpsreport ini_Methods.xml
        - python runtest_Method_C.py
+       - python runtest_Method_D.py
 
     - name: linux (gcc9)
       os: linux
@@ -28,6 +29,7 @@ matrix:
        - cd ../Utest/Methods
        - ../../bin/jpsreport ini_Methods.xml
        - python runtest_Method_C.py
+       - python runtest_Method_D.py
 
 before_install:
     - source .travis_before_install.bash

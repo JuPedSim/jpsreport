@@ -14,5 +14,4 @@ then
     echo "not yet implemented."
 fi
 
-choco install python -- version 3.7.4
-python -m pip install --upgrade pip
+pip3 install --user --upgrade pip

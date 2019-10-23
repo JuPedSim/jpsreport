@@ -14,12 +14,12 @@ logging.basicConfig(
     format   = "{asctime} \t {levelname:8} \t {message} \t",
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("===== Method C =========================")
+logging.info("===== Method D =========================")
 
-data_1_filename = 'reference_data_Method_C.dat'
+data_1_filename = 'reference_data_Method_D.dat'
 data_1 = np.loadtxt(data_1_filename)
 
-data_2_filename = './Output_Methods/Fundamental_Diagram/Classical_Voronoi/rho_v_Classic_traj_Methods.txt_id_3.dat'
+data_2_filename = './Output_Methods/Fundamental_Diagram/Classical_Voronoi/rho_v_Voronoi_traj_Methods.txt_id_5.dat'
 data_2 = np.loadtxt(data_2_filename)
 
 # test
@@ -44,11 +44,11 @@ else:
     velocity_exit = False
 
 if (velocity_exit == True) and (density_exit == True):
-    logging.info('Method C: Test passed successfully.')
+    logging.info('Method D: Test passed successfully.')
     logging.shutdown()
     sys.exit(0)
 else:
-    logging.info('Method C: Test passed not successfully.')
+    logging.info('Method D: Test passed not successfully.')
     logging.shutdown()
     sys.exit(1)
 

@@ -8,13 +8,12 @@ from scipy.stats import ks_2samp
 import logging
 
 logging.basicConfig(
-    filename = "Utest_Methods.log",
+    filename = "Utest_Method_C.log",
     level    = logging.DEBUG,
-    style    = "{",
-    format   = "{asctime} \t {levelname:8} \t {message} \t",
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 
-logging.info("===== Method A =========================")
+logging.info("===== Method A - Flow-NT ===============")
 
 data_1_filename = 'reference_data_Method_A_Flow_NT.dat'
 data_1 = np.loadtxt(data_1_filename)

@@ -20,6 +20,9 @@ matrix:
        - python runtest_Method_B.py
        - python runtest_Method_C.py
        - python runtest_Method_D.py
+       - python runtest_Method_D_IFD.py
+       - python runtest_Method_I_IFD.py
+       - cat Utest_Methods.log
 
     - name: linux (gcc9)
       os: linux
@@ -34,6 +37,9 @@ matrix:
        - python runtest_Method_B.py
        - python runtest_Method_C.py
        - python runtest_Method_D.py
+       - python runtest_Method_D_IFD.py
+       - python runtest_Method_I_IFD.py
+       - cat Utest_Methods.log
 
 before_install:
     - source .travis_before_install.bash

@@ -1,8 +1,8 @@
 /**
  * \file        Method_Voronoi.cpp
- * \date        Oct 10, 2014
- * \version     v0.7
- * \copyright   <2009-2015> Forschungszentrum Jülich GmbH. All rights reserved.
+ * \date        Oct 29, 2019
+ * \version     v0.8.5
+ * \copyright   <2009-2019> Forschungszentrum Juelich GmbH. All rights reserved.
  *
  * \section License
  * This file is part of JuPedSim.
@@ -339,8 +339,6 @@ std::tuple<double,double> Method_Voronoi::GetVoronoiDensityVelocity(const vector
      if(pedsinMeasureArea!=0)
       {
         velocity /= (1.0*pedsinMeasureArea);
-      } else {
-        velocity = 0;
       }
 
      density = density/(area(measureArea)*CMtoM*CMtoM);

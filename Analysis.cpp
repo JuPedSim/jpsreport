@@ -32,21 +32,22 @@
 #include "geometry/Room.h"
 #include "geometry/SubRoom.h"
 
-#include "methods/VoronoiDiagram.h"
 #include "methods/Method_A.h"
 #include "methods/Method_B.h"
 #include "methods/Method_C.h"
 #include "methods/Method_D.h"
 #include "methods/Method_I.h"
+#include "methods/Method_Voronoi.h"
 #include "methods/PedData.h"
+#include "methods/VoronoiDiagram.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
+#include <algorithm> // std::min_element, std::max_element
 #include <cfloat>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <stdlib.h>
-#include <algorithm>    // std::min_element, std::max_element
+#include <vector>
 
 #ifdef __linux__
 #include <sys/stat.h>
@@ -77,6 +78,7 @@ Analysis::Analysis()
      _DoesUseMethodC = false;                                   // Method C //calculate and save results of classic in separate file
      _DoesUseMethodD = false;                                   // Method D--Voronoi method
      _DoesUseMethodI = false;
+     _DoesUseMethod_Voronoi = false;
      _cutByCircle = false;  //Adjust whether cut each original voronoi cell by a circle
      _getProfile = false;   // Whether make field analysis or not
      _calcIndividualFD = false; //Adjust whether analyze the individual density and velocity of each pedestrian in stationary state (ALWAYS VORONOI-BASED)
@@ -174,8 +176,22 @@ void Analysis::InitArgs(ArgumentParser* args)
           _StartFramesMethodI = args->GetStartFramesMethodI();
           _StopFramesMethodI = args->GetStopFramesMethodI();
           _IndividualFDFlags = args->GetIndividualFDFlags();
-           _geoPolyMethodI = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_I);
+          _geoPolyMethodI = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_I);
      }
+
+    if(args->GetIsMethod_Voronoi()) {
+          _DoesUseMethod_Voronoi = true;
+          vector<int> Measurement_Area_IDs = args->GetAreaIDforMethod_Voronoi();
+          for(unsigned int i=0; i<Measurement_Area_IDs.size(); i++)
+          {
+            _areaForMethod_Voronoi.push_back(dynamic_cast<MeasurementArea_B*>( args->GetMeasurementArea(Measurement_Area_IDs[i])));
+          }
+          _StartFramesMethod_Voronoi = args->GetStartFramesMethod_Voronoi();
+          _StopFramesMethod_Voronoi = args->GetStopFramesMethod_Voronoi();
+          _IndividualFDFlags = args->GetIndividualFDFlags();
+          _geoPolyMethod_Voronoi = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_Voronoi);
+
+    }
 
      _deltaF = args->GetDelatT_Vins();
      _cutByCircle = args->GetIsCutByCircle();
@@ -460,6 +476,45 @@ int Analysis::RunAnalysis(const fs::path& filename, const fs::path& path)
           }
      }
 
+    if(_DoesUseMethod_Voronoi) //method_Voronoi
+    {
+      if(_areaForMethod_Voronoi.empty())
+      {
+        Log->Write("ERROR: Method Voronoi selected with no measurement area!");
+        exit(EXIT_FAILURE);
+      }
+
+  #pragma omp parallel for
+      for(int i=0; i<int(_areaForMethod_Voronoi.size()); i++)
+      {
+        Method_Voronoi method_Voronoi;
+        method_Voronoi.SetStartFrame(_StartFramesMethod_Voronoi[i]);
+        method_Voronoi.SetStopFrame(_StopFramesMethod_Voronoi[i]);
+        method_Voronoi.SetCalculateIndividualFD(_IndividualFDFlags[i]);
+        method_Voronoi.SetGeometryPolygon(_geoPolyMethod_Voronoi[_areaForMethod_Voronoi[i]->_id]);
+        method_Voronoi.SetGeometryFileName(_geometryFileName);
+        method_Voronoi.SetGeometryBoundaries(_lowVertexX, _lowVertexY, _highVertexX, _highVertexY);
+        method_Voronoi.SetGridSize(_grid_size_X, _grid_size_Y);
+        method_Voronoi.SetDimensional(_isOneDimensional);
+        method_Voronoi.SetCalculateProfiles(_getProfile);
+        method_Voronoi.SetTrajectoriesLocation(path);
+        if(_cutByCircle)
+        {
+          method_Voronoi.Setcutbycircle(_cutRadius, _circleEdges);
+        }
+        method_Voronoi.SetMeasurementArea(_areaForMethod_Voronoi[i]);
+        bool result_Voronoi = method_Voronoi.Process(data,_scriptsLocation, _areaForMethod_Voronoi[i]->_zPos);
+        if(result_Voronoi)
+        {
+          Log->Write("INFO:\tSuccess with Method Voronoi using measurement area id %d!\n",_areaForMethod_Voronoi[i]->_id);
+          std::cout << "INFO:\tSuccess with Method Voronoi using measurement area id "<< _areaForMethod_Voronoi[i]->_id << "\n";
+        }
+        else
+        {
+          Log->Write("INFO:\tFailed with Method Voronoi using measurement area id %d!\n",_areaForMethod_Voronoi[i]->_id);
+        }
+      }
+    }
 
      return 0;
 }

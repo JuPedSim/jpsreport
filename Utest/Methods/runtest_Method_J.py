@@ -15,7 +15,7 @@ logging.basicConfig(
 
 logging.info("===== Method j =========================")
 
-data_1_filename = 'reference_data_Method_j.dat'
+data_1_filename = 'reference_data_Method_J.dat'
 data_1 = np.loadtxt(data_1_filename)
 
 data_2_filename = './Output_Methods/Fundamental_Diagram/Classical_Voronoi/rho_v_Voronoi_J_traj_Methods.txt_id_5.dat'

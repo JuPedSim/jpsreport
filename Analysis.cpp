@@ -37,7 +37,7 @@
 #include "methods/Method_C.h"
 #include "methods/Method_D.h"
 #include "methods/Method_I.h"
-#include "methods/Method_Voronoi.h"
+#include "methods/Method_J.h"
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
@@ -78,7 +78,7 @@ Analysis::Analysis()
      _DoesUseMethodC = false;                                   // Method C //calculate and save results of classic in separate file
      _DoesUseMethodD = false;                                   // Method D--Voronoi method
      _DoesUseMethodI = false;
-     _DoesUseMethod_Voronoi = false;
+     _DoesUseMethodJ = false;
      _cutByCircle = false;  //Adjust whether cut each original voronoi cell by a circle
      _getProfile = false;   // Whether make field analysis or not
      _calcIndividualFD = false; //Adjust whether analyze the individual density and velocity of each pedestrian in stationary state (ALWAYS VORONOI-BASED)
@@ -179,17 +179,17 @@ void Analysis::InitArgs(ArgumentParser* args)
           _geoPolyMethodI = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_I);
      }
 
-    if(args->GetIsMethod_Voronoi()) {
-          _DoesUseMethod_Voronoi = true;
-          vector<int> Measurement_Area_IDs = args->GetAreaIDforMethod_Voronoi();
+    if(args->GetIsMethodJ()) {
+          _DoesUseMethodJ = true;
+          vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodJ();
           for(unsigned int i=0; i<Measurement_Area_IDs.size(); i++)
           {
-            _areaForMethod_Voronoi.push_back(dynamic_cast<MeasurementArea_B*>( args->GetMeasurementArea(Measurement_Area_IDs[i])));
+            _areaForMethod_J.push_back(dynamic_cast<MeasurementArea_B*>( args->GetMeasurementArea(Measurement_Area_IDs[i])));
           }
-          _StartFramesMethod_Voronoi = args->GetStartFramesMethod_Voronoi();
-          _StopFramesMethod_Voronoi = args->GetStopFramesMethod_Voronoi();
+          _StartFramesMethodJ = args->GetStartFramesMethodJ();
+          _StopFramesMethodJ = args->GetStopFramesMethodJ();
           _IndividualFDFlags = args->GetIndividualFDFlags();
-          _geoPolyMethod_Voronoi = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_Voronoi);
+          _geoPolyMethodJ = ReadGeometry(args->GetGeometryFilename(), _areaForMethod_J);
 
     }
 
@@ -476,42 +476,42 @@ int Analysis::RunAnalysis(const fs::path& filename, const fs::path& path)
           }
      }
 
-    if(_DoesUseMethod_Voronoi) //method_Voronoi
+    if(_DoesUseMethodJ) //Method_J
     {
-      if(_areaForMethod_Voronoi.empty())
+      if(_areaForMethod_J.empty())
       {
         Log->Write("ERROR: Method Voronoi selected with no measurement area!");
         exit(EXIT_FAILURE);
       }
 
   #pragma omp parallel for
-      for(int i=0; i<int(_areaForMethod_Voronoi.size()); i++)
+      for(int i=0; i<int(_areaForMethod_J.size()); i++)
       {
-        Method_Voronoi method_Voronoi;
-        method_Voronoi.SetStartFrame(_StartFramesMethod_Voronoi[i]);
-        method_Voronoi.SetStopFrame(_StopFramesMethod_Voronoi[i]);
-        method_Voronoi.SetCalculateIndividualFD(_IndividualFDFlags[i]);
-        method_Voronoi.SetGeometryPolygon(_geoPolyMethod_Voronoi[_areaForMethod_Voronoi[i]->_id]);
-        method_Voronoi.SetGeometryFileName(_geometryFileName);
-        method_Voronoi.SetGeometryBoundaries(_lowVertexX, _lowVertexY, _highVertexX, _highVertexY);
-        method_Voronoi.SetGridSize(_grid_size_X, _grid_size_Y);
-        method_Voronoi.SetDimensional(_isOneDimensional);
-        method_Voronoi.SetCalculateProfiles(_getProfile);
-        method_Voronoi.SetTrajectoriesLocation(path);
+        Method_J Method_J;
+        Method_J.SetStartFrame(_StartFramesMethodJ[i]);
+        Method_J.SetStopFrame(_StopFramesMethodJ[i]);
+        Method_J.SetCalculateIndividualFD(_IndividualFDFlags[i]);
+        Method_J.SetGeometryPolygon(_geoPolyMethodJ[_areaForMethod_J[i]->_id]);
+        Method_J.SetGeometryFileName(_geometryFileName);
+        Method_J.SetGeometryBoundaries(_lowVertexX, _lowVertexY, _highVertexX, _highVertexY);
+        Method_J.SetGridSize(_grid_size_X, _grid_size_Y);
+        Method_J.SetDimensional(_isOneDimensional);
+        Method_J.SetCalculateProfiles(_getProfile);
+        Method_J.SetTrajectoriesLocation(path);
         if(_cutByCircle)
         {
-          method_Voronoi.Setcutbycircle(_cutRadius, _circleEdges);
+          Method_J.Setcutbycircle(_cutRadius, _circleEdges);
         }
-        method_Voronoi.SetMeasurementArea(_areaForMethod_Voronoi[i]);
-        bool result_Voronoi = method_Voronoi.Process(data,_scriptsLocation, _areaForMethod_Voronoi[i]->_zPos);
+        Method_J.SetMeasurementArea(_areaForMethod_J[i]);
+        bool result_Voronoi = Method_J.Process(data,_scriptsLocation, _areaForMethod_J[i]->_zPos);
         if(result_Voronoi)
         {
-          Log->Write("INFO:\tSuccess with Method Voronoi using measurement area id %d!\n",_areaForMethod_Voronoi[i]->_id);
-          std::cout << "INFO:\tSuccess with Method Voronoi using measurement area id "<< _areaForMethod_Voronoi[i]->_id << "\n";
+          Log->Write("INFO:\tSuccess with Method J using measurement area id %d!\n",_areaForMethod_J[i]->_id);
+          std::cout << "INFO:\tSuccess with Method J using measurement area id "<< _areaForMethod_J[i]->_id << "\n";
         }
         else
         {
-          Log->Write("INFO:\tFailed with Method Voronoi using measurement area id %d!\n",_areaForMethod_Voronoi[i]->_id);
+          Log->Write("INFO:\tFailed with Method J using measurement area id %d!\n",_areaForMethod_J[i]->_id);
         }
       }
     }

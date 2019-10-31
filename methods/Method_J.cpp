@@ -1,5 +1,5 @@
 /**
- * \file        Method_Voronoi.cpp
+ * \file        Method_J.cpp
  * \date        Oct 29, 2019
  * \version     v0.8.5
  * \copyright   <2009-2019> Forschungszentrum Juelich GmbH. All rights reserved.
@@ -26,7 +26,7 @@
  *
  **/
 
-#include "Method_Voronoi.h"
+#include "Method_J.h"
 #include <cmath>
 #include<map>
 #include<iostream>
@@ -39,7 +39,7 @@ using namespace std;
 
 
 
-Method_Voronoi::Method_Voronoi()
+Method_J::Method_J()
 {
      _grid_size_X = 0.10;
      _grid_size_Y = 0.10;
@@ -55,18 +55,18 @@ Method_Voronoi::Method_Voronoi()
      _fIndividualFD = nullptr;
      _calcIndividualFD = false;
      _fVoronoiRhoV = nullptr;
-     _areaForMethod_Voronoi = nullptr;
+     _areaForMethod_J = nullptr;
      _isOneDimensional=false;
      _startFrame =-1;
      _stopFrame = -1;
 }
 
-Method_Voronoi::~Method_Voronoi()
+Method_J::~Method_J()
 {
 
 }
 
-bool Method_Voronoi::Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea)
+bool Method_J::Process (const PedData& peddata,const fs::path& scriptsLocation, const double& zPos_measureArea)
 {
      bool return_value = true;
      _scriptsLocation = scriptsLocation;
@@ -74,7 +74,7 @@ bool Method_Voronoi::Process (const PedData& peddata,const fs::path& scriptsLoca
      _peds_t = peddata.GetPedsFrame();
      _trajName = peddata.GetTrajName();
      _projectRootDir = peddata.GetProjectRootDir();
-     _measureAreaId = boost::lexical_cast<string>(_areaForMethod_Voronoi->_id);
+     _measureAreaId = boost::lexical_cast<string>(_areaForMethod_J->_id);
      _fps =peddata.GetFps();
      int mycounter = 0;
      int minFrame = peddata.GetMinFrame();
@@ -156,7 +156,7 @@ bool Method_Voronoi::Process (const PedData& peddata,const fs::path& scriptsLoca
           {
                if(_isOneDimensional)
                {
-                    CalcVoronoiResults1D(XInFrame, VInFrame, IdInFrame, _areaForMethod_Voronoi->_poly,str_frid);
+                    CalcVoronoiResults1D(XInFrame, VInFrame, IdInFrame, _areaForMethod_J->_poly,str_frid);
                }
                else
                {
@@ -184,8 +184,8 @@ bool Method_Voronoi::Process (const PedData& peddata,const fs::path& scriptsLoca
                          {
                               if(!_isOneDimensional)
                               {
-                                   // GetIndividualFD(polygons,VInFrame, IdInFrame, _areaForMethod_Voronoi->_poly, str_frid); // TODO polygons_id
-                                  GetIndividualFD(polygons,VInFrame, IdInFrame, _areaForMethod_Voronoi->_poly, str_frid, XInFrame, YInFrame, ZInFrame);
+                                   // GetIndividualFD(polygons,VInFrame, IdInFrame, _areaForMethod_J->_poly, str_frid); // TODO polygons_id
+                                  GetIndividualFD(polygons,VInFrame, IdInFrame, _areaForMethod_J->_poly, str_frid, XInFrame, YInFrame, ZInFrame);
                               }
                          }
                          if(_getProfile)
@@ -216,12 +216,12 @@ bool Method_Voronoi::Process (const PedData& peddata,const fs::path& scriptsLoca
      return return_value;
 }
 
-bool Method_Voronoi::OpenFileMethodVoronoi()
+bool Method_J::OpenFileMethodVoronoi()
 {
 
      std::string voroLocation(VORO_LOCATION);
      fs::path tmp("_id_"+_measureAreaId+".dat");
-     tmp =  _outputLocation / voroLocation / ("rho_v_Voronoi_V_" + _trajName.string() + tmp.string());
+     tmp =  _outputLocation / voroLocation / ("rho_v_Voronoi_J_" + _trajName.string() + tmp.string());
      string results_V= tmp.string();
 
      if((_fVoronoiRhoV=Analysis::CreateFile(results_V))==nullptr)
@@ -243,7 +243,7 @@ bool Method_Voronoi::OpenFileMethodVoronoi()
      }
 }
 
-bool Method_Voronoi::OpenFileIndividualFD()
+bool Method_J::OpenFileIndividualFD()
 {
      fs::path trajFileName("_id_"+_measureAreaId+".dat");
      fs::path indFDPath("Fundamental_Diagram");
@@ -268,7 +268,7 @@ bool Method_Voronoi::OpenFileIndividualFD()
      }
 }
 
-std::vector<std::pair<polygon_2d, int> > Method_Voronoi::GetPolygons(vector<double>& XInFrame, vector<double>& YInFrame, vector<double>& VInFrame, vector<int>& IdInFrame)
+std::vector<std::pair<polygon_2d, int> > Method_J::GetPolygons(vector<double>& XInFrame, vector<double>& YInFrame, vector<double>& VInFrame, vector<int>& IdInFrame)
 {
      VoronoiDiagram vd;
      //int NrInFrm = ids.size();
@@ -296,11 +296,11 @@ std::vector<std::pair<polygon_2d, int> > Method_Voronoi::GetPolygons(vector<doub
 /**
  * Output the Voronoi density and velocity in the corresponding file
  */
-void Method_Voronoi::OutputVoronoiResults(const vector<polygon_2d>&  polygons, const string& frid, const vector<double>& VInFrame)
+void Method_J::OutputVoronoiResults(const vector<polygon_2d>&  polygons, const string& frid, const vector<double>& VInFrame)
 {
      double VoronoiVelocity=1;
      double VoronoiDensity=-1;
-     std::tie(VoronoiDensity, VoronoiVelocity) = GetVoronoiDensityVelocity(polygons,VInFrame,_areaForMethod_Voronoi->_poly);
+     std::tie(VoronoiDensity, VoronoiVelocity) = GetVoronoiDensityVelocity(polygons,VInFrame,_areaForMethod_J->_poly);
      fprintf(_fVoronoiRhoV,"%s\t%.3f\t%.3f\n",frid.c_str(),VoronoiDensity, VoronoiVelocity);
 }
 
@@ -309,7 +309,7 @@ void Method_Voronoi::OutputVoronoiResults(const vector<polygon_2d>&  polygons, c
  * input: voronoi cell and velocity of each pedestrian and the measurement area
  * output: the voronoi density and velocity in the measurement area (tuple)
  */
-std::tuple<double,double> Method_Voronoi::GetVoronoiDensityVelocity(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const polygon_2d & measureArea)
+std::tuple<double,double> Method_J::GetVoronoiDensityVelocity(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const polygon_2d & measureArea)
 {
      double velocity=0;
      double density=0;
@@ -345,7 +345,7 @@ std::tuple<double,double> Method_Voronoi::GetVoronoiDensityVelocity(const vector
      return std::make_tuple(density, velocity);
 }
 // and velocity is calculated for every frame
-void Method_Voronoi::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
+void Method_J::GetProfiles(const string& frameId, const vector<polygon_2d>& polygons, const vector<double>& velocity)
 {
      std::string voroLocation(VORO_LOCATION);
      fs::path tmp("field");
@@ -396,7 +396,7 @@ void Method_Voronoi::GetProfiles(const string& frameId, const vector<polygon_2d>
      fclose(Prf_density);
 }
 
-void Method_Voronoi::OutputVoroGraph(const string & frameId,  std::vector<std::pair<polygon_2d, int> >& polygons_id, int numPedsInFrame,const vector<double>& VInFrame)
+void Method_J::OutputVoroGraph(const string & frameId,  std::vector<std::pair<polygon_2d, int> >& polygons_id, int numPedsInFrame,const vector<double>& VInFrame)
 {
      fs::path voroLocPath(_outputLocation);
      fs::path voro_location_path (VORO_LOCATION); // TODO: convert
@@ -486,7 +486,7 @@ void Method_Voronoi::OutputVoroGraph(const string & frameId,  std::vector<std::p
 
 }
 
-void Method_Voronoi::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const polygon_2d& measureArea, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame, vector<double>& ZInFrame)
+void Method_J::GetIndividualFD(const vector<polygon_2d>& polygon, const vector<double>& Velocity, const vector<int>& Id, const polygon_2d& measureArea, const string& frid, vector<double>& XInFrame, vector<double>& YInFrame, vector<double>& ZInFrame)
 {
      double uniquedensity=0;
      double uniquevelocity=0;
@@ -523,34 +523,34 @@ void Method_Voronoi::GetIndividualFD(const vector<polygon_2d>& polygon, const ve
      }
 }
 
-void Method_Voronoi::SetCalculateIndividualFD(bool individualFD)
+void Method_J::SetCalculateIndividualFD(bool individualFD)
 {
      _calcIndividualFD = individualFD;
 }
 
-void Method_Voronoi::SetStartFrame(int startFrame)
+void Method_J::SetStartFrame(int startFrame)
 {
      _startFrame=startFrame;
 }
 
-void Method_Voronoi::SetStopFrame(int stopFrame)
+void Method_J::SetStopFrame(int stopFrame)
 {
      _stopFrame=stopFrame;
 }
 
-void Method_Voronoi::Setcutbycircle(double radius,int edges)
+void Method_J::Setcutbycircle(double radius,int edges)
 {
      _cutByCircle=true;
      _cutRadius = radius;
      _circleEdges = edges;
 }
 
-void Method_Voronoi::SetGeometryPolygon(polygon_2d geometryPolygon)
+void Method_J::SetGeometryPolygon(polygon_2d geometryPolygon)
 {
      _geoPoly = geometryPolygon;
 }
 
-void Method_Voronoi::SetGeometryBoundaries(double minX, double minY, double maxX, double maxY)
+void Method_J::SetGeometryBoundaries(double minX, double minY, double maxX, double maxY)
 {
      _geoMinX = minX;
      _geoMinY = minY;
@@ -558,38 +558,38 @@ void Method_Voronoi::SetGeometryBoundaries(double minX, double minY, double maxX
      _geoMaxY = maxY;
 }
 
-void Method_Voronoi::SetGeometryFileName(const fs::path& geometryFile)
+void Method_J::SetGeometryFileName(const fs::path& geometryFile)
 {
      _geometryFileName=geometryFile;
 }
 
-void Method_Voronoi::SetTrajectoriesLocation(const fs::path& trajectoryPath)
+void Method_J::SetTrajectoriesLocation(const fs::path& trajectoryPath)
 {
      _trajectoryPath=trajectoryPath;
 }
 
-void Method_Voronoi::SetGridSize(double x, double y)
+void Method_J::SetGridSize(double x, double y)
 {
      _grid_size_X = x;
      _grid_size_Y = y;
 }
 
-void Method_Voronoi::SetCalculateProfiles(bool calcProfile)
+void Method_J::SetCalculateProfiles(bool calcProfile)
 {
      _getProfile =calcProfile;
 }
 
-void Method_Voronoi::SetMeasurementArea (MeasurementArea_B* area)
+void Method_J::SetMeasurementArea (MeasurementArea_B* area)
 {
-     _areaForMethod_Voronoi = area;
+     _areaForMethod_J = area;
 }
 
-void Method_Voronoi::SetDimensional (bool dimension)
+void Method_J::SetDimensional (bool dimension)
 {
      _isOneDimensional = dimension;
 }
 
-void Method_Voronoi::ReducePrecision(polygon_2d& polygon)
+void Method_J::ReducePrecision(polygon_2d& polygon)
 {
      for(auto&& point:polygon.outer())
      {
@@ -598,7 +598,7 @@ void Method_Voronoi::ReducePrecision(polygon_2d& polygon)
      }
 }
 
-void Method_Voronoi::CalcVoronoiResults1D(vector<double>& XInFrame, vector<double>& VInFrame, vector<int>& IdInFrame, const polygon_2d & measureArea,const string& frid)
+void Method_J::CalcVoronoiResults1D(vector<double>& XInFrame, vector<double>& VInFrame, vector<int>& IdInFrame, const polygon_2d & measureArea,const string& frid)
 {
      vector<double> measurearea_x;
      for(unsigned int i=0;i<measureArea.outer().size();i++)
@@ -662,7 +662,7 @@ void Method_Voronoi::CalcVoronoiResults1D(vector<double>& XInFrame, vector<doubl
 
 }
 
-double Method_Voronoi::getOverlapRatio(const double& left, const double& right, const double& measurearea_left, const double& measurearea_right)
+double Method_J::getOverlapRatio(const double& left, const double& right, const double& measurearea_left, const double& measurearea_right)
 {
      double OverlapRatio=0;
      double PersonalSpace=right-left;
@@ -685,7 +685,7 @@ double Method_Voronoi::getOverlapRatio(const double& left, const double& right, 
      return OverlapRatio;
 }
 
-bool Method_Voronoi::IsPointsOnOneLine(vector<double>& XInFrame, vector<double>& YInFrame)
+bool Method_J::IsPointsOnOneLine(vector<double>& XInFrame, vector<double>& YInFrame)
 {
      double deltaX=XInFrame[1] - XInFrame[0];
      bool isOnOneLine=true;

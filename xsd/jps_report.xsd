@@ -311,7 +311,7 @@
             <xs:attribute type="xs:string" name="enabled"  use="required"/>
           </xs:complexType>
         </xs:element>
-        <xs:element name="method_Voronoi">
+        <xs:element name="method_J">
           <xs:annotation>
             <xs:documentation>Method Voronoi density and velocity</xs:documentation>
           </xs:annotation>

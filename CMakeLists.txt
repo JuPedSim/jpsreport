@@ -181,7 +181,7 @@ set(methods
   methods/Method_C.cpp
   methods/Method_D.cpp
   methods/Method_I.cpp
-  methods/Method_Voronoi.cpp
+  methods/Method_J.cpp
   )
 set(source_files
   Analysis.cpp
@@ -214,7 +214,7 @@ set (  header_files
   methods/Method_C.h
   methods/Method_D.h
   methods/Method_I.h
-  methods/Method_Voronoi.h
+  methods/Method_J.h
   IO/OutputHandler.h
   general/ArgumentParser.h
   general/Macros.h

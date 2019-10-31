@@ -86,11 +86,11 @@
     <cut_by_circle enabled="true" radius="1.0" edges="10"/>
 	</method_I>
 
-  <method_Voronoi enabled="true">
+  <method_J enabled="true">
     <measurement_area id="5" start_frame="None" stop_frame="None" get_individual_FD="true"/>
     <one_dimensional enabled="false"/>
     <cut_by_circle enabled="true" radius="1.0" edges="10"/>
     <profiles enabled="false" grid_size_x="0.20" grid_size_y="0.20"/>
-  </method_Voronoi>
+  </method_J>
 
 </JPSreport>

@@ -18,17 +18,17 @@ title: JuPedSim/jpsreport
 
 # version of the release
 
-version: '0.8.1'
+version: '0.8.5'
 
 # Short description of your site
-description: Analysis of trajectories of pedestrians 
+description: Analysis of trajectories of pedestrians
 
 # --- Navigation bar options --- #
 
 # List of links in the navigation bar
 navbar-links:
   Ressources:
-    - JuPedSim: "http://www.jupedsim.org"      
+    - JuPedSim: "http://www.jupedsim.org"
     - Inifile: "2016-11-01-inifile"
     - Geometry: "2016-11-02-geometry"
     - Trajectory: "2016-11-03-trajectory"
@@ -38,6 +38,7 @@ navbar-links:
     - Method B: "2016-11-05-method-b"
     - Method C: "2016-11-06-method-c"
     - Method D: "2016-11-07-method-d"
+    - Method J: "2019-11-01-method-j"
 
   Samples:
      - Fundamental Diagram: "2016-11-08-fd"

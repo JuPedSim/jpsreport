@@ -33,6 +33,7 @@
 #define ANALYSIS_H_
 
 #include "general/ArgumentParser.h"
+#include <tinyxml.h>
 #include "tinyxml/tinyxml.h"
 #include "geometry/Building.h"
 #include "IO/OutputHandler.h"

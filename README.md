@@ -1,3 +1,5 @@
+This project has been integrated into [JuPedSim core](https://github.com/JuPedSim/jpscore).
+
 # JPSreport
 
 [![Build Status](https://travis-ci.com/JuPedSim/jpsreport.svg?branch=develop)](https://travis-ci.com/JuPedSim/jpsreport)

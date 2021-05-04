@@ -8,7 +8,7 @@ from sys import argv, path, stdout
 import logging
 
 
-utestdir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(path[0]))))
+utestdir = os.path.abspath(os.path.dirname(os.path.dirname(path[0])))
 path.append(utestdir)
 
 path.append(os.path.dirname(path[0]))

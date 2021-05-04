@@ -1,0 +1,15 @@
+---
+Checks: >-
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  -modernize-use-nodiscard,
+  performance-*,
+  portability-*,
+  readability-*,
+  google-explicit-constructor
+WarningsAsErrors:    '*'
+HeaderFilterRegex:   '.*'
+FormatStyle:         file

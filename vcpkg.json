@@ -1,0 +1,19 @@
+{
+  "name": "jpsreport",
+  "version-string": "0.1.0-dev",
+  "maintainers": [ "T. Schroedter" ],
+  "description": "Juelich Pedestrian Dynamics Simulator",
+  "homepage": "http://jupedsim.org",
+  "dependencies": [
+    "boost-foreach",
+    "boost-geometry",
+    "boost-polygon",
+    "boost-algorithm",
+    "boost-range",
+    "boost-ublas",
+    "fmt",
+    "spdlog",
+    "catch2",
+    "cli11"
+  ]
+}

@@ -6,7 +6,7 @@ import os
 from sys import argv, path
 import logging
 
-utestdir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(path[0]))))
+utestdir = os.path.abspath(os.path.dirname(os.path.dirname(path[0])))
 path.append(utestdir)
 path.append(os.path.dirname(path[0]))  # source helper file
 from tests_method_D import test_cut_off_density

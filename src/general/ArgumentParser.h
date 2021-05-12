@@ -30,8 +30,8 @@
 
 #include "../methods/ConfigData_D.h"
 #include "../methods/MeasurementArea.h"
-#include "tinyxml.h"
 #include "Macros.h"
+#include "tinyxml.h"
 
 #include <boost/geometry/geometries/adapted/c_array.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -126,9 +126,9 @@ public:
     MeasurementArea * GetMeasurementArea(int id);
 
     /**
-      * parse the initialization file
-      * @param inifile
-      */
+     * parse the initialization file
+     * @param inifile
+     */
     bool ParseInputFiles(const std::string & inifile);
 
     const std::vector<polygon_2d> & GetGeometry() const;

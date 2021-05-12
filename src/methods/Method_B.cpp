@@ -94,7 +94,7 @@ void Method_B::GetTinTout(int numFrames)
         IsinMeasurezone[i] = false;
     }
     _DensityPerFrame = new double[numFrames];
-    //Method_C method_C;
+    // Method_C method_C;
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
         vector<int> ids       = _peds_t[frameNr];
         int pedsinMeasureArea = 0;
@@ -133,7 +133,8 @@ void Method_B::GetFundamentalTinTout(double * DensityPerFrame, double LengthMeas
     fs::path tmp("_id_" + _measureAreaId + ".dat");
     tmp = _outputLocation / "Fundamental_Diagram" / "TinTout" /
           ("FDTinTout_" + _trajName.string() + tmp.string());
-    //     string fdTinTout=_outputLocation.string()+"Fundamental_Diagram/TinTout/FDTinTout_"+_trajName+"_id_"+_measureAreaId+".dat";
+    //     string
+    //     fdTinTout=_outputLocation.string()+"Fundamental_Diagram/TinTout/FDTinTout_"+_trajName+"_id_"+_measureAreaId+".dat";
     string fdTinTout = tmp.string();
 
     if((fFD_TinTout = Analysis::CreateFile(fdTinTout)) == nullptr) {

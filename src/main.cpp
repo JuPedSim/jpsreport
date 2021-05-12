@@ -31,8 +31,8 @@
 
 #include "Analysis.h"
 #include "general/ArgumentParser.h"
-
 #include "general/Logger.h"
+
 #include <chrono>
 #include <exception>
 #include <stdexcept>
@@ -71,7 +71,7 @@ int main(int argc, char ** argv)
         LOG_INFO("Finishing...");
     }
 
-    //do the last cleaning
+    // do the last cleaning
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     float duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000000.0;

@@ -28,19 +28,19 @@
 
 #include "Method_D.h"
 
+#include "../general/Logger.h"
 #include "../general/Macros.h"
 #include "ConfigData_D.h"
 
-#include "../general/Logger.h"
 #include <cmath>
 #include <iostream>
 #include <map>
 #include <tuple>
 #include <vector>
 
-//using std::string;
-//using std::vector;
-//using std::ofstream;
+// using std::string;
+// using std::vector;
+// using std::ofstream;
 using namespace std;
 
 
@@ -84,8 +84,10 @@ bool Method_D::Process(
     _densityType      = configData.densityType;
     _velocityType     = configData.velocityType;
 
-    // global options are calculated only once --> default: false, change to true for corresponding measurement areas
-    // TODO: should be changed in future. There should be a function for processing global data (once) which are measurement area independent
+    // global options are calculated only once --> default: false, change to true for corresponding
+    // measurement areas
+    // TODO: should be changed in future. There should be a function for processing global data
+    // (once) which are measurement area independent
     bool _calcProfileOnly   = false;
     bool _calcGlobalIFDOnly = false;
 
@@ -120,7 +122,8 @@ bool Method_D::Process(
         }
     }
 
-    // open file for general Method D output. should not be done if global_IFD or profile option is enabled
+    // open file for general Method D output. should not be done if global_IFD or profile option is
+    // enabled
     if(!_calcGlobalIFDOnly && !_calcProfileOnly && !OpenFileMethodD(_isOneDimensional)) {
         return_value = false;
     }
@@ -135,7 +138,7 @@ bool Method_D::Process(
     for(const auto & ite : _pedIDsByFrameNr) {
         int frameNr = ite.first;
         int frid    = frameNr + minFrame;
-        //padd the frameid with 0
+        // padd the frameid with 0
         std::ostringstream ss;
         ss << std::setw(5) << std::setfill('0') << std::internal << frid;
         const std::string str_frid = ss.str();
@@ -154,7 +157,8 @@ bool Method_D::Process(
             continue;
         }
 
-        //------------------------------Remove peds outside geometry------------------------------------------
+        //------------------------------Remove peds outside
+        // geometry------------------------------------------
         for(size_t i = 0; i < static_cast<size_t>(IdInFrame.size()); i++) {
             if(!within(point_2d(round(XInFrame[i]), round(YInFrame[i])), _geoPoly)) {
                 LOG_WARNING(
@@ -186,7 +190,8 @@ bool Method_D::Process(
                     str_frid,
                     _calcLocalIFD);
             } else {
-                // TODO: not sure what is happening here?? Positions are shifted when they are on the same line?
+                // TODO: not sure what is happening here?? Positions are shifted when they are on
+                // the same line?
                 if(ArePointsOnOneLine(XInFrame, YInFrame)) {
                     if(fabs(XInFrame[1] - XInFrame[0]) < DMIN) {
                         XInFrame[1] += JPS_OFFSET;
@@ -373,9 +378,10 @@ void Method_D::OutputVoronoiResults(
 }
 
 /**
- * Calculate the voronoi density according to voronoi cell of each pedestrian. Velocity calculation is initiated based in the chosen option (default voronoi).
- * input: voronoi cell and velocity of each pedestrian and the measurement area
- * output: the voronoi density and velocity in the measurement area (tuple)
+ * Calculate the voronoi density according to voronoi cell of each pedestrian. Velocity calculation
+ * is initiated based in the chosen option (default voronoi). input: voronoi cell and velocity of
+ * each pedestrian and the measurement area output: the voronoi density and velocity in the
+ * measurement area (tuple)
  */
 std::tuple<double, double> Method_D::CalcDensityVelocity(
     const polygon_list & polygons,
@@ -414,8 +420,9 @@ std::tuple<double, double> Method_D::CalcDensityVelocity(
                 LOG_WARNING("{}", stringStream.str());
             }
 
-            //store intersecting polygon and individual Velocity for velocity calculation
-            // TODO data handling must be improved. two separate vectors are maintained here. related data should be stored in a common data structure.
+            // store intersecting polygon and individual Velocity for velocity calculation
+            // TODO data handling must be improved. two separate vectors are maintained here.
+            // related data should be stored in a common data structure.
             intersectingPolygons.push_back(currentIntersectingPolygon[0]);
             correspondingVelocities.push_back(VInFrame[i]);
         }
@@ -464,13 +471,13 @@ void Method_D::GetProfiles(
         exit(EXIT_FAILURE);
     }
 
-    int NRow = (int) ceil(
-        (_geoMaxY - _geoMinY) /
-        _grid_size_Y); // the number of rows that the geometry will be discretized for field analysis
-    int NColumn = (int) ceil(
-        (_geoMaxX - _geoMinX) /
-        _grid_size_X); //the number of columns that the geometry will be discretized for field analysis
-    for(int row_i = 0; row_i < NRow; row_i++) { //
+    int NRow =
+        (int) ceil((_geoMaxY - _geoMinY) / _grid_size_Y); // the number of rows that the geometry
+                                                          // will be discretized for field analysis
+    int NColumn =
+        (int) ceil((_geoMaxX - _geoMinX) / _grid_size_X); // the number of columns that the geometry
+                                                          // will be discretized for field analysis
+    for(int row_i = 0; row_i < NRow; row_i++) {           //
         for(int colum_j = 0; colum_j < NColumn; colum_j++) {
             polygon_2d measurezoneXY;
             {
@@ -487,8 +494,8 @@ void Method_D::GetProfiles(
                 };
                 assign_points(measurezoneXY, coor);
             }
-            correct(
-                measurezoneXY); // Polygons should be closed, and directed clockwise. If you're not sure if that is the case, call this function
+            correct(measurezoneXY); // Polygons should be closed, and directed clockwise. If you're
+                                    // not sure if that is the case, call this function
             auto [densityXY, velocityXY] = CalcDensityVelocity(polygons, velocity, measurezoneXY);
             fprintf(Prf_density, "%.3f\t", densityXY);
             fprintf(Prf_velocity, "%.3f\t", velocityXY);
@@ -671,7 +678,7 @@ double Method_D::getOverlapRatio(
 {
     double OverlapRatio  = 0;
     double PersonalSpace = right - left;
-    if(left > measurearea_left && right < measurearea_right) //case1
+    if(left > measurearea_left && right < measurearea_right) // case1
     {
         OverlapRatio = 1;
     } else if(right > measurearea_left && right < measurearea_right && left < measurearea_left) {

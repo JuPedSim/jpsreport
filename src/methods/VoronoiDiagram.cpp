@@ -64,19 +64,19 @@ std::vector<std::pair<polygon_2d, int>> VoronoiDiagram::getVoronoiPolygons(
         XInFrame.push_back(XInFrame[0] + 10 * M2CM);
         YInFrame.push_back(YInFrame[0] + 10 * M2CM);
         VInFrame.push_back(VInFrame[0]);
-        //IdInFrame.push_back(IdInFrame[0]+1);
+        // IdInFrame.push_back(IdInFrame[0]+1);
         IdInFrame.push_back(-1);
         // up left
         XInFrame.push_back(XInFrame[0] - 10 * M2CM);
         YInFrame.push_back(YInFrame[0] + 10 * M2CM);
         VInFrame.push_back(VInFrame[0]);
-        //IdInFrame.push_back(IdInFrame[0]+2);
+        // IdInFrame.push_back(IdInFrame[0]+2);
         IdInFrame.push_back(-2);
         // down right
         XInFrame.push_back(XInFrame[0] + 10 * M2CM);
         YInFrame.push_back(YInFrame[0] - 10 * M2CM);
         VInFrame.push_back(VInFrame[0]);
-        //IdInFrame.push_back(IdInFrame[0]+3);
+        // IdInFrame.push_back(IdInFrame[0]+3);
         IdInFrame.push_back(-3);
         // down left
         XInFrame.push_back(XInFrame[0] - 10 * M2CM);
@@ -92,14 +92,15 @@ std::vector<std::pair<polygon_2d, int>> VoronoiDiagram::getVoronoiPolygons(
         YInFrame_temp.push_back(round(YInFrame[i]));
         VInFrame_temp.push_back(VInFrame[i]);
         IdInFrame_temp.push_back(IdInFrame[i]);
-        // std::cout << "i: " << i << " Id " << IdInFrame[i] << "  pos = " << XInFrame[i] << ", " << YInFrame[i] << "\n";
+        // std::cout << "i: " << i << " Id " << IdInFrame[i] << "  pos = " << XInFrame[i] << ", " <<
+        // YInFrame[i] << "\n";
     }
 
 
     VD voronoidiagram;
     construct_voronoi(points.begin(), points.end(), &voronoidiagram);
     int Ncell = 0;
-    //std::vector<polygon_2d> polygons;
+    // std::vector<polygon_2d> polygons;
     std::vector<std::pair<polygon_2d, int>> polygons_id;
     double Bd_Box_minX = -Bound_Max;
     double Bd_Box_minY = -Bound_Max;
@@ -218,8 +219,8 @@ std::vector<std::pair<polygon_2d, int>> VoronoiDiagram::getVoronoiPolygons(
         }
 
         boost::geometry::correct(poly);
-        //polygons.push_back(poly);
-        //cout << "poly is: " << typeid(poly).name() << '\n'
+        // polygons.push_back(poly);
+        // cout << "poly is: " << typeid(poly).name() << '\n'
         int id_ped                         = IdInFrame[Ncell];
         std::pair<polygon_2d, int> poly_id = std::make_pair(poly, id_ped);
         if(id_ped < 0) {
@@ -418,7 +419,8 @@ vector<point_type2> VoronoiDiagram::add_bounding_points(
 }
 
 
-//-----------In getIntersectionPoint() the edges of the square is  vertical or horizontal segment--------------
+//-----------In getIntersectionPoint() the edges of the square is  vertical or horizontal
+// segment--------------
 point_type2 VoronoiDiagram::getIntersectionPoint(
     const point_2d & pt0,
     const point_2d & pt1,
@@ -462,8 +464,8 @@ std::vector<std::pair<polygon_2d, int>> VoronoiDiagram::cutPolygonsWithGeometry(
             // std::cout << "v" << temp << " = " << dsv(it) << "\n";
             if(within(point_2d(xs[temp], ys[temp]), it)) {
                 // std::cout << "within " << temp << ": " << xs[temp] << ", " << ys[temp] << "\n";
-                //check and remove duplicates
-                //dispatch::unique (it);
+                // check and remove duplicates
+                // dispatch::unique (it);
                 polygon_2d simplified;
                 simplify(it, simplified, J_EPS);
 
@@ -508,8 +510,8 @@ std::vector<std::pair<polygon_2d, int>> VoronoiDiagram::cutPolygonsWithCircle(
             // std::cout << "check " << temp << ": " << xs[temp] << ", " << ys[temp] << "\n";
             if(within(point_2d(xs[temp], ys[temp]), it)) {
                 // std::cout << "within " << temp << ": " << xs[temp] << ", " << ys[temp] << "\n";
-                //check and remove duplicates
-                //dispatch::unique (it);
+                // check and remove duplicates
+                // dispatch::unique (it);
                 polygon_2d simplified;
                 simplify(it, simplified, J_EPS);
                 correct(simplified);

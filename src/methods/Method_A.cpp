@@ -29,8 +29,8 @@
 #include "Method_A.h"
 
 #include "../Analysis.h"
-
 #include "../general/Logger.h"
+
 #include <fstream>
 #include <iostream>
 
@@ -78,7 +78,7 @@ bool Method_A::Process(
     bool PedInGeometry = false;
     for(std::map<int, std::vector<int>>::iterator ite = _peds_t.begin(); ite != _peds_t.end();
         ite++) {
-        int frameNr = ite->first;                      //index starts by 0
+        int frameNr = ite->first;                      // index starts by 0
         int frid    = frameNr + peddata.GetMinFrame(); // frame in traj file
         if(!(frid % 100)) {
             LOG_INFO("frame ID = {}", frid);
@@ -117,7 +117,7 @@ void Method_A::WriteFile_N_t(string data)
         fs::path tmp2 = _outputLocation / FD_FlowVelocity;
         // _outputLocation.string()+"Fundamental_Diagram/FlowVelocity/";
         string METHOD_A_LOCATION = tmp2.string();
-        //string file_N_t ="Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
+        // string file_N_t ="Flow_NT_"+_trajName+"_id_"+_measureAreaId+".dat";
         string file_N_t = fN_t; //@todo: this is redundant
     } else {
         LOG_ERROR("could not create the file {}", fN_t);
@@ -190,7 +190,7 @@ void Method_A::FlowRate_Velocity(
     }
     fprintf(fFD_FlowVelocity, "#Flow rate(1/s)	\t Mean velocity(m/s)\n");
     int TotalTime = AccumPeds.size();         // the total Frame of in the data file
-    int TotalPeds = AccumPeds[TotalTime - 1]; //the total pedestrians in the data file
+    int TotalPeds = AccumPeds[TotalTime - 1]; // the total pedestrians in the data file
     if(TotalPeds > 0) {
         int firstPassT = -1; // the first time that there are pedestrians pass the line
         int * pedspassT =
@@ -208,8 +208,8 @@ void Method_A::FlowRate_Velocity(
             }
         }
         for(int i = firstPassT + _deltaT; i < TotalTime; i += _deltaT) {
-            int N1 = AccumPeds
-                [i - _deltaT]; // the total number of pedestrians pass the line at this time
+            int N1 = AccumPeds[i - _deltaT]; // the total number of pedestrians pass the line at
+                                             // this time
             int N2   = AccumPeds[i];
             int t_N1 = pedspassT[N1];
             int t_N2 = pedspassT[N2];

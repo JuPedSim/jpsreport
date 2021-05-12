@@ -56,8 +56,8 @@ private:
     float _fps;
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
-    int * _tIn;                           //the time for each pedestrian enter the measurement area
-    int * _tOut;                          //the time for each pedestrian exit the measurement area
+    int * _tIn;                           // the time for each pedestrian enter the measurement area
+    int * _tOut;                          // the time for each pedestrian exit the measurement area
     std::vector<point_2d> _entrancePoint; // where pedestrian enters the measurement area
     std::vector<point_2d> _exitPoint;     // where pedestrian leaves the measurement area
     double * _DensityPerFrame;            // the measured density in each frame

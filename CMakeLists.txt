@@ -234,7 +234,7 @@ add_subdirectory(src)
 if(UNIX)
     find_program(CLANG_FORMAT
         NAMES
-            clang-format-10
+            clang-format-11
             clang-format
     )
     if(CLANG_FORMAT)
@@ -251,7 +251,7 @@ if(UNIX)
                 version
                 "${version_string}"
             )
-            if(version MATCHES "^10.*")
+            if(version MATCHES "^11.*")
                 message(STATUS "Found clang-format ${version}, add format-check and reformat targets")
                 set(folders src tests)
                 add_custom_target(check-format

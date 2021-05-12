@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y wget \
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6084F3CF814B57C1CF12EFD515CF4D18AF4F7421 && \
     add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main" && \
     apt-get update && \
-    apt-get install -y clang-format-10
+    apt-get install -y clang-format-11
 
 
 COPY scripts/setup-deps.sh /opt/

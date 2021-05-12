@@ -63,32 +63,32 @@ public:
     void InitArgs(ArgumentParser * args);
 
     /**
-      * Run the analysis for different files.
-      * @param file
-      * @param path
-      * @return
-      */
+     * Run the analysis for different files.
+     * @param file
+     * @param path
+     * @return
+     */
     int RunAnalysis(const fs::path & file, const fs::path & path);
 
     /**
-      * return the base name from the string.
-      * // file.txt ---> file
-      * @param str
-      */
+     * return the base name from the string.
+     * // file.txt ---> file
+     * @param str
+     */
     std::string GetBasename(const std::string & str);
 
     /**
-      * extract the filename from the path
-      * // c:\\windows\\winhelp.exe ---> winhelp.exe
-      * @param str
-      */
+     * extract the filename from the path
+     * // c:\\windows\\winhelp.exe ---> winhelp.exe
+     * @param str
+     */
     std::string GetFilename(const std::string & str);
 
     /**
-      * create a file and the directory structure if needed.
-      * @param filename
-      * @return
-      */
+     * create a file and the directory structure if needed.
+     * @param filename
+     * @return
+     */
     static FILE * CreateFile(const std::string & filename);
 
 private:
@@ -119,15 +119,16 @@ private:
     double _lowVertexY;  //  LOWest vertex of the geometry (y coordinate)
     double _highVertexX; // Highest vertex of the geometry
     double _highVertexY;
-    int _deltaF; // half of the time interval that used to calculate instantaneous velocity of ped i.
+    int _deltaF; // half of the time interval that used to calculate instantaneous velocity of ped
+                 // i.
     std::vector<int> _deltaT; // the time interval to calculate the classic flow
     bool _DoesUseMethodA;     // Method A (Zhang2011a)
     bool _DoesUseMethodB;     // Method B (Zhang2011a)
     bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
     bool _DoesUseMethodD;     // Method D--Voronoi method
 
-    std::string
-        _vComponent; // to mark whether x, y or x and y coordinate are used when calculating the velocity
+    std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
+                             // the velocity
     bool _IgnoreBackwardMovement;
 
     fs::path _projectRootDir;

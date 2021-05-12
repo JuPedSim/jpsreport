@@ -30,6 +30,7 @@
 
 #include "Analysis.h"
 
+#include "general/Logger.h"
 #include "methods/Method_A.h"
 #include "methods/Method_B.h"
 #include "methods/Method_C.h"
@@ -37,7 +38,6 @@
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
-#include "general/Logger.h"
 #include <algorithm> // std::min_element, std::max_element
 #include <cfloat>
 #include <fmt/format.h>
@@ -69,8 +69,8 @@ using namespace std;
 Analysis::Analysis()
 {
     _projectRootDir = "";
-    _deltaF =
-        5; // half of the time interval that used to calculate instantaneous velocity of ped i. Here v_i = (X(t+deltaF) - X(t+deltaF))/(2*deltaF).   X is location.
+    _deltaF = 5; // half of the time interval that used to calculate instantaneous velocity of ped
+                 // i. Here v_i = (X(t+deltaF) - X(t+deltaF))/(2*deltaF).   X is location.
     _DoesUseMethodA = false; // Method A (Zhang2011a)
     _DoesUseMethodB = false; // Method B (Zhang2011a)
     _DoesUseMethodC = false; // Method C //calculate and save results of classic in separate file
@@ -112,7 +112,8 @@ void Analysis::InitArgs(ArgumentParser * args)
         box.min_corner().y() * CMtoM,
         box.max_corner().y() * CMtoM);
 
-    // TODO Same default MA can be used for profiles and globalIFD, currently only the polygon is reused
+    // TODO Same default MA can be used for profiles and globalIFD, currently only the polygon is
+    // reused
     if(args->GetIsMethodA()) {
         _DoesUseMethodA                  = true;
         vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodA();
@@ -182,9 +183,9 @@ Analysis::GetRoomForMeasurementArea(const std::vector<MeasurementArea_B *> & are
 {
     std::map<int, polygon_2d> geoPoly;
 
-    //loop over all areas
+    // loop over all areas
     for(auto && area : areas) {
-        //search for the subroom that contains that area
+        // search for the subroom that contains that area
         for(auto && room : _geometry) {
             point_2d point(0, 0);
             boost::geometry::centroid(area->_poly, point);
@@ -260,7 +261,8 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
         return EXIT_FAILURE;
     }
 
-    //-----------------------------check whether there is pedestrian outside the whole geometry--------------------------------------------
+    //-----------------------------check whether there is pedestrian outside the whole
+    // geometry--------------------------------------------
     std::map<int, std::vector<int>> _peds_t = data.GetPedIDsByFrameNr();
     for(int frameNr = 0; frameNr < data.GetNumFrames(); frameNr++) {
         vector<int> ids         = _peds_t[frameNr];
@@ -284,7 +286,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    if(_DoesUseMethodA) //Method A
+    if(_DoesUseMethodA) // Method A
     {
         if(_areasForMethodA.empty()) {
             LOG_ERROR("Method A selected with no measurement area!");
@@ -308,7 +310,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
         }
     }
 
-    if(_DoesUseMethodB) //Method_B
+    if(_DoesUseMethodB) // Method_B
     {
         if(_areasForMethodB.empty()) {
             LOG_ERROR("Method B selected with no measurement area!");
@@ -332,7 +334,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
         }
     }
 
-    if(_DoesUseMethodC) //Method C
+    if(_DoesUseMethodC) // Method C
     {
         if(_areasForMethodC.empty()) {
             LOG_ERROR("Method C selected with no measurement area!");
@@ -355,7 +357,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
         }
     }
 
-    if(_DoesUseMethodD) //method_D
+    if(_DoesUseMethodD) // method_D
     {
         if(_areasForMethodD.empty()) {
             LOG_ERROR("Method D selected with no measurement area!");
@@ -398,7 +400,7 @@ FILE * Analysis::CreateFile(const string & filename)
         LOG_INFO("create the directory <{}>", filepath.string());
     }
 
-    //create the file
+    // create the file
     FILE * fHandle = fopen(filename.c_str(), "w");
     return fHandle;
 }

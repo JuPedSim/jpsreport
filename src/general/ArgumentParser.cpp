@@ -27,18 +27,18 @@
  **/
 #include "ArgumentParser.h"
 
-#include "Compiler.h"
 #include "../Analysis.h"
+#include "Compiler.h"
+#include "Logger.h"
 #include "tinyxml.h"
 
-#include "Logger.h"
 #include <boost/range/iterator_range.hpp>
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <cmath>
 #include <numeric>
 #include <optional>
 #include <sstream>
@@ -106,7 +106,7 @@ ArgumentParser::ArgumentParser()
 
 bool ArgumentParser::ParseArgs(int argc, char ** argv)
 {
-    //special case of the default configuration ini.xml
+    // special case of the default configuration ini.xml
     if(argc == 1) {
         LOG_INFO("Trying to load the default configuration from the file <ini.xml>");
         if(!ParseInputFiles("ini.xml")) {
@@ -125,7 +125,7 @@ bool ArgumentParser::ParseArgs(int argc, char ** argv)
     }
 
     // other special case where a single configuration file is submitted
-    //check if inifile options are given
+    // check if inifile options are given
     if(argc == 2) {
         string prefix1 = "--ini=";
         string prefix2 = "--inifile=";
@@ -138,7 +138,7 @@ bool ArgumentParser::ParseArgs(int argc, char ** argv)
         return ParseInputFiles(argument);
     }
 
-    //more than one argument was supplied
+    // more than one argument was supplied
     Usage(argv[0]);
     return false;
 }
@@ -157,7 +157,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
 {
     Logs();
     LOG_INFO("Parsing the ini file <{}>", inifile);
-    //extract and set the project root dir
+    // extract and set the project root dir
     fs::path p(inifile);
     _projectRootDir = weakly_canonical(p).parent_path();
     TiXmlDocument doc(inifile.string());
@@ -177,7 +177,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         return false;
     }
 
-    //geometry
+    // geometry
     if(xMainNode->FirstChild("geometry")) {
         fs::path pathGeo(xMainNode->FirstChildElement("geometry")->Attribute("file"));
         _geometryFileName = GetProjectRootDir() / pathGeo;
@@ -189,10 +189,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         LOG_INFO("Geometry File is: <{}>", _geometryFileName.string());
     }
 
-    //trajectories
+    // trajectories
     TiXmlNode * xTrajectories = xMainNode->FirstChild("trajectories");
     if(xTrajectories) {
-        //add the extension point
+        // add the extension point
         string fmt =
             "." + string(xmltoa(xMainNode->FirstChildElement("trajectories")->Attribute("format")));
         LOG_INFO("Format of the trajectory file is: <{}>", fmt);
@@ -211,14 +211,14 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
             LOG_WARNING("only <m> unit is supported. Convert your units.");
             return false;
         }
-        //a file descriptor was given
+        // a file descriptor was given
         for(TiXmlElement * xFile = xTrajectories->FirstChildElement("file"); xFile;
             xFile                = xFile->NextSiblingElement("file")) {
-            //collect all the files given
+            // collect all the files given
             _trajectoriesFilename = fs::path(xFile->Attribute("name"));
             _trajectoriesFiles.push_back(_trajectoriesFilename);
 
-            //check if the given file match the format
+            // check if the given file match the format
             if(boost::algorithm::ends_with(_trajectoriesFilename.string(), fmt)) {
                 LOG_INFO("Input trajectory file is <{}>", _trajectoriesFilename.string());
             } else {
@@ -268,7 +268,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
-    //max CPU
+    // max CPU
     if(xMainNode->FirstChild("num_threads")) {
         TiXmlNode * numthreads = xMainNode->FirstChild("num_threads")->FirstChild();
         if(numthreads) {
@@ -304,7 +304,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
     LOG_INFO("Output directory for results is: <{}>", _outputDir.string());
 
-    //measurement area
+    // measurement area
     if(xMainNode->FirstChild("measurement_areas")) {
         string unit = "";
         if(xMainNode->FirstChildElement("measurement_areas")->Attribute("unit"))
@@ -336,7 +336,8 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
             int num_verteces = 0;
             for(TiXmlElement * xVertex = xMeasurementArea_B->FirstChildElement("vertex"); xVertex;
                 xVertex                = xVertex->NextSiblingElement("vertex")) {
-                // Note: Attributes are optional, their existence needs to be checked since xmltof returns 0.0 if unknown
+                // Note: Attributes are optional, their existence needs to be checked since xmltof
+                // returns 0.0 if unknown
                 if(xVertex->Attribute("x") != nullptr && xVertex->Attribute("y") != nullptr) {
                     // DEPRECATED FORMAT should be removed in future
                     double box_px = xmltof(xVertex->Attribute("x")) * M2CM;
@@ -403,7 +404,8 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 xMeasurementArea_L->FirstChildElement("start")->Attribute("px") != nullptr &&
                 xMeasurementArea_L->FirstChildElement("start")->Attribute("py") != nullptr) {
                 // NEW FORMAT
-                // Note: argument can be changed to "required" (once the deprecated format is removed), existence would no longer need to be checked
+                // Note: argument can be changed to "required" (once the deprecated format is
+                // removed), existence would no longer need to be checked
                 areaL->_lineStartX =
                     xmltof(xMeasurementArea_L->FirstChildElement("start")->Attribute("px")) * M2CM;
                 areaL->_lineStartY =
@@ -424,7 +426,8 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 xMeasurementArea_L->FirstChildElement("end")->Attribute("px") != nullptr &&
                 xMeasurementArea_L->FirstChildElement("end")->Attribute("py") != nullptr) {
                 // NEW FORMAT
-                // Note: argument can be changed to "required" (once the deprecated format is removed), existence would no longer need to be checked
+                // Note: argument can be changed to "required" (once the deprecated format is
+                // removed), existence would no longer need to be checked
                 areaL->_lineEndX =
                     xmltof(xMeasurementArea_L->FirstChildElement("end")->Attribute("px")) * M2CM;
                 areaL->_lineEndY =
@@ -443,7 +446,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 areaL->_lineEndY * CMtoM);
         }
     }
-    //instantaneous velocity
+    // instantaneous velocity
     TiXmlNode * xVelocity = xMainNode->FirstChild("velocity");
     if(xVelocity) {
         string FrameSteps = "10";
@@ -497,8 +500,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         if(string(xMethod_A->Attribute("enabled")) == "true") {
             _isMethodA = true;
             LOG_INFO("Method A is selected");
-            /*               _timeIntervalA = xmltoi(xMethod_A->FirstChildElement("frame_interval")->GetText());
-                 Log->Write("INFO: \tFrame interval used for calculating flow in Method A is <%d> frame",_timeIntervalA);*/
+            /*               _timeIntervalA =
+               xmltoi(xMethod_A->FirstChildElement("frame_interval")->GetText());
+                 Log->Write("INFO: \tFrame interval used for calculating flow in Method A is <%d>
+               frame",_timeIntervalA);*/
             for(TiXmlElement * xMeasurementArea =
                     xMainNode->FirstChildElement("method_A")->FirstChildElement("measurement_area");
                 xMeasurementArea;
@@ -638,7 +643,7 @@ std::optional<std::vector<polygon_2d>> ArgumentParser::ParseGeometry(const fs::p
         return std::nullopt;
     }
 
-    //processing the rooms node
+    // processing the rooms node
     TiXmlNode * xRoomsNode = xRootNode->FirstChild("rooms");
     if(!xRoomsNode) {
         LOG_ERROR("The geometry should have at least one room and one subroom");
@@ -650,15 +655,15 @@ std::optional<std::vector<polygon_2d>> ArgumentParser::ParseGeometry(const fs::p
         string room_id = xmltoa(xRoom->Attribute("id"), "-1");
 
         boost::geometry::model::multi_polygon<polygon_2d> room;
-        //parsing the subrooms
-        //processing the rooms node
+        // parsing the subrooms
+        // processing the rooms node
         for(TiXmlElement * xSubRoom = xRoom->FirstChildElement("subroom"); xSubRoom;
             xSubRoom                = xSubRoom->NextSiblingElement("subroom")) {
             polygon_2d subroom;
 
             string subroom_id = xmltoa(xSubRoom->Attribute("id"), "-1");
 
-            //looking for polygons (walls)
+            // looking for polygons (walls)
             for(TiXmlElement * xPolyVertices = xSubRoom->FirstChildElement("polygon");
                 xPolyVertices;
                 xPolyVertices = xPolyVertices->NextSiblingElement("polygon")) {
@@ -676,10 +681,10 @@ std::optional<std::vector<polygon_2d>> ArgumentParser::ParseGeometry(const fs::p
             correct(subroom);
 
             std::vector<polygon_2d> obstacles;
-            //looking for obstacles
+            // looking for obstacles
             for(TiXmlElement * xObstacle = xSubRoom->FirstChildElement("obstacle"); xObstacle;
                 xObstacle                = xObstacle->NextSiblingElement("obstacle")) {
-                //looking for polygons (walls)
+                // looking for polygons (walls)
                 polygon_2d obstacle;
 
                 for(TiXmlElement * xPolyVertices = xObstacle->FirstChildElement("polygon");
@@ -819,7 +824,8 @@ std::optional<ConfigData_D> ArgumentParser::ParseDIJParams(TiXmlElement * xMetho
             configData.stopFrames.push_back(-1);
         }
 
-        //TODO: restructuring needed. profiles option should be independet of MA so that start and stop frame can be set here.
+        // TODO: restructuring needed. profiles option should be independet of MA so that start and
+        // stop frame can be set here.
         // create MA with polygon points outside the geometry
         MeasurementArea_B * areaB = new MeasurementArea_B();
         areaB->_id                = -2;
@@ -843,9 +849,9 @@ std::optional<ConfigData_D> ArgumentParser::ParseDIJParams(TiXmlElement * xMetho
     if(xMethod->FirstChildElement("vel_calculation") &&
        string(xMethod->FirstChildElement("vel_calculation")->Attribute("type")) == "Arithmetic") {
         /** Arithmetic velocity calculation is chosen.
-         * Calculates the velocity of pedestrians based as arithmetic mean of their instantaneous velocity.
-         * Method is independent of size of Voronoi cells.
-        **/
+         * Calculates the velocity of pedestrians based as arithmetic mean of their instantaneous
+         *velocity. Method is independent of size of Voronoi cells.
+         **/
         configData.velocityCalcFunc = [](const polygon_list & polygons,
                                          const vector<double> & individualVelocity,
                                          const polygon_2d &

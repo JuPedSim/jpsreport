@@ -229,6 +229,57 @@ endif()
 add_subdirectory(src)
 
 ################################################################################
+# Code formating
+################################################################################
+if(UNIX)
+    find_program(CLANG_FORMAT
+        NAMES
+            clang-format-10
+            clang-format
+    )
+    if(CLANG_FORMAT)
+        execute_process(
+            COMMAND ${CLANG_FORMAT} --version
+            OUTPUT_VARIABLE version_string
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        if(version_string MATCHES "^.*clang-format version .*")
+            string(REGEX REPLACE
+                "^.*clang-format version ([.0-9]+).*"
+                "\\1"
+                version
+                "${version_string}"
+            )
+            if(version MATCHES "^10.*")
+                message(STATUS "Found clang-format ${version}, add format-check and reformat targets")
+                set(folders src tests)
+                add_custom_target(check-format
+                    COMMENT "Checking format with clang-format"
+                    COMMAND find ${folders}
+                        -name '*.cpp'
+                        -o -name '*.c'
+                        -o -name '*.h'
+                        -o -name '*.hpp' | xargs ${CLANG_FORMAT}
+                        -n -Werror --style=file
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                )
+                add_custom_target(reformat
+                    COMMENT "Reformatting code with clang-format"
+                    COMMAND find ${folders}
+                        -name '*.cpp'
+                        -o -name '*.c'
+                        -o -name '*.h'
+                        -o -name '*.hpp' | xargs ${CLANG_FORMAT}
+                        -i --style=file
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                )
+            endif()
+        endif()
+    endif()
+endif()
+
+################################################################################
 # Integration tests
 ################################################################################
 if (BUILD_TESTING)

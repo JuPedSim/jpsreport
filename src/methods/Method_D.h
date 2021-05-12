@@ -102,9 +102,9 @@ private:
         std::vector<double> & ZInFrame,
         bool global);
     /**
-      * Reduce the precision of the points to two digits
-      * @param polygon
-      */
+     * Reduce the precision of the points to two digits
+     * @param polygon
+     */
     void CalcVoronoiResults1D(
         std::vector<double> & XInFrame,
         std::vector<double> & VInFrame,

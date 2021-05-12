@@ -29,9 +29,9 @@
 #define METHOD_A_H_
 
 #include "../general/Macros.h"
-#include "tinyxml.h"
 #include "MeasurementArea.h"
 #include "PedData.h"
+#include "tinyxml.h"
 
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -74,22 +74,21 @@ private:
 
     bool * _passLine;
     int _classicFlow; // the number of pedestrians pass a line in a certain time
-    double
-        _vDeltaT; // define this is to measure cumulative velocity each pedestrian pass a measure line each time step to calculate the <v>delat T=sum<vi>/N
+    double _vDeltaT; // define this is to measure cumulative velocity each pedestrian pass a measure
+                     // line each time step to calculate the <v>delat T=sum<vi>/N
     int _deltaT;
 
     /**
-      * Calculate the Flow rate during a certain time interval DeltaT and the mean velocity passing a line.
-      * Note: here the time interval in calculating the flow rate is modified.
-      * it is the actual time between the first person and last person
-      * passing the line in DeltaT.
-      *
-      * @param DeltaT
-      * @param fps
-      * @param AccumPeds
-      * @param AccumVelocity
-      * @param ofile
-      */
+     * Calculate the Flow rate during a certain time interval DeltaT and the mean velocity passing a
+     * line. Note: here the time interval in calculating the flow rate is modified. it is the actual
+     * time between the first person and last person passing the line in DeltaT.
+     *
+     * @param DeltaT
+     * @param fps
+     * @param AccumPeds
+     * @param AccumVelocity
+     * @param ofile
+     */
     void WriteFile_N_t(std::string data);
 
     void FlowRate_Velocity(

@@ -90,7 +90,7 @@ typedef VD::cell_type::source_index_type source_index_type;
 
 // precision error
 #define J_EPS 0.001
-#define J_EPS_EVENT 0.00001 //zum pruefen des aktuellen Zeitschrittes auf events
+#define J_EPS_EVENT 0.00001 // zum pruefen des aktuellen Zeitschrittes auf events
 #define J_EPS_DIST 0.05     // [m]
 
 #define J_EPS_GOAL 0.005 /// [m] Abstand zum Ziel, damit Fußgänger immer zu einem Raum gehört
@@ -99,9 +99,11 @@ typedef VD::cell_type::source_index_type source_index_type;
 
 // routing macros
 #define J_QUEUE_VEL_THRESHOLD_NEW_ROOM                                                             \
-    0.7 // [m/s] maximum speed to be considered in a queue while looking for a reference in a new room
+    0.7 // [m/s] maximum speed to be considered in a queue while looking for a reference in a new
+        // room
 #define J_QUEUE_VEL_THRESHOLD_JAM                                                                  \
-    0.2 // [m/s] maximum speed to be considered in a queue while looking for a reference in a jam situation
+    0.2 // [m/s] maximum speed to be considered in a queue while looking for a reference in a jam
+        // situation
 #define CBA_THRESHOLD 0.15
 #define OBSTRUCTION 4
 
@@ -164,7 +166,7 @@ enum AgentColorMode {
     BY_FINAL_GOAL,
     BY_INTERMEDIATE_GOAL
 };
-//global functions for convenience
+// global functions for convenience
 
 inline char xmltob(const char * t, char v = 0)
 {
@@ -227,7 +229,7 @@ inline std::string polygon_to_string(const polygon_2d & polygon)
         }
     }
     polygon_str.pop_back();
-    polygon_str.pop_back(); //remove last komma
+    polygon_str.pop_back(); // remove last komma
     polygon_str.append("))");
     return polygon_str;
 }
@@ -270,14 +272,14 @@ inline std::string concatenate(std::string const & name, int i)
 }
 
 //**************************************************************
-//useful colors attributes for debugging
+// useful colors attributes for debugging
 //**************************************************************
 
-//Text attributes
-#define OFF 0    //All attributes off
-#define BRIGHT 1 //Bold on
+// Text attributes
+#define OFF 0    // All attributes off
+#define BRIGHT 1 // Bold on
 //       4    Underscore (on monochrome display adapter only)
-#define BLINK 5 //Blink on
+#define BLINK 5 // Blink on
 //       7    Reverse video on
 //      8    Concealed on
 
@@ -302,7 +304,7 @@ inline std::string concatenate(std::string const & name, int i)
 
 // Special caracters
 #define HOME printf("\033[1;1H"); // cursor up left
-#define CLEAR printf(" \033[2J"); //clear screen
+#define CLEAR printf(" \033[2J"); // clear screen
 #define RED_LINE printf("%c[%d;%d;%dm\n", 0x1B, BRIGHT, RED, BG_BLACK);
 #define GREEN_LINE printf("\t%c[%d;%d;%dm", 0x1B, BRIGHT, GREEN, BG_BLACK);
 #define BLUE_LINE printf("\t%c[%d;%d;%dm", 0x1B, BRIGHT, BLUE, BG_BLACK);
@@ -312,7 +314,7 @@ inline std::string concatenate(std::string const & name, int i)
 
 
 //**************************************************************
-//useful macros  for debugging
+// useful macros  for debugging
 //**************************************************************
 #ifdef TRACE_LOGGING
 

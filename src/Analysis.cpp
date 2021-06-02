@@ -35,6 +35,7 @@
 #include "methods/Method_B.h"
 #include "methods/Method_C.h"
 #include "methods/Method_D.h"
+#include "methods/Method_E.h"
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
@@ -75,6 +76,7 @@ Analysis::Analysis()
     _DoesUseMethodB = false; // Method B (Zhang2011a)
     _DoesUseMethodC = false; // Method C //calculate and save results of classic in separate file
     _DoesUseMethodD = false; // Method D--Voronoi method
+    _DoesUseMethodE = false; // Method E
 
     _vComponent =
         "B"; // to mark whether x, y or x and y coordinate are used when calculating the velocity
@@ -164,6 +166,10 @@ void Analysis::InitArgs(ArgumentParser * args)
             _areasForMethodD.push_back(area);
         }
         _geoPolyMethodD = GetRoomForMeasurementArea(_areasForMethodD);
+    }
+
+    if(args->GetIsMethodE()) {
+        _DoesUseMethodE = true;
     }
 
     _deltaF                 = args->GetDelatT_Vins();
@@ -382,6 +388,16 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
                     "Failed with Method D using measurement area id {}!\n",
                     _areasForMethodD[i]->_id);
             }
+        }
+    }
+
+    if(_DoesUseMethodE) // method_E
+    {
+        Method_E method_E;
+        bool result_E;
+        result_E = method_E.Process();
+        if(result_E) {
+            LOG_INFO("Success with Method E!");
         }
     }
 

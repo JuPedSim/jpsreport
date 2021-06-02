@@ -126,6 +126,7 @@ private:
     bool _DoesUseMethodB;     // Method B (Zhang2011a)
     bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
     bool _DoesUseMethodD;     // Method D--Voronoi method
+    bool _DoesUseMethodE;     // Method E
 
     std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
                              // the velocity

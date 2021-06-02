@@ -66,6 +66,7 @@ private:
     bool _isMethodB;
     bool _isMethodC;
     bool _isMethodD;
+    bool _isMethodE;
     double _steadyStart;
     double _steadyEnd;
     int _delatTVInst;
@@ -116,6 +117,7 @@ public:
     bool GetIsMethodB() const;
     bool GetIsMethodC() const;
     bool GetIsMethodD() const;
+    bool GetIsMethodE() const;
     std::vector<int> GetAreaIDforMethodA() const;
     std::vector<int> GetAreaIDforMethodB() const;
     std::vector<int> GetAreaIDforMethodC() const;

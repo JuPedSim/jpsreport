@@ -95,6 +95,7 @@ ArgumentParser::ArgumentParser()
     _isMethodB              = false;
     _isMethodC              = false;
     _isMethodD              = false;
+    _isMethodE              = false;
     _steadyStart            = 100;
     _steadyEnd              = 1000;
     _trajectoriesLocation   = "./";
@@ -582,8 +583,11 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
+    // method E
+    _isMethodE = true; // hardcoded for testing purposes (TODO)
+
     LOG_INFO("Finish parsing inifile");
-    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD)) {
+    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -978,6 +982,11 @@ bool ArgumentParser::GetIsMethodC() const
 bool ArgumentParser::GetIsMethodD() const
 {
     return _isMethodD;
+}
+
+bool ArgumentParser::GetIsMethodE() const
+{
+    return _isMethodE;
 }
 
 double ArgumentParser::GetSteadyStart() const

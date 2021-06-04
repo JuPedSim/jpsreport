@@ -74,7 +74,9 @@ private:
     std::vector<int> _areaIDforMethodA;
     std::vector<int> _areaIDforMethodB;
     std::vector<int> _areaIDforMethodC;
+    std::vector<int> _areaIDforMethodE;
     std::vector<int> _timeIntervalA;
+    std::vector<int> _timeIntervalE;
 
 
     std::map<int, MeasurementArea *> _measurementAreasByIDs;
@@ -113,6 +115,7 @@ public:
     bool GetIgnoreBackwardMovement() const;
     int GetDelatT_Vins() const;
     std::vector<int> GetTimeIntervalA() const;
+    std::vector<int> GetTimeIntervalE() const;
     bool GetIsMethodA() const;
     bool GetIsMethodB() const;
     bool GetIsMethodC() const;
@@ -121,6 +124,7 @@ public:
     std::vector<int> GetAreaIDforMethodA() const;
     std::vector<int> GetAreaIDforMethodB() const;
     std::vector<int> GetAreaIDforMethodC() const;
+    std::vector<int> GetAreaIDforMethodE() const;
     bool GetIsOutputGraph() const;
     double GetSteadyStart() const;
     double GetSteadyEnd() const;

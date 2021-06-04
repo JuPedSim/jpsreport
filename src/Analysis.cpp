@@ -169,7 +169,13 @@ void Analysis::InitArgs(ArgumentParser * args)
     }
 
     if(args->GetIsMethodE()) {
-        _DoesUseMethodE = true;
+        _DoesUseMethodE               = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodE();
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodE.push_back(dynamic_cast<MeasurementArea_L *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+        }
+        _deltaTMethodE = args->GetTimeIntervalE();
     }
 
     _deltaF                 = args->GetDelatT_Vins();
@@ -394,10 +400,15 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
     if(_DoesUseMethodE) // method_E
     {
         Method_E method_E;
+        // hardcoded for testing
+        method_E.SetTimeInterval(_deltaTMethodE[0]);
+        method_E.SetMeasurementArea(_areasForMethodE[0]);
         bool result_E;
-        result_E = method_E.Process();
+        result_E = method_E.Process(data, _scriptsLocation, _areasForMethodE[0]->_zPos);
         if(result_E) {
             LOG_INFO("Success with Method E!");
+        } else {
+            LOG_ERROR("Failed with Method E using measurement area id 16!\n");
         }
     }
 

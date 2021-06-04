@@ -446,6 +446,17 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 areaL->_lineEndX * CMtoM,
                 areaL->_lineEndY * CMtoM);
         }
+
+        // hardcoded MA with id 16 for method E (testing purposes)
+
+        MeasurementArea_L * areaL       = new MeasurementArea_L();
+        areaL->_id   = 16;
+        areaL->_type = "Line";
+        areaL->_lineStartX = 9;
+        areaL->_lineStartY = 1.5;
+        areaL->_lineEndX = 9;
+        areaL->_lineEndY = 0.5;
+        _measurementAreasByIDs[areaL->_id] = areaL;
     }
     // instantaneous velocity
     TiXmlNode * xVelocity = xMainNode->FirstChild("velocity");
@@ -584,7 +595,14 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
 
     // method E
-    _isMethodE = true; // hardcoded for testing purposes (TODO)
+    // hardcoded for testing purposes
+
+    _isMethodE = true;
+    _areaIDforMethodE.push_back(16);
+    _timeIntervalE.push_back(100);
+    LOG_INFO("Method E is selected");
+    LOG_INFO("Measurement area id 16 will be used for analysis");
+    LOG_INFO("Frame interval used for calculating flow is 100 frames");
 
     LOG_INFO("Finish parsing inifile");
     if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE)) {
@@ -969,6 +987,11 @@ vector<int> ArgumentParser::GetTimeIntervalA() const
     return _timeIntervalA;
 }
 
+vector<int> ArgumentParser::GetTimeIntervalE() const
+{
+    return _timeIntervalE;
+}
+
 bool ArgumentParser::GetIsMethodB() const
 {
     return _isMethodB;
@@ -1012,6 +1035,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodB() const
 vector<int> ArgumentParser::GetAreaIDforMethodC() const
 {
     return _areaIDforMethodC;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodE() const
+{
+    return _areaIDforMethodE;
 }
 
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)

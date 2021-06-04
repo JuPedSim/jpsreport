@@ -127,6 +127,7 @@ private:
     bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
     bool _DoesUseMethodD;     // Method D--Voronoi method
     bool _DoesUseMethodE;     // Method E
+    std::vector<int> _deltaTMethodE;
 
     std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
                              // the velocity
@@ -142,6 +143,7 @@ private:
     std::vector<MeasurementArea_B *> _areasForMethodB;
     std::vector<MeasurementArea_B *> _areasForMethodC;
     std::vector<MeasurementArea_B *> _areasForMethodD;
+    std::vector<MeasurementArea_L *> _areasForMethodE;
 
     ConfigData_D configData_D;
 };

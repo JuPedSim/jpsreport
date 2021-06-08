@@ -16,6 +16,7 @@ Method_E::Method_E()
     _deltaT          = 100;
     _fps             = 16;
     _lineForMethod_E = nullptr;
+    _boxForMethod_E  = nullptr;
     _fRho            = nullptr;
     _fFlow           = nullptr;
     _lenLine         = NULL;
@@ -38,8 +39,23 @@ bool Method_E::Process(
     _yCor            = peddata.GetYCor();
     _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
-    _measureAreaId   = boost::lexical_cast<string>(_lineForMethod_E->_id);
-    _firstFrame      = peddata.GetFirstFrame();
+    _firstFrame = peddata.GetFirstFrame();
+
+    if(_lineForMethod_E) {
+        HandleLineMeasurementArea(peddata, scriptsLocation, zPos_measureArea);
+    } else if(_boxForMethod_E) {
+        HandleBoxMeasurementArea(peddata, scriptsLocation, zPos_measureArea);
+    }
+    
+    return true;
+}
+
+void Method_E::HandleLineMeasurementArea(
+    const PedData & peddata,
+    const fs::path & scriptsLocation,
+    const double & zPos_measureArea)
+{
+    _measureAreaId = boost::lexical_cast<string>(_lineForMethod_E->_id);
 
     for(int i = 0; i < peddata.GetNumPeds(); i++) {
         _passLine.push_back(false);
@@ -53,6 +69,7 @@ bool Method_E::Process(
 
     OpenRhoFileMethodE();
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
+    LOG_INFO("Line is selected as measurement area (id {})", _measureAreaId);
 
     for(const auto & [frameNr, ids] : _peds_t) {
         int frid = frameNr + _minFrame;
@@ -64,12 +81,11 @@ bool Method_E::Process(
         vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
 
-        OutputDensity(frameNr, idsInFrame);
+        OutputDensityLine(frameNr, idsInFrame);
     }
     fclose(_fRho);
     // output of density done, now output of flow
     OutputFlow(_fps, _accumPedsPassLine);
-    return true;
 }
 
 void Method_E::OpenRhoFileMethodE()
@@ -87,7 +103,7 @@ void Method_E::OpenRhoFileMethodE()
     fprintf(_fRho, "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-2))\n", _fps);
 }
 
-void Method_E::OutputDensity(int frame, const vector<int> & ids)
+void Method_E::OutputDensityLine(int frame, const vector<int> & ids)
 {
     int framePassLine = GetNumberPassLine(frame, ids);
     // framePassLine -> number of pedestrians that pass the line during this frame
@@ -180,9 +196,59 @@ void Method_E::OutputFlow(int fps, const vector<int> & AccumPeds)
     }
 }
 
+void Method_E::HandleBoxMeasurementArea(
+    const PedData & peddata,
+    const fs::path & scriptsLocation,
+    const double & zPos_measureArea)
+{
+    _measureAreaId = boost::lexical_cast<string>(_boxForMethod_E->_id);
+    OpenRhoFileMethodE();
+    LOG_INFO("------------------------Analyzing with Method E-----------------------------");
+    LOG_INFO("Box is selected as measurement area (id {})", _measureAreaId);
+
+    for(const auto & [frameNr, ids] : _peds_t) {
+        int frid = frameNr + _minFrame;
+
+        if(!(frid % 100)) {
+            LOG_INFO("frame ID = {}", frid);
+        }
+
+        vector<int> IdInFrame         = peddata.GetIdInFrame(frameNr, ids, zPos_measureArea);
+        const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
+        const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
+
+        OutputDensityBox(frameNr, IdInFrame.size(), XInFrame, YInFrame);
+    }
+    fclose(_fRho);
+}
+
+void Method_E::OutputDensityBox(
+    int frmNr, 
+    int numPedsInFrame, 
+    const vector<double> & XInFrame,
+    const vector<double> & YInFrame)
+{
+    int pedsInMA = 0;
+    for(int i = 0; i < numPedsInFrame; i++) {
+        if(within(make<point_2d>(XInFrame[i], YInFrame[i]), _boxForMethod_E->_poly)) {
+            pedsInMA++;
+        }
+    }
+
+    double density = pedsInMA / (area(_boxForMethod_E->_poly) * CMtoM * CMtoM);
+    // by definition of the method, this should be a rectangle
+    // in this case delta x * delta y is the same as the area of the bounding box
+    fprintf(_fRho, "%i\t%.3f\n", frmNr, density);
+}
+
 void Method_E::SetMeasurementAreaLine(MeasurementArea_L * area)
 {
     _lineForMethod_E = area;
+}
+
+void Method_E::SetMeasurementAreaBox(MeasurementArea_B * area)
+{
+    _boxForMethod_E = area;
 }
 
 void Method_E::SetTimeInterval(int deltaT)

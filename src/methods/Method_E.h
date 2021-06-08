@@ -17,6 +17,7 @@ public:
     Method_E();
     virtual ~Method_E();
     void SetMeasurementAreaLine(MeasurementArea_L * area);
+    void SetMeasurementAreaBox(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
     bool Process(
         const PedData & peddata,
@@ -38,6 +39,7 @@ private:
 
     std::string _measureAreaId;
     MeasurementArea_L * _lineForMethod_E;
+    MeasurementArea_B * _boxForMethod_E;
 
     std::vector<bool> _passLine; // which pedestrians have passed the line
     double _lenLine;
@@ -47,9 +49,14 @@ private:
     FILE * _fRho;
     FILE * _fFlow;
 
+    void HandleLineMeasurementArea(
+        const PedData & peddata,
+        const fs::path & scriptsLocation,
+        const double & zPos_measureArea);
+
     void OpenRhoFileMethodE();
 
-    void OutputDensity(int frame, const std::vector<int> & ids);
+    void OutputDensityLine(int frame, const std::vector<int> & ids);
 
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
@@ -65,6 +72,17 @@ private:
         double pt2_Y);
 
     void OutputFlow(int fps, const std::vector<int> & AccumPeds);
+
+    void HandleBoxMeasurementArea(
+        const PedData & peddata,
+        const fs::path & scriptsLocation,
+        const double & zPos_measureArea);
+
+    void OutputDensityBox(
+        int frmNr,
+        int numPedsInFrame,
+        const std::vector<double> & XInFrame,
+        const std::vector<double> & YInFrame);
 };
 
 #endif /* METHOD_E_H_ */

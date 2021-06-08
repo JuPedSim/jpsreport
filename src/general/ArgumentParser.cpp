@@ -598,18 +598,22 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 _areaIDforMethodE.push_back(id);
                 LOG_INFO("Measurement area id <{}> will be used for analysis", id);
 
-                if(xMeasurementArea->Attribute("frame_interval")) {
-                    if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
-                        _timeIntervalE.push_back(
-                            xmltoi(xMeasurementArea->Attribute("frame_interval")));
-                        LOG_INFO(
-                            "Frame interval used for calculating flow is <{}> frames",
-                            xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                if(_measurementAreasByIDs[id]->_type == "Line") {
+                    if(xMeasurementArea->Attribute("frame_interval")) {
+                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                            _timeIntervalE.push_back(
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            LOG_INFO(
+                                "Frame interval used for calculating flow is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        } else {
+                            _timeIntervalE.push_back(100);
+                        }
                     } else {
                         _timeIntervalE.push_back(100);
                     }
                 } else {
-                    _timeIntervalE.push_back(100);
+                    _timeIntervalE.push_back(NULL);
                 }
             }
         }

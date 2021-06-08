@@ -143,7 +143,8 @@ private:
     std::vector<MeasurementArea_B *> _areasForMethodB;
     std::vector<MeasurementArea_B *> _areasForMethodC;
     std::vector<MeasurementArea_B *> _areasForMethodD;
-    std::vector<MeasurementArea_L *> _areasForMethodE;
+    std::vector<MeasurementArea_L *> _linesForMethodE;
+    std::vector<MeasurementArea_B *> _boxesForMethodE;
 
     ConfigData_D configData_D;
 };

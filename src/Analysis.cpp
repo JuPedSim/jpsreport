@@ -399,16 +399,24 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
 
     if(_DoesUseMethodE) // method_E
     {
-        Method_E method_E;
-        // hardcoded for testing
-        method_E.SetTimeInterval(_deltaTMethodE[0]);
-        method_E.SetMeasurementArea(_areasForMethodE[0]);
-        bool result_E;
-        result_E = method_E.Process(data, _scriptsLocation, _areasForMethodE[0]->_zPos);
-        if(result_E) {
-            LOG_INFO("Success with Method E!");
-        } else {
-            LOG_ERROR("Failed with Method E using measurement area id 16!\n");
+        if(_areasForMethodE.empty()) {
+            LOG_ERROR("Method E selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodE.size()); i++) {
+            Method_E method_E;
+            method_E.SetMeasurementAreaLine(_areasForMethodE[i]);
+            method_E.SetTimeInterval(_deltaTMethodE[i]);
+            bool result_E = method_E.Process(data, _scriptsLocation, _areasForMethodE[i]->_zPos);
+            if(result_E) {
+                LOG_INFO(
+                    "Success with Method E using measurement area id {}!\n",
+                    _areasForMethodE[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method E using measurement area id {}!\n",
+                    _areasForMethodE[i]->_id);
+            }
         }
     }
 

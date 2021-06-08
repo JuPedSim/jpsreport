@@ -446,17 +446,6 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 areaL->_lineEndX * CMtoM,
                 areaL->_lineEndY * CMtoM);
         }
-
-        // hardcoded MA with id 16 for method E (testing purposes)
-
-        MeasurementArea_L * areaL       = new MeasurementArea_L();
-        areaL->_id   = 16;
-        areaL->_type = "Line";
-        areaL->_lineStartX = 9;
-        areaL->_lineStartY = 1.5;
-        areaL->_lineEndX = 9;
-        areaL->_lineEndY = 0.5;
-        _measurementAreasByIDs[areaL->_id] = areaL;
     }
     // instantaneous velocity
     TiXmlNode * xVelocity = xMainNode->FirstChild("velocity");
@@ -595,14 +584,36 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
 
     // method E
-    // hardcoded for testing purposes
 
-    _isMethodE = true;
-    _areaIDforMethodE.push_back(16);
-    _timeIntervalE.push_back(100);
-    LOG_INFO("Method E is selected");
-    LOG_INFO("Measurement area id 16 will be used for analysis");
-    LOG_INFO("Frame interval used for calculating flow is 100 frames");
+    TiXmlElement * xMethod_E = xMainNode->FirstChildElement("method_E");
+    if(xMethod_E) {
+        if(string(xMethod_E->Attribute("enabled")) == "true") {
+            _isMethodE = true;
+            LOG_INFO("Method E is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_E")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+                _areaIDforMethodE.push_back(id);
+                LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+
+                if(xMeasurementArea->Attribute("frame_interval")) {
+                    if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                        _timeIntervalE.push_back(
+                            xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        LOG_INFO(
+                            "Frame interval used for calculating flow is <{}> frames",
+                            xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                    } else {
+                        _timeIntervalE.push_back(100);
+                    }
+                } else {
+                    _timeIntervalE.push_back(100);
+                }
+            }
+        }
+    }
 
     LOG_INFO("Finish parsing inifile");
     if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE)) {

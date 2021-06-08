@@ -1,6 +1,7 @@
+#include "Method_E.h"
+
 #include "../Analysis.h"
 #include "../general/Logger.h"
-#include "Method_E.h"
 
 #include <fstream>
 #include <iostream>
@@ -11,12 +12,14 @@ using std::vector;
 
 Method_E::Method_E()
 {
-    _firstFrame      = nullptr;
-    _passLine        = nullptr;
+    _minFrame        = NULL;
     _deltaT          = 100;
     _fps             = 16;
-    _areaForMethod_E = nullptr;
+    _lineForMethod_E = nullptr;
     _fRho            = nullptr;
+    _fFlow           = nullptr;
+    _lenLine         = NULL;
+    _firstFrame      = nullptr;
 }
 
 Method_E::~Method_E() {}
@@ -26,38 +29,103 @@ bool Method_E::Process(
     const fs::path & scriptsLocation,
     const double & zPos_measureArea)
 {
-    _trajName     = peddata.GetTrajName();
+    _trajName        = peddata.GetTrajName();
     _projectRootDir  = peddata.GetProjectRootDir();
     _scriptsLocation = scriptsLocation;
     _outputLocation  = peddata.GetOutputLocation();
     _peds_t          = peddata.GetPedIDsByFrameNr();
     _xCor            = peddata.GetXCor();
     _yCor            = peddata.GetYCor();
-    _firstFrame      = peddata.GetFirstFrame();
+    _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
-    _measureAreaId   = boost::lexical_cast<string>(_areaForMethod_E->_id);
-    _passLine        = new bool[peddata.GetNumPeds()];
+    _measureAreaId   = boost::lexical_cast<string>(_lineForMethod_E->_id);
+    _firstFrame      = peddata.GetFirstFrame();
 
-    OpenFileMethodE();
+    for(int i = 0; i < peddata.GetNumPeds(); i++) {
+        _passLine.push_back(false);
+    }
+
+    _lenLine = sqrt(
+                   pow((_lineForMethod_E->_lineStartX - _lineForMethod_E->_lineEndX), 2) +
+                   pow((_lineForMethod_E->_lineStartY - _lineForMethod_E->_lineEndY), 2)) *
+               CMtoM;
+    // length of line -> delta x for density
+
+    OpenRhoFileMethodE();
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
+
+    for(const auto & [frameNr, ids] : _peds_t) {
+        int frid = frameNr + _minFrame;
+
+        if(!(frid % 100)) {
+            LOG_INFO("frame ID = {}", frid);
+        }
+
+        vector<int> idsInFrame =
+            peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
+
+        OutputDensity(frameNr, idsInFrame);
+    }
+    fclose(_fRho);
+    // output of density done, now output of flow
+    OutputFlow(_fps, _accumPedsPassLine);
     return true;
 }
 
-void Method_E::OpenFileMethodE()
+void Method_E::OpenRhoFileMethodE()
 {
     fs::path tmp("_id_" + _measureAreaId + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" / ("rho_" + _trajName.string() + tmp.string());
+    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
+          ("rho_" + _trajName.string() + tmp.string());
 
     string filename = tmp.string();
 
     if((_fRho = Analysis::CreateFile(filename)) == nullptr) {
-        LOG_WARNING("cannot open file {} to write output of method E\n", filename);
+        LOG_WARNING("cannot open file {} to write density data\n", filename);
         exit(EXIT_FAILURE);
     }
-    fprintf(
-        _fRho,
-        "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-2))\n",
-        _fps);
+    fprintf(_fRho, "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-2))\n", _fps);
+}
+
+void Method_E::OutputDensity(int frame, const vector<int> & ids)
+{
+    int framePassLine = GetNumberPassLine(frame, ids);
+    // framePassLine -> number of pedestrians that pass the line during this frame
+
+    if(!_accumPedsPassLine.size() == 0) {
+        _accumPedsPassLine.push_back(_accumPedsPassLine.back() + framePassLine);
+    } else {
+        // first frame
+        _accumPedsPassLine.push_back(framePassLine);
+    }
+
+    double density = framePassLine / _lenLine;
+    fprintf(_fRho, "%i\t%.3f\n", frame, density);
+}
+
+int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
+{
+    // returns number of pedestrians that passed the line during this frame
+    int framePassLine = 0;
+    for(auto const i : ids) {
+        bool IspassLine = false;
+        if(frame > _firstFrame[i] && !_passLine[i]) {
+            IspassLine = IsPassLine(
+                _lineForMethod_E->_lineStartX,
+                _lineForMethod_E->_lineStartY,
+                _lineForMethod_E->_lineEndX,
+                _lineForMethod_E->_lineEndY,
+                _xCor(i, frame - 1),
+                _yCor(i, frame - 1),
+                _xCor(i, frame),
+                _yCor(i, frame));
+        }
+        if(IspassLine == true) {
+            _passLine[i] = true;
+            framePassLine++;
+        }
+    }
+    return framePassLine;
 }
 
 bool Method_E::IsPassLine(
@@ -81,9 +149,40 @@ bool Method_E::IsPassLine(
     return (intersects(edge0, edge1));
 }
 
-void Method_E::SetMeasurementArea(MeasurementArea_L * area)
+void Method_E::OutputFlow(int fps, const vector<int> & AccumPeds)
 {
-    _areaForMethod_E = area;
+    fs::path tmp("_id_" + _measureAreaId + ".dat");
+    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
+          ("flow_" + _trajName.string() + tmp.string());
+    string filename = tmp.string();
+
+    if((_fFlow = Analysis::CreateFile(filename)) == nullptr) {
+        LOG_ERROR("Cannot open the file to write flow data!\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(_fFlow, "#Flow rate(1/s)\n");
+
+    int TotalFrames = AccumPeds.size();
+    int TotalPeds   = AccumPeds[TotalFrames - 1];
+    if(TotalPeds > 0) {
+        for(int i = _deltaT; i < TotalFrames; i += _deltaT) {
+            int N1 = AccumPeds[i - _deltaT];
+            int N2 = AccumPeds[i];
+
+            if(!(N1 == N2)) {
+                double flow = (N2 - N1) / (_deltaT * 1.0 / fps);
+                fprintf(_fFlow, "%.3f\t\n", flow);
+            }
+        }
+        fclose(_fFlow);
+    } else {
+        LOG_WARNING("No person passing the reference line given by Method E!\n");
+    }
+}
+
+void Method_E::SetMeasurementAreaLine(MeasurementArea_L * area)
+{
+    _lineForMethod_E = area;
 }
 
 void Method_E::SetTimeInterval(int deltaT)

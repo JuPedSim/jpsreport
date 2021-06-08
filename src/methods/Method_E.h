@@ -16,7 +16,7 @@ class Method_E
 public:
     Method_E();
     virtual ~Method_E();
-    void SetMeasurementArea(MeasurementArea_L * area);
+    void SetMeasurementAreaLine(MeasurementArea_L * area);
     void SetTimeInterval(int deltaT);
     bool Process(
         const PedData & peddata,
@@ -25,25 +25,34 @@ public:
 
 private:
     fs::path _trajName;
-    std::string _measureAreaId;
-    MeasurementArea_L * _areaForMethod_E;
-
     fs::path _projectRootDir;
     fs::path _scriptsLocation;
     fs::path _outputLocation;
 
-    std::vector<int> _accumPedsPassLine; // the accumulative pedestrians pass a line with time
     std::map<int, std::vector<int>> _peds_t;
-
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
     int * _firstFrame;
+    int _minFrame;
     float _fps;
 
-    bool * _passLine;
-    int _deltaT;
+    std::string _measureAreaId;
+    MeasurementArea_L * _lineForMethod_E;
+
+    std::vector<bool> _passLine; // which pedestrians have passed the line
+    double _lenLine;
+    int _deltaT; // delta t for flow
+    std::vector<int> _accumPedsPassLine; // accumulative pedestrians that pass the line over frames
 
     FILE * _fRho;
+    FILE * _fFlow;
+
+    void OpenRhoFileMethodE();
+
+    void OutputDensity(int frame, const std::vector<int> & ids);
+
+    int GetNumberPassLine(int frame, const std::vector<int> & ids);
+    // returns number of pedestrians that passed the line during this frame
 
     bool IsPassLine(
         double Line_startX,
@@ -55,7 +64,7 @@ private:
         double pt2_X,
         double pt2_Y);
 
-    void OpenFileMethodE();
+    void OutputFlow(int fps, const std::vector<int> & AccumPeds);
 };
 
 #endif /* METHOD_E_H_ */

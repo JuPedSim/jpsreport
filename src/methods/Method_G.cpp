@@ -67,7 +67,7 @@ void Method_G::OpenFileMethodG()
         LOG_WARNING("cannot open file {} to write density and velocity data\n", filename);
         exit(EXIT_FAILURE);
     }
-    fprintf(_fRhoV, "#framerate:\t%.2f\n\n#denisty (m ^ (-2))\tharmonic mean velocity (m / s)\n", _fps);
+    fprintf(_fRhoV, "#denisty (m ^ (-2))\tharmonic mean velocity (m / s)\n");
 }
 
 void Method_G::GetTinTout(int numFrames)

@@ -100,7 +100,7 @@ void Method_E::OpenRhoFileMethodE()
         LOG_WARNING("cannot open file {} to write density data\n", filename);
         exit(EXIT_FAILURE);
     }
-    fprintf(_fRho, "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-2))\n", _fps);
+    fprintf(_fRho, "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-1))\n", _fps);
 }
 
 void Method_E::OutputDensityLine(int frame, const vector<int> & ids)

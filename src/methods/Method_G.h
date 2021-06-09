@@ -41,8 +41,8 @@ private:
     MeasurementArea_B * _areaForMethod_G;
     int _deltaT;
     std::vector<int> _pedsInMeasureArea;
-    std::vector<int> _tIn; // the time for each pedestrian enters the measurement area
-    std::vector<int> _tOut; // the time for each pedestrian exits the measurement area
+    std::vector<int> _tIn; // the time for each pedestrian that enters the measurement area
+    std::vector<int> _tOut; // the time for each pedestrian that exits the measurement area
 
     FILE * _fRhoV;
 

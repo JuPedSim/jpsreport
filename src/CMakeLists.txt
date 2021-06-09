@@ -7,6 +7,7 @@ set(methods
         methods/Method_D.cpp
         methods/Method_E.cpp
         methods/Method_G.cpp
+        methods/Method_H.cpp
 )
 
 set(source_files
@@ -26,6 +27,7 @@ set (header_files
         methods/Method_D.h
         methods/Method_E.h
         methods/Method_G.h
+        methods/Method_H.h
         methods/ConfigData_D.h
         general/ArgumentParser.h
         general/Compiler.h

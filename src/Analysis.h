@@ -124,12 +124,14 @@ private:
     std::vector<int> _deltaT; // the time interval to calculate the classic flow
     std::vector<int> _deltaTMethodE;
     std::vector<int> _deltaTMethodG;
+    std::vector<int> _deltaTMethodH;
     bool _DoesUseMethodA;     // Method A (Zhang2011a)
     bool _DoesUseMethodB;     // Method B (Zhang2011a)
     bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
     bool _DoesUseMethodD;     // Method D--Voronoi method
     bool _DoesUseMethodE;     // Method E
     bool _DoesUseMethodG;     // Method G
+    bool _DoesUseMethodH;     // Method H
 
     std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
                              // the velocity
@@ -148,6 +150,7 @@ private:
     std::vector<MeasurementArea_L *> _linesForMethodE;
     std::vector<MeasurementArea_B *> _boxesForMethodE;
     std::vector<MeasurementArea_B *> _areasForMethodG;
+    std::vector<MeasurementArea_B *> _areasForMethodH;
 
     ConfigData_D configData_D;
 };

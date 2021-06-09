@@ -68,6 +68,7 @@ private:
     bool _isMethodD;
     bool _isMethodE;
     bool _isMethodG;
+    bool _isMethodH;
     double _steadyStart;
     double _steadyEnd;
     int _delatTVInst;
@@ -77,9 +78,11 @@ private:
     std::vector<int> _areaIDforMethodC;
     std::vector<int> _areaIDforMethodE;
     std::vector<int> _areaIDforMethodG;
+    std::vector<int> _areaIDforMethodH;
     std::vector<int> _timeIntervalA;
     std::vector<int> _timeIntervalE;
     std::vector<int> _timeIntervalG;
+    std::vector<int> _timeIntervalH;
 
 
     std::map<int, MeasurementArea *> _measurementAreasByIDs;
@@ -120,17 +123,20 @@ public:
     std::vector<int> GetTimeIntervalA() const;
     std::vector<int> GetTimeIntervalE() const;
     std::vector<int> GetTimeIntervalG() const;
+    std::vector<int> GetTimeIntervalH() const;
     bool GetIsMethodA() const;
     bool GetIsMethodB() const;
     bool GetIsMethodC() const;
     bool GetIsMethodD() const;
     bool GetIsMethodE() const;
     bool GetIsMethodG() const;
+    bool GetIsMethodH() const;
     std::vector<int> GetAreaIDforMethodA() const;
     std::vector<int> GetAreaIDforMethodB() const;
     std::vector<int> GetAreaIDforMethodC() const;
     std::vector<int> GetAreaIDforMethodE() const;
     std::vector<int> GetAreaIDforMethodG() const;
+    std::vector<int> GetAreaIDforMethodH() const;
     bool GetIsOutputGraph() const;
     double GetSteadyStart() const;
     double GetSteadyEnd() const;

@@ -37,6 +37,7 @@
 #include "methods/Method_D.h"
 #include "methods/Method_E.h"
 #include "methods/Method_G.h"
+#include "methods/Method_H.h"
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
@@ -193,6 +194,16 @@ void Analysis::InitArgs(ArgumentParser * args)
                 args->GetMeasurementArea(Measurement_Area_IDs[i])));
         }
         _deltaTMethodG = args->GetTimeIntervalG();
+    }
+
+    if(args->GetIsMethodH()) {
+        _DoesUseMethodH                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodH();
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodH.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+        }
+        _deltaTMethodH = args->GetTimeIntervalH();
     }
 
     _deltaF                 = args->GetDelatT_Vins();
@@ -471,6 +482,29 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
                 LOG_ERROR(
                     "Failed with Method G using measurement area id {}!\n",
                     _areasForMethodG[i]->_id);
+            }
+        }
+    }
+
+    if(_DoesUseMethodH) // method_H
+    {
+        if(_areasForMethodH.empty()) {
+            LOG_ERROR("Method H selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodH.size()); i++) {
+            Method_H method_H;
+            method_H.SetMeasurementArea(_areasForMethodH[i]);
+            method_H.SetTimeInterval(_deltaTMethodH[i]);
+            bool result_H = method_H.Process(data, _areasForMethodH[i]->_zPos);
+            if(result_H) {
+                LOG_INFO(
+                    "Success with Method H using measurement area id {}!\n",
+                    _areasForMethodH[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method H using measurement area id {}!\n",
+                    _areasForMethodH[i]->_id);
             }
         }
     }

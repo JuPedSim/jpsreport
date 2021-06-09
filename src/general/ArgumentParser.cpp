@@ -97,6 +97,7 @@ ArgumentParser::ArgumentParser()
     _isMethodD              = false;
     _isMethodE              = false;
     _isMethodG              = false;
+    _isMethodH              = false;
     _steadyStart            = 100;
     _steadyEnd              = 1000;
     _trajectoriesLocation   = "./";
@@ -585,7 +586,6 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
 
     // method E
-
     TiXmlElement * xMethod_E = xMainNode->FirstChildElement("method_E");
     if(xMethod_E) {
         if(string(xMethod_E->Attribute("enabled")) == "true") {
@@ -621,7 +621,6 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
 
     // method G
-
     TiXmlElement * xMethod_G = xMainNode->FirstChildElement("method_G");
     if(xMethod_G) {
         if(string(xMethod_G->Attribute("enabled")) == "true") {
@@ -660,8 +659,48 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
+    // method H
+    TiXmlElement * xMethod_H = xMainNode->FirstChildElement("method_H");
+    if(xMethod_H) {
+        if(string(xMethod_H->Attribute("enabled")) == "true") {
+            _isMethodH = true;
+            LOG_INFO("Method H is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_H")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
+                    _areaIDforMethodH.push_back(id);
+                    LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                    if(xMeasurementArea->Attribute("frame_interval")) {
+                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                            _timeIntervalH.push_back(
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            LOG_INFO(
+                                "Frame interval for calculation is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        } else {
+                            _timeIntervalH.push_back(100);
+                        }
+                    } else {
+                        _timeIntervalH.push_back(100);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis (Type "
+                        "<{}> is not BoundingBox)",
+                        id,
+                        _measurementAreasByIDs[id]->_type);
+                }
+            }
+        }
+    }
+
     LOG_INFO("Finish parsing inifile");
-    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodG)) {
+    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodG ||
+         _isMethodH)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -1053,6 +1092,11 @@ vector<int> ArgumentParser::GetTimeIntervalG() const
     return _timeIntervalG;
 }
 
+vector<int> ArgumentParser::GetTimeIntervalH() const
+{
+    return _timeIntervalH;
+}
+
 bool ArgumentParser::GetIsMethodB() const
 {
     return _isMethodB;
@@ -1076,6 +1120,11 @@ bool ArgumentParser::GetIsMethodE() const
 bool ArgumentParser::GetIsMethodG() const
 {
     return _isMethodG;
+}
+
+bool ArgumentParser::GetIsMethodH() const
+{
+    return _isMethodH;
 }
 
 double ArgumentParser::GetSteadyStart() const
@@ -1111,6 +1160,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodE() const
 vector<int> ArgumentParser::GetAreaIDforMethodG() const
 {
     return _areaIDforMethodG;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodH() const
+{
+    return _areaIDforMethodH;
 }
 
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)

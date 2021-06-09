@@ -96,6 +96,7 @@ ArgumentParser::ArgumentParser()
     _isMethodC              = false;
     _isMethodD              = false;
     _isMethodE              = false;
+    _isMethodG              = false;
     _steadyStart            = 100;
     _steadyEnd              = 1000;
     _trajectoriesLocation   = "./";
@@ -619,8 +620,48 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
+    // method G
+
+    TiXmlElement * xMethod_G = xMainNode->FirstChildElement("method_G");
+    if(xMethod_G) {
+        if(string(xMethod_G->Attribute("enabled")) == "true") {
+            _isMethodG = true;
+            LOG_INFO("Method G is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_G")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+                
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
+                    _areaIDforMethodG.push_back(id);
+                    LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                    if(xMeasurementArea->Attribute("frame_interval")) {
+                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                            _timeIntervalG.push_back(
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            LOG_INFO(
+                                "Frame interval used for calculating flow is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        } else {
+                            _timeIntervalG.push_back(100);
+                        }
+                    } else {
+                        _timeIntervalG.push_back(100);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis (Type "
+                        "<{}> is not BoundingBox)",
+                        id,
+                        _measurementAreasByIDs[id]->_type);
+                }
+            }
+        }
+    }
+
     LOG_INFO("Finish parsing inifile");
-    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE)) {
+    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodG)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -1007,6 +1048,11 @@ vector<int> ArgumentParser::GetTimeIntervalE() const
     return _timeIntervalE;
 }
 
+vector<int> ArgumentParser::GetTimeIntervalG() const
+{
+    return _timeIntervalG;
+}
+
 bool ArgumentParser::GetIsMethodB() const
 {
     return _isMethodB;
@@ -1025,6 +1071,11 @@ bool ArgumentParser::GetIsMethodD() const
 bool ArgumentParser::GetIsMethodE() const
 {
     return _isMethodE;
+}
+
+bool ArgumentParser::GetIsMethodG() const
+{
+    return _isMethodG;
 }
 
 double ArgumentParser::GetSteadyStart() const
@@ -1055,6 +1106,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodC() const
 vector<int> ArgumentParser::GetAreaIDforMethodE() const
 {
     return _areaIDforMethodE;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodG() const
+{
+    return _areaIDforMethodG;
 }
 
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)

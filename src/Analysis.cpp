@@ -36,6 +36,7 @@
 #include "methods/Method_C.h"
 #include "methods/Method_D.h"
 #include "methods/Method_E.h"
+#include "methods/Method_G.h"
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
@@ -77,6 +78,7 @@ Analysis::Analysis()
     _DoesUseMethodC = false; // Method C //calculate and save results of classic in separate file
     _DoesUseMethodD = false; // Method D--Voronoi method
     _DoesUseMethodE = false; // Method E
+    _DoesUseMethodG = false; // Method G
 
     _vComponent =
         "B"; // to mark whether x, y or x and y coordinate are used when calculating the velocity
@@ -181,6 +183,16 @@ void Analysis::InitArgs(ArgumentParser * args)
             }
         }
         _deltaTMethodE = args->GetTimeIntervalE();
+    }
+
+    if(args->GetIsMethodG()) {
+        _DoesUseMethodG                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodG();
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodG.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+        }
+        _deltaTMethodG = args->GetTimeIntervalG();
     }
 
     _deltaF                 = args->GetDelatT_Vins();
@@ -438,6 +450,29 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             }
         }
         // TODO one loop instead of two loops (if possible?)
+    }
+
+    if(_DoesUseMethodG) // method_G
+    {
+        if(_areasForMethodG.empty()) {
+            LOG_ERROR("Method G selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodG.size()); i++) {
+            Method_G method_G;
+            method_G.SetMeasurementArea(_areasForMethodG[i]);
+            method_G.SetTimeInterval(_deltaTMethodG[i]);
+            bool result_G = method_G.Process(data, _areasForMethodG[i]->_zPos);
+            if(result_G) {
+                LOG_INFO(
+                    "Success with Method G using measurement area id {}!\n",
+                    _areasForMethodG[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method G using measurement area id {}!\n",
+                    _areasForMethodG[i]->_id);
+            }
+        }
     }
 
     return 0;

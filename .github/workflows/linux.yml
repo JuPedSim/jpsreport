@@ -1,6 +1,14 @@
 name: jpsreport-unix
 
-on: [push]
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

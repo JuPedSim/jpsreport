@@ -21,7 +21,6 @@ public:
     void SetTimeInterval(int deltaT);
     bool Process(
         const PedData & peddata,
-        const fs::path & scriptsLocation,
         const double & zPos_measureArea);
 
 private:
@@ -51,7 +50,6 @@ private:
 
     void HandleLineMeasurementArea(
         const PedData & peddata,
-        const fs::path & scriptsLocation,
         const double & zPos_measureArea);
 
     void OpenRhoFileMethodE();
@@ -71,16 +69,14 @@ private:
         double pt2_X,
         double pt2_Y);
 
-    void OutputFlow(int fps, const std::vector<int> & AccumPeds);
+    void OutputFlow(float fps, const std::vector<int> & AccumPeds);
 
     void HandleBoxMeasurementArea(
         const PedData & peddata,
-        const fs::path & scriptsLocation,
         const double & zPos_measureArea);
 
     void OutputDensityBox(
         int frmNr,
-        int numPedsInFrame,
         const std::vector<double> & XInFrame,
         const std::vector<double> & YInFrame);
 };

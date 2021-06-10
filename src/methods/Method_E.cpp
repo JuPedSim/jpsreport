@@ -23,16 +23,14 @@ Method_E::Method_E()
     _firstFrame      = nullptr;
 }
 
-Method_E::~Method_E() {}
+Method_E::~Method_E() = default;
 
 bool Method_E::Process(
     const PedData & peddata,
-    const fs::path & scriptsLocation,
     const double & zPos_measureArea)
 {
     _trajName        = peddata.GetTrajName();
     _projectRootDir  = peddata.GetProjectRootDir();
-    _scriptsLocation = scriptsLocation;
     _outputLocation  = peddata.GetOutputLocation();
     _peds_t          = peddata.GetPedIDsByFrameNr();
     _xCor            = peddata.GetXCor();
@@ -42,9 +40,9 @@ bool Method_E::Process(
     _firstFrame = peddata.GetFirstFrame();
 
     if(_lineForMethod_E) {
-        HandleLineMeasurementArea(peddata, scriptsLocation, zPos_measureArea);
+        HandleLineMeasurementArea(peddata, zPos_measureArea);
     } else if(_boxForMethod_E) {
-        HandleBoxMeasurementArea(peddata, scriptsLocation, zPos_measureArea);
+        HandleBoxMeasurementArea(peddata, zPos_measureArea);
     }
     
     return true;
@@ -52,7 +50,6 @@ bool Method_E::Process(
 
 void Method_E::HandleLineMeasurementArea(
     const PedData & peddata,
-    const fs::path & scriptsLocation,
     const double & zPos_measureArea)
 {
     _measureAreaId = boost::lexical_cast<string>(_lineForMethod_E->_id);
@@ -74,7 +71,7 @@ void Method_E::HandleLineMeasurementArea(
     for(const auto & [frameNr, ids] : _peds_t) {
         int frid = frameNr + _minFrame;
 
-        if(!(frid % 100)) {
+        if((frid % 100) == 0) {
             LOG_INFO("frame ID = {}", frid);
         }
 
@@ -108,7 +105,7 @@ void Method_E::OutputDensityLine(int frame, const vector<int> & ids)
     int framePassLine = GetNumberPassLine(frame, ids);
     // framePassLine -> number of pedestrians that pass the line during this frame
 
-    if(!_accumPedsPassLine.size() == 0) {
+    if(!_accumPedsPassLine.empty()) {
         _accumPedsPassLine.push_back(_accumPedsPassLine.back() + framePassLine);
     } else {
         // first frame
@@ -136,7 +133,7 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
                 _xCor(i, frame),
                 _yCor(i, frame));
         }
-        if(IspassLine == true) {
+        if(IspassLine) {
             _passLine[i] = true;
             framePassLine++;
         }
@@ -165,7 +162,7 @@ bool Method_E::IsPassLine(
     return (intersects(edge0, edge1));
 }
 
-void Method_E::OutputFlow(int fps, const vector<int> & AccumPeds)
+void Method_E::OutputFlow(float fps, const vector<int> & AccumPeds)
 {
     fs::path tmp("_id_" + _measureAreaId + ".dat");
     tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
@@ -198,7 +195,6 @@ void Method_E::OutputFlow(int fps, const vector<int> & AccumPeds)
 
 void Method_E::HandleBoxMeasurementArea(
     const PedData & peddata,
-    const fs::path & scriptsLocation,
     const double & zPos_measureArea)
 {
     _measureAreaId = boost::lexical_cast<string>(_boxForMethod_E->_id);
@@ -213,21 +209,20 @@ void Method_E::HandleBoxMeasurementArea(
             LOG_INFO("frame ID = {}", frid);
         }
 
-        vector<int> IdInFrame         = peddata.GetIdInFrame(frameNr, ids, zPos_measureArea);
         const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
         const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
 
-        OutputDensityBox(frameNr, IdInFrame.size(), XInFrame, YInFrame);
+        OutputDensityBox(frameNr, XInFrame, YInFrame);
     }
     fclose(_fRho);
 }
 
 void Method_E::OutputDensityBox(
-    int frmNr, 
-    int numPedsInFrame, 
+    int frmNr,
     const vector<double> & XInFrame,
     const vector<double> & YInFrame)
 {
+    int numPedsInFrame = XInFrame.size();
     int pedsInMA = 0;
     for(int i = 0; i < numPedsInFrame; i++) {
         if(within(make<point_2d>(XInFrame[i], YInFrame[i]), _boxForMethod_E->_poly)) {

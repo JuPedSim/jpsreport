@@ -377,6 +377,16 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 areaB->_length = xmltof(xLength->Attribute("distance"));
                 LOG_INFO("Length in movement direction {:.3f}", areaB->_length);
             }
+
+            TiXmlElement * xLengthOrthogonal =
+                xMeasurementArea_B->FirstChildElement("length_orthogonal_to_movement_direction");
+            if(xLengthOrthogonal) {
+                areaB->_lengthOrthogonal = xmltof(xLengthOrthogonal->Attribute("distance"));
+                LOG_INFO(
+                    "Length orthogonal to movement direction {:.3f}", areaB->_lengthOrthogonal);
+            }
+            // delta y for methods E and F (orthogonal to movement direction)
+
             _measurementAreasByIDs[areaB->_id] = areaB;
         }
         for(TiXmlNode * xMeasurementArea_L =

@@ -452,7 +452,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             Method_E method_E;
             method_E.SetMeasurementAreaLine(_linesForMethodE[i]);
             method_E.SetTimeInterval(_deltaTMethodE[i]);
-            bool result_E = method_E.Process(data, _scriptsLocation, _linesForMethodE[i]->_zPos);
+            bool result_E = method_E.Process(data, _linesForMethodE[i]->_zPos);
             if(result_E) {
                 LOG_INFO(
                     "Success with Method E using measurement area id {}!\n",
@@ -466,7 +466,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
         for(int i = 0; i < int(_boxesForMethodE.size()); i++) {
             Method_E method_E;
             method_E.SetMeasurementAreaBox(_boxesForMethodE[i]);
-            bool result_E = method_E.Process(data, _scriptsLocation, _boxesForMethodE[i]->_zPos);
+            bool result_E = method_E.Process(data, _boxesForMethodE[i]->_zPos);
             if(result_E) {
                 LOG_INFO(
                     "Success with Method E using measurement area id {}!\n",

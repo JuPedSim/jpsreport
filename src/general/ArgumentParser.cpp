@@ -630,6 +630,52 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
+    // method F
+    TiXmlElement * xMethod_F = xMainNode->FirstChildElement("method_F");
+    if(xMethod_F) {
+        if(string(xMethod_F->Attribute("enabled")) == "true") {
+            _isMethodF = true;
+            LOG_INFO("Method F is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_F")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+                int line_id = xmltoi(xMeasurementArea->Attribute("line_id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox" &&
+                   _measurementAreasByIDs[line_id]->_type == "Line") {
+                    _areaIDforMethodF.push_back(id);
+                    _lineIDforMethodF.push_back(line_id);
+                    LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                    if(xMeasurementArea->Attribute("frame_interval")) {
+                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                            _timeIntervalF.push_back(
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            LOG_INFO(
+                                "Frame interval used for calculating density is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        } else {
+                            _timeIntervalF.push_back(100);
+                        }
+                    } else {
+                        _timeIntervalF.push_back(100);
+                    }
+                } else {
+                    // TODO add function to check whether line is in the measurement area
+                    // (also check whether z Pos is identical)
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis: Either type "
+                        "of measurement area ({}) is not BoundingBox, or type of line ({}) "
+                        "is not Line.",
+                        id,
+                        _measurementAreasByIDs[id]->_type,
+                        _measurementAreasByIDs[line_id]->_type);
+                }
+            }
+        }
+    }
+
     // method G
     TiXmlElement * xMethod_G = xMainNode->FirstChildElement("method_G");
     if(xMethod_G) {
@@ -709,8 +755,8 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
     }
 
     LOG_INFO("Finish parsing inifile");
-    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodG ||
-         _isMethodH)) {
+    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodF ||
+        _isMethodG || _isMethodH)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -1097,6 +1143,11 @@ vector<int> ArgumentParser::GetTimeIntervalE() const
     return _timeIntervalE;
 }
 
+vector<int> ArgumentParser::GetTimeIntervalF() const
+{
+    return _timeIntervalF;
+}
+
 vector<int> ArgumentParser::GetTimeIntervalG() const
 {
     return _timeIntervalG;
@@ -1125,6 +1176,11 @@ bool ArgumentParser::GetIsMethodD() const
 bool ArgumentParser::GetIsMethodE() const
 {
     return _isMethodE;
+}
+
+bool ArgumentParser::GetIsMethodF() const
+{
+    return _isMethodF;
 }
 
 bool ArgumentParser::GetIsMethodG() const
@@ -1167,6 +1223,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodE() const
     return _areaIDforMethodE;
 }
 
+vector<int> ArgumentParser::GetAreaIDforMethodF() const
+{
+    return _areaIDforMethodF;
+}
+
 vector<int> ArgumentParser::GetAreaIDforMethodG() const
 {
     return _areaIDforMethodG;
@@ -1175,6 +1236,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodG() const
 vector<int> ArgumentParser::GetAreaIDforMethodH() const
 {
     return _areaIDforMethodH;
+}
+
+vector<int> ArgumentParser::GetLineIDforMethodF() const
+{
+    return _lineIDforMethodF;
 }
 
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)

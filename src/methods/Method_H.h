@@ -44,14 +44,12 @@ private:
     std::vector<point_2d> _entrancePoint; // where pedestrian enters the measurement area
     std::vector<point_2d> _exitPoint;     // where pedestrian leaves the measurement area
 
-    FILE * _fRhoVFlow;
-
-    void OpenFileMethodH();
+    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
 
     void GetTinToutEntExt(int numFrames); 
     // get time of exit/entry and entry/exit position for each pedestrian that enters the area
 
-    void OutputRhoVFlow(int numFrames);
+    void OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow);
 
     double GetExactDistance(int pedId, int firstFrame, int lastFrame);
     // gives the distance a pedestrian walks during firstFrame and lastFrame

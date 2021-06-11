@@ -14,7 +14,6 @@ Method_G::Method_G()
     _minFrame        = NULL;
     _deltaT          = 100;
     _fps             = 16;
-    _fRhoV           = nullptr;
     _areaForMethod_G = nullptr;
     _numPeds         = NULL;
     _dx              = NULL;
@@ -37,7 +36,14 @@ bool Method_G::Process(
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
 
-    OpenFileMethodG();
+    _measureAreaId = boost::lexical_cast<string>(_areaForMethod_G->_id);
+    std::ofstream fRhoV = GetFile("rho_v", _measureAreaId);
+    if(!fRhoV.is_open()) {
+        LOG_ERROR("Cannot open file to write density and velocity data for method G!\n");
+        exit(EXIT_FAILURE);
+    }
+    fRhoV << "#denisty (m ^ (-1))\tharmonic mean velocity (m / s)\n";
+
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
     GetTinTout(peddata.GetNumFrames());
     if(_areaForMethod_G->_length < 0) {
@@ -47,24 +53,31 @@ bool Method_G::Process(
         _dx = _areaForMethod_G->_length;
         LOG_INFO("The measurement area length for method G is {:.3f}", _areaForMethod_G->_length);
     }
-    OutputDensityV(peddata.GetNumFrames());
+    OutputDensityV(peddata.GetNumFrames(), fRhoV);
+    fRhoV.close();
     
     return true;
 }
 
-void Method_G::OpenFileMethodG()
+std::ofstream Method_G::GetFile(string whatOutput, string idCombination)
 {
-    fs::path tmp("_id_" + _measureAreaId + ".dat");
+    // TODO put this function somewhere so that all methods can access it (and modify it
+    // accordingly)
+
+    fs::path tmp("_" + idCombination + ".dat");
     tmp = _outputLocation / "Fundamental_Diagram" / "Method_G" /
-          ("rho_v_" + _trajName.string() + tmp.string());
-
-    string filename = tmp.string();
-
-    if((_fRhoV = Analysis::CreateFile(filename)) == nullptr) {
-        LOG_WARNING("cannot open file {} to write density and velocity data\n", filename);
-        exit(EXIT_FAILURE);
+          (whatOutput + "_" + _trajName.string() + tmp.string());
+    string filename   = tmp.string();
+    fs::path filepath = fs::path(filename.c_str()).parent_path();
+    if(fs::is_directory(filepath) == false) {
+        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
+            LOG_ERROR("cannot create the directory <{}>", filepath.string());
+            exit(EXIT_FAILURE);
+        }
+        LOG_INFO("create the directory <{}>", filepath.string());
     }
-    fprintf(_fRhoV, "#denisty (m ^ (-1))\tharmonic mean velocity (m / s)\n");
+    std::ofstream file(tmp.string());
+    return file;
 }
 
 void Method_G::GetTinTout(int numFrames)
@@ -96,7 +109,7 @@ void Method_G::GetTinTout(int numFrames)
     }
 }
 
-void Method_G::OutputDensityV(int numFrames)
+void Method_G::OutputDensityV(int numFrames, std::ofstream & fRhoV)
 {
     for(int i = _deltaT; i < numFrames; i += _deltaT) {
         int pedsInMeasureArea = 0;
@@ -114,7 +127,7 @@ void Method_G::OutputDensityV(int numFrames)
         double density = sumTime / ((_deltaT/_fps) * _dx);
         double meanVelocity = _dx / (sumTime / pedsInMeasureArea);
 
-        fprintf(_fRhoV, "%.3f\t%.3f\n", density, meanVelocity);
+        fRhoV << density << "\t" << meanVelocity << "\n";
     }
 }
 

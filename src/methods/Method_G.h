@@ -44,11 +44,9 @@ private:
     std::vector<int> _tIn; // the time for each pedestrian that enters the measurement area
     std::vector<int> _tOut; // the time for each pedestrian that exits the measurement area
 
-    FILE * _fRhoV;
+    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
 
-    void OpenFileMethodG();
-
-    void OutputDensityV(int numFrames);
+    void OutputDensityV(int numFrames, std::ofstream & fRhoV);
 
     void GetTinTout(int numFrames);
 };

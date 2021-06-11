@@ -15,7 +15,6 @@ Method_H::Method_H()
     _minFrame        = NULL;
     _deltaT          = 100;
     _fps             = 16;
-    _fRhoVFlow       = nullptr;
     _areaForMethod_H = nullptr;
     _numPeds         = NULL;
 }
@@ -35,7 +34,14 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
     _fps            = peddata.GetFps();
     _firstFrame     = peddata.GetFirstFrame();
 
-    OpenFileMethodH();
+    _measureAreaId           = boost::lexical_cast<string>(_areaForMethod_H->_id);
+    std::ofstream fRhoVFlow = GetFile("flow_rho_v", _measureAreaId);
+    if(!fRhoVFlow.is_open()) {
+        LOG_ERROR("Cannot open file to write density, flow and velocity data for method H!\n");
+        exit(EXIT_FAILURE);
+    }
+    fRhoVFlow << "#mean flow (1 / s)\tmean density (1 / m)\tmean velocity (m / s)\n";
+
     LOG_INFO("------------------------Analyzing with Method H-----------------------------");
     GetTinToutEntExt(peddata.GetNumFrames());
     
@@ -47,24 +53,31 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
         _dx = _areaForMethod_H->_length;
         LOG_INFO("The measurement area length for method H is {:.3f}", _areaForMethod_H->_length);
     }
-    OutputRhoVFlow(peddata.GetNumFrames());
+    OutputRhoVFlow(peddata.GetNumFrames(), fRhoVFlow);
+    fRhoVFlow.close();
 
     return true;
 }
 
-void Method_H::OpenFileMethodH()
+std::ofstream Method_H::GetFile(string whatOutput, string idCombination)
 {
-    fs::path tmp("_id_" + _measureAreaId + ".dat");
+    // TODO put this function somewhere so that all methods can access it (and modify it
+    // accordingly)
+
+    fs::path tmp("_" + idCombination + ".dat");
     tmp = _outputLocation / "Fundamental_Diagram" / "Method_H" /
-          ("flow_rho_v" + _trajName.string() + tmp.string());
-
-    string filename = tmp.string();
-
-    if((_fRhoVFlow = Analysis::CreateFile(filename)) == nullptr) {
-        LOG_WARNING("cannot open file {} to write data for method H\n", filename);
-        exit(EXIT_FAILURE);
+          (whatOutput + "_" + _trajName.string() + tmp.string());
+    string filename   = tmp.string();
+    fs::path filepath = fs::path(filename.c_str()).parent_path();
+    if(fs::is_directory(filepath) == false) {
+        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
+            LOG_ERROR("cannot create the directory <{}>", filepath.string());
+            exit(EXIT_FAILURE);
+        }
+        LOG_INFO("create the directory <{}>", filepath.string());
     }
-    fprintf(_fRhoVFlow, "#mean flow (1 / s)\tmean density (1 / m)\tmean velocity (m / s)\n");
+    std::ofstream file(tmp.string());
+    return file;
 }
 
 void Method_H::GetTinToutEntExt(int numFrames)
@@ -103,7 +116,8 @@ void Method_H::GetTinToutEntExt(int numFrames)
     }
 }
 
-void Method_H::OutputRhoVFlow(int numFrames) {
+void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
+{
     for(int i = 0; i < _numPeds; i++) {
         for(int frameNr = 0; frameNr < numFrames; frameNr++) {
             _xCor(i, frameNr) = _xCor(i, frameNr) * CMtoM;
@@ -148,7 +162,7 @@ void Method_H::OutputRhoVFlow(int numFrames) {
         double flow     = sumDistance / (_dx * _deltaT);
         double density  = sumTime / (_dx * _deltaT);
         double velocity = sumDistance / sumTime;
-        fprintf(_fRhoVFlow, "%.3f\t%.3f\t%.3f\n", flow, density, velocity);
+        fRhoVFlow << flow << "\t" << density << "\t" << velocity << "\n";
     }
 }
 

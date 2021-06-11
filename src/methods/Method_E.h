@@ -32,7 +32,7 @@ private:
     std::map<int, std::vector<int>> _peds_t;
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
-    int * _firstFrame;
+    std::vector<int> _firstFrame;
     int _minFrame;
     float _fps;
 

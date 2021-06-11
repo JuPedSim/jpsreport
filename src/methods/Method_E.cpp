@@ -18,7 +18,6 @@ Method_E::Method_E()
     _lineForMethod_E = nullptr;
     _boxForMethod_E  = nullptr;
     _lenLine         = NULL;
-    _firstFrame      = nullptr;
 }
 
 Method_E::~Method_E() = default;
@@ -35,7 +34,7 @@ bool Method_E::Process(
     _yCor            = peddata.GetYCor();
     _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
-    _firstFrame = peddata.GetFirstFrame();
+    _firstFrame      = peddata.GetFirstFrame();
 
     if(_lineForMethod_E) {
         HandleLineMeasurementArea(peddata, zPos_measureArea);

@@ -42,7 +42,6 @@ Method_A::Method_A()
 {
     _classicFlow     = 0;
     _vDeltaT         = 0;
-    _firstFrame      = nullptr;
     _passLine        = nullptr;
     _deltaT          = 100;
     _fps             = 16;

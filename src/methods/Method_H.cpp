@@ -16,7 +16,6 @@ Method_H::Method_H()
     _deltaT          = 100;
     _fps             = 16;
     _fRhoVFlow       = nullptr;
-    _firstFrame      = nullptr;
     _areaForMethod_H = nullptr;
     _numPeds         = NULL;
 }

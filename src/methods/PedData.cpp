@@ -463,8 +463,8 @@ double PedData::GetInstantaneousVelocity(
     int Tpast,
     int Tfuture,
     int ID,
-    int * Tfirst,
-    int * Tlast,
+    std::vector<int> Tfirst,
+    std::vector<int> Tlast,
     const ub::matrix<double> & Xcor,
     const ub::matrix<double> & Ycor) const
 {
@@ -527,8 +527,8 @@ double PedData::GetInstantaneousVelocity1(
     int Tpast,
     int Tfuture,
     int ID,
-    int * Tfirst,
-    int * Tlast,
+    std::vector<int> Tfirst,
+    std::vector<int> Tlast,
     const ub::matrix<double> & Xcor,
     const ub::matrix<double> & Ycor) const
 {
@@ -610,8 +610,6 @@ void PedData::CreateGlobalVariables(int numPeds, int numFrames)
     LOG_INFO("allocate memory for vComp");
     _vComp = ub::matrix<std::string>(numPeds, numFrames);
     LOG_INFO("Finished memory allocation");
-    _firstFrame = new int[numPeds]; // Record the first frame of each pedestrian
-    _lastFrame  = new int[numPeds]; // Record the last frame of each pedestrian
     for(int i = 0; i < numPeds; i++) {
         for(int j = 0; j < numFrames; j++) {
             _xCor(i, j)  = 0;
@@ -619,8 +617,8 @@ void PedData::CreateGlobalVariables(int numPeds, int numFrames)
             _zCor(i, j)  = 0;
             _vComp(i, j) = "B";
         }
-        _firstFrame[i] = INT_MAX;
-        _lastFrame[i]  = INT_MIN;
+        _firstFrame.push_back(INT_MAX);
+        _lastFrame.push_back(INT_MIN);
     }
     LOG_INFO("Leave CreateGlobalVariables()");
 }
@@ -675,11 +673,11 @@ ub::matrix<double> PedData::GetZCor() const
     return _zCor;
 }
 
-int * PedData::GetFirstFrame() const
+std::vector<int> PedData::GetFirstFrame() const
 {
     return _firstFrame;
 }
-int * PedData::GetLastFrame() const
+std::vector<int> PedData::GetLastFrame() const
 {
     return _lastFrame;
 }

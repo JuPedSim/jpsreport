@@ -69,7 +69,7 @@ private:
 
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
-    int * _firstFrame;
+    std::vector<int> _firstFrame;
     float _fps;
 
     bool * _passLine;

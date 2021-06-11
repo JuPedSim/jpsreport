@@ -13,7 +13,6 @@ Method_F::Method_F()
 {
     _deltaT          = 100;
     _fps             = 16;
-    _firstFrame      = nullptr;
     _areaForMethod_F = nullptr;
     _lineForMethod_F = nullptr;
     _numPeds         = NULL;

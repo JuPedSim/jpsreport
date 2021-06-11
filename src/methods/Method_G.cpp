@@ -15,9 +15,9 @@ Method_G::Method_G()
     _deltaT          = 100;
     _fps             = 16;
     _fRhoV           = nullptr;
-    _firstFrame      = nullptr;
     _areaForMethod_G = nullptr;
     _numPeds         = NULL;
+    _dx              = NULL;
 }
 
 Method_G::~Method_G() {}
@@ -42,9 +42,6 @@ bool Method_G::Process(
     GetTinTout(peddata.GetNumFrames());
     if(_areaForMethod_G->_length < 0) {
         LOG_WARNING("The measurement area length for method G is not assigned! Cannot calculate density and velocity!");
-        // TODO should the effective distance between entrance point 
-        // to the measurement area and the exit point from the measurement area 
-        // be used if length is not assigned? (see method B)
         exit(EXIT_FAILURE);
     } else {
         _dx = _areaForMethod_G->_length;
@@ -67,7 +64,7 @@ void Method_G::OpenFileMethodG()
         LOG_WARNING("cannot open file {} to write density and velocity data\n", filename);
         exit(EXIT_FAILURE);
     }
-    fprintf(_fRhoV, "#denisty (m ^ (-2))\tharmonic mean velocity (m / s)\n");
+    fprintf(_fRhoV, "#denisty (m ^ (-1))\tharmonic mean velocity (m / s)\n");
 }
 
 void Method_G::GetTinTout(int numFrames)

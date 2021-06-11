@@ -17,8 +17,6 @@ Method_E::Method_E()
     _fps             = 16;
     _lineForMethod_E = nullptr;
     _boxForMethod_E  = nullptr;
-    _fRho            = nullptr;
-    _fFlow           = nullptr;
     _lenLine         = NULL;
     _firstFrame      = nullptr;
 }
@@ -48,11 +46,42 @@ bool Method_E::Process(
     return true;
 }
 
+std::ofstream Method_E::GetFile(string rhoFlow){
+    // TODO put this function somewhere so that all methods can access it
+    // (modify parameters for this)
+    
+    // create the directory for the file
+    fs::path tmp("_id_" + _measureAreaId + ".dat");
+    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
+          (rhoFlow + "_" + _trajName.string() + tmp.string());
+    string filename   = tmp.string();
+    fs::path filepath = fs::path(filename.c_str()).parent_path();
+    if(fs::is_directory(filepath) == false) {
+        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
+            LOG_ERROR("cannot create the directory <{}>", filepath.string());
+            exit(EXIT_FAILURE);
+        }
+        LOG_INFO("create the directory <{}>", filepath.string());
+    }
+    std::ofstream file(tmp.string());
+    return file;
+}
+
 void Method_E::HandleLineMeasurementArea(
     const PedData & peddata,
     const double & zPos_measureArea)
 {
     _measureAreaId = boost::lexical_cast<string>(_lineForMethod_E->_id);
+
+    std::ofstream fRho = GetFile("rho");
+    std::ofstream fFlow = GetFile("flow");
+
+    if(!(fRho.is_open() && fFlow.is_open())) {
+        LOG_ERROR("Cannot open files to write data for method E!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fRho << "#framerate:\t" << std::to_string(_fps) << "\n\n#frame\tdensity(m ^ (-1))\n";
 
     for(int i = 0; i < peddata.GetNumPeds(); i++) {
         _passLine.push_back(false);
@@ -64,7 +93,6 @@ void Method_E::HandleLineMeasurementArea(
                CMtoM;
     // length of line -> delta x for density
 
-    OpenRhoFileMethodE();
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
     LOG_INFO("Line is selected as measurement area (id {})", _measureAreaId);
 
@@ -77,30 +105,17 @@ void Method_E::HandleLineMeasurementArea(
 
         vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
-
-        OutputDensityLine(frameNr, idsInFrame);
+        
+        OutputDensityLine(frameNr, idsInFrame, fRho);
     }
-    fclose(_fRho);
+    fRho.close();
     // output of density done, now output of flow
-    OutputFlow(_fps, _accumPedsPassLine);
+    OutputFlow(_fps, _accumPedsPassLine, fFlow);
 }
 
-void Method_E::OpenRhoFileMethodE()
-{
-    fs::path tmp("_id_" + _measureAreaId + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
-          ("rho_" + _trajName.string() + tmp.string());
-
-    string filename = tmp.string();
-
-    if((_fRho = Analysis::CreateFile(filename)) == nullptr) {
-        LOG_WARNING("cannot open file {} to write density data\n", filename);
-        exit(EXIT_FAILURE);
-    }
-    fprintf(_fRho, "#framerate:\t%.2f\n\n#frame\tdensity(m ^ (-1))\n", _fps);
-}
-
-void Method_E::OutputDensityLine(int frame, const vector<int> & ids)
+void Method_E::OutputDensityLine(int frame, 
+    const vector<int> & ids, 
+    std::ofstream & fRho)
 {
     int framePassLine = GetNumberPassLine(frame, ids);
     // framePassLine -> number of pedestrians that pass the line during this frame
@@ -113,7 +128,7 @@ void Method_E::OutputDensityLine(int frame, const vector<int> & ids)
     }
 
     double density = framePassLine / _lenLine;
-    fprintf(_fRho, "%i\t%.3f\n", frame, density);
+    fRho << frame << "\t" << density << "\n";
 }
 
 int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
@@ -162,18 +177,11 @@ bool Method_E::IsPassLine(
     return (intersects(edge0, edge1));
 }
 
-void Method_E::OutputFlow(float fps, const vector<int> & AccumPeds)
+void Method_E::OutputFlow(float fps, 
+    const vector<int> & AccumPeds,
+    std::ofstream & fFlow)
 {
-    fs::path tmp("_id_" + _measureAreaId + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
-          ("flow_" + _trajName.string() + tmp.string());
-    string filename = tmp.string();
-
-    if((_fFlow = Analysis::CreateFile(filename)) == nullptr) {
-        LOG_ERROR("Cannot open the file to write flow data!\n");
-        exit(EXIT_FAILURE);
-    }
-    fprintf(_fFlow, "#Flow rate(1/s)\n");
+    fFlow << "#Flow rate(1/s)\n";
 
     int TotalFrames = AccumPeds.size();
     int TotalPeds   = AccumPeds[TotalFrames - 1];
@@ -184,10 +192,10 @@ void Method_E::OutputFlow(float fps, const vector<int> & AccumPeds)
 
             if(!(N1 == N2)) {
                 double flow = (N2 - N1) / (_deltaT * 1.0 / fps);
-                fprintf(_fFlow, "%.3f\t\n", flow);
+                fFlow << flow << "\t\n";
             }
         }
-        fclose(_fFlow);
+        fFlow.close();
     } else {
         LOG_WARNING("No person passing the reference line given by Method E!\n");
     }
@@ -198,7 +206,16 @@ void Method_E::HandleBoxMeasurementArea(
     const double & zPos_measureArea)
 {
     _measureAreaId = boost::lexical_cast<string>(_boxForMethod_E->_id);
-    OpenRhoFileMethodE();
+
+    std::ofstream fRho  = GetFile("rho");
+
+    if(!fRho.is_open()) {
+        LOG_ERROR("Cannot open file to write density data for method E!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fRho << "#framerate:\t" << std::to_string(_fps) << "\n\n#frame\tdensity(m ^ (-1))\n";
+
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
     LOG_INFO("Box is selected as measurement area (id {})", _measureAreaId);
 
@@ -212,15 +229,16 @@ void Method_E::HandleBoxMeasurementArea(
         const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
         const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
 
-        OutputDensityBox(frameNr, XInFrame, YInFrame);
+        OutputDensityBox(frameNr, XInFrame, YInFrame, fRho);
     }
-    fclose(_fRho);
+    fRho.close();
 }
 
 void Method_E::OutputDensityBox(
     int frmNr,
     const vector<double> & XInFrame,
-    const vector<double> & YInFrame)
+    const vector<double> & YInFrame,
+    std::ofstream & fRho)
 {
     int numPedsInFrame = XInFrame.size();
     int pedsInMA = 0;
@@ -233,7 +251,7 @@ void Method_E::OutputDensityBox(
     double density = pedsInMA / (area(_boxForMethod_E->_poly) * CMtoM * CMtoM);
     // by definition of the method, this should be a rectangle
     // in this case delta x * delta y is the same as the area of the bounding box
-    fprintf(_fRho, "%i\t%.3f\n", frmNr, density);
+    fRho << frmNr << "\t" << density << "\n";
 }
 
 void Method_E::SetMeasurementAreaLine(MeasurementArea_L * area)

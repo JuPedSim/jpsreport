@@ -45,16 +45,13 @@ private:
     int _deltaT; // delta t for flow
     std::vector<int> _accumPedsPassLine; // accumulative pedestrians that pass the line over frames
 
-    FILE * _fRho;
-    FILE * _fFlow;
-
     void HandleLineMeasurementArea(
         const PedData & peddata,
         const double & zPos_measureArea);
 
-    void OpenRhoFileMethodE();
-
-    void OutputDensityLine(int frame, const std::vector<int> & ids);
+    void OutputDensityLine(int frame, 
+        const std::vector<int> & ids, 
+        std::ofstream & fRho);
 
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
@@ -69,7 +66,9 @@ private:
         double pt2_X,
         double pt2_Y);
 
-    void OutputFlow(float fps, const std::vector<int> & AccumPeds);
+    void OutputFlow(float fps, 
+        const std::vector<int> & AccumPeds, 
+        std::ofstream & fFlow);
 
     void HandleBoxMeasurementArea(
         const PedData & peddata,
@@ -78,7 +77,10 @@ private:
     void OutputDensityBox(
         int frmNr,
         const std::vector<double> & XInFrame,
-        const std::vector<double> & YInFrame);
+        const std::vector<double> & YInFrame,
+        std::ofstream & fRho);
+
+    std::ofstream GetFile(std::string rhoFlow);
 };
 
 #endif /* METHOD_E_H_ */

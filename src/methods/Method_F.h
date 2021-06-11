@@ -23,7 +23,6 @@ public:
 
 private:
     fs::path _trajName;
-    fs::path _projectRootDir;
     fs::path _scriptsLocation;
     fs::path _outputLocation;
 
@@ -31,7 +30,6 @@ private:
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
     int * _firstFrame;
-    int _minFrame;
     int _numPeds;
     float _fps;
 
@@ -42,8 +40,34 @@ private:
     int _deltaT;
     double _dx;
     double _dy;
+    std::vector<double> _velPed; // the velocity of each pedestrian
+    std::vector<int> _tIn;       // the time at which each pedestrian enters the measurement area
+    std::vector<int> _tOut;      // the time at which each pedestrian exits the measurement area
+    double _averageV;
+    std::vector<bool> _passLine; // which pedestrians have passed the line
 
-    FILE * _fRhoV;
+    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
+
+    void GetTinTout(int numFrames);
+
+    void OutputVelocity();
+
+    void OutputDensityLine(
+        const PedData & peddata,
+        const double & zPos_measureArea);
+
+    int GetNumberPassLine(int frame, const std::vector<int> & ids);
+    // returns number of pedestrians that passed the line during this frame
+
+    bool IsPassLine(
+        double Line_startX,
+        double Line_startY,
+        double Line_endX,
+        double Line_endY,
+        double pt1_X,
+        double pt1_Y,
+        double pt2_X,
+        double pt2_Y);
 };
 
 #endif /* METHOD_F_H_ */

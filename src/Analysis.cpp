@@ -491,7 +491,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             method_F.SetMeasurementArea(_areasForMethodF[i]);
             method_F.SetLine(_linesForMethodF[i]);
             method_F.SetTimeInterval(_deltaTMethodF[i]);
-            bool result_F = method_F.Process(data, _areasForMethodG[i]->_zPos);
+            bool result_F = method_F.Process(data, _areasForMethodF[i]->_zPos);
             if(result_F) {
                 LOG_INFO(
                     "Success with Method F using measurement area id {} and "

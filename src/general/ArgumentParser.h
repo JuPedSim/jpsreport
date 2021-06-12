@@ -110,6 +110,8 @@ private:
 
     std::optional<ConfigData_D> ParseDIJParams(TiXmlElement * xMethod);
 
+    bool IsInMeasureArea(MeasurementArea_L * line, MeasurementArea_B * area);
+
 public:
     // Konstruktor
     ArgumentParser();

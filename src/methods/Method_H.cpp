@@ -121,20 +121,20 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
                 if((i < _tIn[j] < (i + _deltaT)) && (i < _tOut[j] < (i + _deltaT))) {
                     // entrance and exit are during the time interval
                     tmpTime = (_tOut[j] - _tIn[j] * 1.0) / _fps;
-                    sumDistance += GetExactDistance(j, _tIn[j], _tOut[j]);
+                    sumDistance += GetExactDistance(j, _tIn[j], _tOut[j], _xCor, _yCor);
                 } else if((_tIn[j] <= i) && (_tOut[j] <= (i + _deltaT))) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
                     tmpTime = (_deltaT * 1.0) / _fps;
-                    sumDistance += GetExactDistance(j, i, i + _deltaT);
+                    sumDistance += GetExactDistance(j, i, i + _deltaT, _xCor, _yCor);
                 } else if((i < _tOut[j] < (i + _deltaT))) {
                     // only exit is during the time interval
                     tmpTime = (_tOut[j] - i * 1.0) / _fps;
-                    sumDistance += GetExactDistance(j, i, _tOut[j]);
+                    sumDistance += GetExactDistance(j, i, _tOut[j], _xCor, _yCor);
                 } else if((i < _tIn[j] < (i + _deltaT))) {
                     // only entrance is during the time interval
                     tmpTime = (i + _deltaT - _tIn[j] * 1.0) / _fps;
-                    sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT);
+                    sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT, _xCor, _yCor);
                 }
                 // TODO check whether these conditions are correct
                 sumTime += tmpTime;
@@ -145,26 +145,6 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
         double velocity = sumDistance / sumTime;
         fRhoVFlow << flow << "\t" << density << "\t" << velocity << "\n";
     }
-}
-
-double Method_H::GetExactDistance(
-    int pedId,
-    int firstFrame, 
-    int lastFrame) 
-{
-    double totalDist = 0;
-    for(int i = (firstFrame + 1); i <= lastFrame; i += 1) {
-        double x0 = _xCor(pedId, i - 1);
-        double x1 = _xCor(pedId, i);
-        double y0 = _yCor(pedId, i - 1);
-        double y1 = _yCor(pedId, i);
-        double dxq = (_xCor(pedId, i-1) - _xCor(pedId, i)) *
-                     (_xCor(pedId, i-1) - _xCor(pedId, i));
-        double dyq = (_yCor(pedId, i-1) - _yCor(pedId, i)) *
-                     (_yCor(pedId, i-1) - _yCor(pedId, i));
-        totalDist += sqrt(dxq + dyq);
-    }
-    return totalDist;
 }
 
 void Method_H::SetMeasurementArea(MeasurementArea_B * area)

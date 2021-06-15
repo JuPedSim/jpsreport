@@ -54,8 +54,6 @@ private:
 
     polygon_list GetCutPolygons();
 
-    double GetExactDistance(int pedId, int firstFrame, int lastFrame);
-
     void OutputDensityVFlowDt(int numFrames);
 };
 

@@ -48,9 +48,6 @@ private:
     // get time of exit/entry and entry/exit position for each pedestrian that enters the area
 
     void OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow);
-
-    double GetExactDistance(int pedId, int firstFrame, int lastFrame);
-    // gives the distance a pedestrian walks during firstFrame and lastFrame
 };
 
 #endif /* METHOD_H_H_ */

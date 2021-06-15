@@ -33,4 +33,11 @@ std::vector<std::vector<int>> GetTinTout(
     ub::matrix<double> xCor,
     ub::matrix<double> yCor);
 
+double GetExactDistance(
+    int pedId,
+    int firstFrame,
+    int lastFrame,
+    ub::matrix<double> xCor,
+    ub::matrix<double> yCor);
+
 #endif /* METHOD_FUNCTIONS_H_ */

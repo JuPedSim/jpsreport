@@ -108,7 +108,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             if(tIn[j] <= (i + _dt) && tOut[j] <= (i + _dt) && tOut[j] > i) {
                 // pedestian passed the measurement area during this time interval
                 pedsInMeasureArea++;
-                sumDistance += GetExactDistance(j, i, i + _dt);
+                sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
             }
         }
         double density      = pedsInMeasureArea / _deltaX;
@@ -265,21 +265,4 @@ void Method_G::SetTimeInterval(int deltaT)
 
 void Method_G::SetDt(int dt) {
     _dt = dt;
-}
-
-double Method_G::GetExactDistance(int pedId, int firstFrame, int lastFrame)
-{
-    double totalDist = 0;
-    for(int i = (firstFrame + 1); i <= lastFrame; i += 1) {
-        double x0 = _xCor(pedId, i - 1);
-        double x1 = _xCor(pedId, i);
-        double y0 = _yCor(pedId, i - 1);
-        double y1 = _yCor(pedId, i);
-        double dxq =
-            (_xCor(pedId, i - 1) - _xCor(pedId, i)) * (_xCor(pedId, i - 1) - _xCor(pedId, i));
-        double dyq =
-            (_yCor(pedId, i - 1) - _yCor(pedId, i)) * (_yCor(pedId, i - 1) - _yCor(pedId, i));
-        totalDist += sqrt(dxq + dyq);
-    }
-    return totalDist;
 }

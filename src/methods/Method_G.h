@@ -44,12 +44,19 @@ private:
     int _deltaT;
     int _dt;
     std::vector<int> _pedsInMeasureArea;
-    std::vector<int> _tIn; // the time for each pedestrian that enters the measurement area
-    std::vector<int> _tOut; // the time for each pedestrian that exits the measurement area
 
-    void OutputDensityV(int numFrames, std::ofstream & fRhoV);
+    void OutputDensityVdx(
+        int numFrames,
+        std::vector<int> tIn,
+        std::vector<int> tOut,
+        std::ofstream & fRho,
+        std::ofstream & fV);
 
     polygon_list GetCutPolygons();
+
+    double GetExactDistance(int pedId, int firstFrame, int lastFrame);
+
+    void OutputDensityVFlowDt(int numFrames);
 };
 
 #endif /* METHOD_G_H_ */

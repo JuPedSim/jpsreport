@@ -39,23 +39,27 @@ bool Method_G::Process(
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
 
-    _measureAreaId = boost::lexical_cast<string>(_areaForMethod_G->_id);
-    std::ofstream fRhoV = GetFile("rho_v", _measureAreaId, _outputLocation, _trajName, "Method_G");
-    if(!fRhoV.is_open()) {
-        LOG_ERROR("Cannot open file to write density and velocity data for method G!\n");
+    _measureAreaId      = boost::lexical_cast<string>(_areaForMethod_G->_id);
+    std::ofstream fRhoDx = GetFile("rho", _measureAreaId, _outputLocation, _trajName, "Method_G");
+    std::ofstream fVdx  = GetFile("v", _measureAreaId, _outputLocation, _trajName, "Method_G");
+
+    if(!(fRhoDx.is_open() && fVdx.is_open())) {
+        LOG_ERROR("Cannot open files to write data method G (fixed area)!\n");
         exit(EXIT_FAILURE);
     }
-    fRhoV << "#denisty (m ^ (-1))\tharmonic mean velocity (m / s)\n";
+    fRhoDx << "#denisty(m ^ (-1))\n";
+    fVdx << "#harmonic mean velocity(m/s)\n";
 
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
+
     if(_areaForMethod_G->_length < 0) {
-        LOG_WARNING("The measurement area length for method G is not assigned! Cannot calculate density and velocity!");
+        LOG_WARNING("The measurement area length for method G is not assigned! Cannot calculate "
+                    "density and velocity!");
         exit(EXIT_FAILURE);
     } else {
         _deltaX = _areaForMethod_G->_length;
         LOG_INFO("The measurement area length for method G is {:.3f}", _areaForMethod_G->_length);
     }
-    fRhoV.close();
 
     polygon_list cutPolygons = GetCutPolygons();
     for(int i = 0; i < cutPolygons.size(); i += 1) {
@@ -63,9 +67,57 @@ bool Method_G::Process(
             GetTinTout(peddata.GetNumFrames(), cutPolygons[i], _numPeds, _peds_t, _xCor, _yCor);
         // Is this the most efficient way to iterate through all
         // frames, pedestrians and cut measurement areas?
+        OutputDensityVdx(peddata.GetNumFrames(), TinTout[0], TinTout[1], fRhoDx, fVdx);
+        fRhoDx << "\n";
+        fVdx << "\n";
+        // structure of these files:
+        // each row is one piece of the measurement area
+        // each column is one frame interval
     }
+    fRhoDx.close();
+    fVdx.close();
+
+    OutputDensityVFlowDt(peddata.GetNumFrames());
     
     return true;
+}
+
+void Method_G::OutputDensityVFlowDt(int numFrames) {
+    std::ofstream fRhoVFlow =
+        GetFile("rho_flow_v", _measureAreaId, _outputLocation, _trajName, "Method_G");
+
+    if(!fRhoVFlow.is_open()) {
+        LOG_ERROR("Cannot open files to write data method G (fixed time)!\n");
+        exit(EXIT_FAILURE);
+    }
+    fRhoVFlow << "#harmonic mean velocity(m/s)\tdenisty(m ^ (-2))\tflow rate(1/s)\n";
+
+    vector<vector<int>> TinTout =
+        GetTinTout(numFrames, _areaForMethod_G->_poly, _numPeds, _peds_t, _xCor, _yCor);
+    vector<int> tIn = TinTout[0];
+    vector<int> tOut = TinTout[1];
+
+    // is this loop correct?
+    for(int i = 0; i < (numFrames - _dt); i += _dt) {
+        int pedsInMeasureArea = 0;
+        double sumDistance    = 0;
+        for(int j = 0; j < _numPeds; j++) {
+            // j is ID of pedestrian
+            // i is start of time interval
+            // i + _dt is end of time interval
+            if(tIn[j] <= (i + _dt) && tOut[j] <= (i + _dt) && tOut[j] > i) {
+                // pedestian passed the measurement area during this time interval
+                pedsInMeasureArea++;
+                sumDistance += GetExactDistance(j, i, i + _dt);
+            }
+        }
+        double density      = pedsInMeasureArea / _deltaX;
+        double meanVelocity = sumDistance / (pedsInMeasureArea * _dt);
+        double flow         = sumDistance / (_deltaX * _dt);
+
+        fRhoVFlow << meanVelocity << "\t" << density << "\t" << flow << "\n";
+    }
+    fRhoVFlow.close();
 }
 
 polygon_list Method_G::GetCutPolygons()
@@ -88,6 +140,9 @@ polygon_list Method_G::GetCutPolygons()
        |------------|      the rectangle is cut into pieces
        |____________|      (see left side)
        A            B
+
+       Alternatively: Directly give the indexes of the points in the ini-file
+       (and not the coordinates)?
     */
 
     // only D and A are given, but C is also needed for calculation
@@ -169,25 +224,32 @@ polygon_list Method_G::GetCutPolygons()
     return cutPolygons;
 }
 
-void Method_G::OutputDensityV(int numFrames, std::ofstream & fRhoV)
+void Method_G::OutputDensityVdx(
+    int numFrames,
+    vector<int> tIn,
+    vector<int> tOut,
+    std::ofstream & fRho,
+    std::ofstream & fV)
 {
-    for(int i = _deltaT; i < numFrames; i += _deltaT) {
+    // is this for loop correct?
+    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;
         double sumTime        = 0;
         for(int j = 0; j < _numPeds; j++) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
-            if(_tIn[j] <= (i + _deltaT) && _tOut[j] <= (i + _deltaT) && _tOut[j] > i) {
+            if(tIn[j] <= (i + _deltaT) && tOut[j] <= (i + _deltaT) && tOut[j] > i) {
                 // pedestian passed the measurement area during this time interval
                 pedsInMeasureArea++;
-                sumTime += (_tOut[j] - _tIn[j] * 1.0) / _fps;
+                sumTime += (tOut[j] - tIn[j] * 1.0) / _fps;
             }
         }
-        double density      = sumTime / ((_deltaT / _fps) * _deltaX);
-        double meanVelocity = _deltaX / (sumTime / pedsInMeasureArea);
+        double density      = sumTime / ((_deltaT / _fps) * _dx);
+        double meanVelocity = _dx / (sumTime / pedsInMeasureArea);
 
-        fRhoV << density << "\t" << meanVelocity << "\n";
+        fRho << density << "\t";
+        fV << meanVelocity << "\t";
     }
 }
 
@@ -203,4 +265,21 @@ void Method_G::SetTimeInterval(int deltaT)
 
 void Method_G::SetDt(int dt) {
     _dt = dt;
+}
+
+double Method_G::GetExactDistance(int pedId, int firstFrame, int lastFrame)
+{
+    double totalDist = 0;
+    for(int i = (firstFrame + 1); i <= lastFrame; i += 1) {
+        double x0 = _xCor(pedId, i - 1);
+        double x1 = _xCor(pedId, i);
+        double y0 = _yCor(pedId, i - 1);
+        double y1 = _yCor(pedId, i);
+        double dxq =
+            (_xCor(pedId, i - 1) - _xCor(pedId, i)) * (_xCor(pedId, i - 1) - _xCor(pedId, i));
+        double dyq =
+            (_yCor(pedId, i - 1) - _yCor(pedId, i)) * (_yCor(pedId, i - 1) - _yCor(pedId, i));
+        totalDist += sqrt(dxq + dyq);
+    }
+    return totalDist;
 }

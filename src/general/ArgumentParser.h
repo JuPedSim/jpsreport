@@ -88,6 +88,7 @@ private:
     std::vector<int> _timeIntervalH;
     std::vector<int> _lineIDforMethodF;
     std::vector<int> _lineIDforMethodE;
+    std::vector<int> _dtMethodG;
 
 
     std::map<int, MeasurementArea *> _measurementAreasByIDs;
@@ -132,6 +133,7 @@ public:
     std::vector<int> GetTimeIntervalF() const;
     std::vector<int> GetTimeIntervalG() const;
     std::vector<int> GetTimeIntervalH() const;
+    std::vector<int> GetDtMethodG() const;
     bool GetIsMethodA() const;
     bool GetIsMethodB() const;
     bool GetIsMethodC() const;

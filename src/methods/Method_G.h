@@ -18,6 +18,7 @@ public:
     virtual ~Method_G();
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
+    void SetDt(int dt);
     bool Process(
         const PedData & peddata,
         const double & zPos_measureArea);
@@ -35,11 +36,13 @@ private:
     int _minFrame;
     int _numPeds;
     float _fps;
-    double _dx;
 
     std::string _measureAreaId;
     MeasurementArea_B * _areaForMethod_G;
+    double _deltaX;
+    double _dx;
     int _deltaT;
+    int _dt;
     std::vector<int> _pedsInMeasureArea;
     std::vector<int> _tIn; // the time for each pedestrian that enters the measurement area
     std::vector<int> _tOut; // the time for each pedestrian that exits the measurement area
@@ -48,7 +51,9 @@ private:
 
     void OutputDensityV(int numFrames, std::ofstream & fRhoV);
 
-    void GetTinTout(int numFrames);
+    std::vector<std::vector<int>> GetTinToutIndividual(int numFrames, polygon_2d polygon);
+
+    polygon_list GetCutPolygons();
 };
 
 #endif /* METHOD_G_H_ */

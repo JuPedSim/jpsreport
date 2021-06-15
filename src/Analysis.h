@@ -125,6 +125,7 @@ private:
     std::vector<int> _deltaTMethodE;
     std::vector<int> _deltaTMethodF;
     std::vector<int> _deltaTMethodG;
+    std::vector<int> _dtMethodG;
     std::vector<int> _deltaTMethodH;
     bool _DoesUseMethodA;     // Method A (Zhang2011a)
     bool _DoesUseMethodB;     // Method B (Zhang2011a)

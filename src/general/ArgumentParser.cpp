@@ -723,13 +723,26 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                             _timeIntervalG.push_back(
                                 xmltoi(xMeasurementArea->Attribute("frame_interval")));
                             LOG_INFO(
-                                "Frame interval used for calculating flow is <{}> frames",
+                                "Frame interval used for calculation is <{}> frames",
                                 xmltoi(xMeasurementArea->Attribute("frame_interval")));
                         } else {
                             _timeIntervalG.push_back(100);
                         }
                     } else {
                         _timeIntervalG.push_back(100);
+                    }
+                    if(xMeasurementArea->Attribute("dt")) {
+                        if(string(xMeasurementArea->Attribute("dt")) != "None") {
+                            _dtMethodG.push_back(
+                                xmltoi(xMeasurementArea->Attribute("dt")));
+                            LOG_INFO(
+                                "Small frame interval (dt) used for calculation is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("dt")));
+                        } else {
+                            _dtMethodG.push_back(4); // what is a good default value?
+                        }
+                    } else {
+                        _dtMethodG.push_back(4); // what is a good default value?
                     }
                 } else {
                     LOG_WARNING(
@@ -1183,6 +1196,11 @@ vector<int> ArgumentParser::GetTimeIntervalG() const
 vector<int> ArgumentParser::GetTimeIntervalH() const
 {
     return _timeIntervalH;
+}
+
+vector<int> ArgumentParser::GetDtMethodG() const
+{
+    return _dtMethodG;
 }
 
 bool ArgumentParser::GetIsMethodB() const

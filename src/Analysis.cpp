@@ -210,6 +210,7 @@ void Analysis::InitArgs(ArgumentParser * args)
                 args->GetMeasurementArea(Measurement_Area_IDs[i])));
         }
         _deltaTMethodG = args->GetTimeIntervalG();
+        _dtMethodG = args->GetDtMethodG();
     }
 
     if(args->GetIsMethodH()) {
@@ -507,6 +508,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             Method_G method_G;
             method_G.SetMeasurementArea(_areasForMethodG[i]);
             method_G.SetTimeInterval(_deltaTMethodG[i]);
+            method_G.SetDt(_dtMethodG[i]);
             bool result_G = method_G.Process(data, _areasForMethodG[i]->_zPos);
             if(result_G) {
                 LOG_INFO(

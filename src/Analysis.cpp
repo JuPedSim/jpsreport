@@ -175,16 +175,15 @@ void Analysis::InitArgs(ArgumentParser * args)
     }
 
     if(args->GetIsMethodE()) {
-        _DoesUseMethodE               = true;
+        _DoesUseMethodE                  = true;
         vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodE();
+        vector<int> Line_IDs             = args->GetLineIDforMethodE();
+        // GetAreaIDforMethodE() and GetLineIDforMethodE() should have the same size
         for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
-            if(args->GetMeasurementArea(Measurement_Area_IDs[i])->_type == "Line") {
-                _linesForMethodE.push_back(dynamic_cast<MeasurementArea_L *>(
-                    args->GetMeasurementArea(Measurement_Area_IDs[i])));
-            } else {
-                _boxesForMethodE.push_back(dynamic_cast<MeasurementArea_B *>(
-                    args->GetMeasurementArea(Measurement_Area_IDs[i])));
-            }
+            _areasForMethodE.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+            _linesForMethodE.push_back(
+                dynamic_cast<MeasurementArea_L *>(args->GetMeasurementArea(Line_IDs[i])));
         }
         _deltaTMethodE = args->GetTimeIntervalE();
     }
@@ -444,40 +443,30 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
 
     if(_DoesUseMethodE) // method_E
     {
-        if(_linesForMethodE.empty() && _boxesForMethodE.empty()) {
+        if(_areasForMethodE.empty()) {
             LOG_ERROR("Method E selected with no measurement area!");
             exit(EXIT_FAILURE);
         }
-        for(int i = 0; i < int(_linesForMethodE.size()); i++) {
+        for(int i = 0; i < int(_areasForMethodE.size()); i++) {
             Method_E method_E;
-            method_E.SetMeasurementAreaLine(_linesForMethodE[i]);
+            method_E.SetMeasurementArea(_areasForMethodE[i]);
+            method_E.SetLine(_linesForMethodE[i]);
             method_E.SetTimeInterval(_deltaTMethodE[i]);
-            bool result_E = method_E.Process(data, _linesForMethodE[i]->_zPos);
+            bool result_E = method_E.Process(data, _areasForMethodE[i]->_zPos);
             if(result_E) {
                 LOG_INFO(
-                    "Success with Method E using measurement area id {}!\n",
+                    "Success with Method E using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodE[i]->_id,
                     _linesForMethodE[i]->_id);
             } else {
                 LOG_ERROR(
-                    "Failed with Method E using measurement area id {}!\n",
+                    "Failed with Method E using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodE[i]->_id,
                     _linesForMethodE[i]->_id);
             }
         }
-        for(int i = 0; i < int(_boxesForMethodE.size()); i++) {
-            Method_E method_E;
-            method_E.SetMeasurementAreaBox(_boxesForMethodE[i]);
-            bool result_E = method_E.Process(data, _boxesForMethodE[i]->_zPos);
-            if(result_E) {
-                LOG_INFO(
-                    "Success with Method E using measurement area id {}!\n",
-                    _boxesForMethodE[i]->_id);
-            } else {
-                LOG_ERROR(
-                    "Failed with Method E using measurement area id {}!\n",
-                    _boxesForMethodE[i]->_id);
-            }
-        }
-        // TODO one loop instead of two loops (if possible?)
     }
 
     if(_DoesUseMethodF) // method_F

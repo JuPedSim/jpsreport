@@ -605,26 +605,45 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                     xMainNode->FirstChildElement("method_E")->FirstChildElement("measurement_area");
                 xMeasurementArea;
                 xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
-                int id = xmltoi(xMeasurementArea->Attribute("id"));
-                _areaIDforMethodE.push_back(id);
-                LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                int id      = xmltoi(xMeasurementArea->Attribute("id"));
+                int line_id = xmltoi(xMeasurementArea->Attribute("line_id"));
 
-                if(_measurementAreasByIDs[id]->_type == "Line") {
-                    if(xMeasurementArea->Attribute("frame_interval")) {
-                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
-                            _timeIntervalE.push_back(
-                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
-                            LOG_INFO(
-                                "Frame interval used for calculating flow is <{}> frames",
-                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox" &&
+                   _measurementAreasByIDs[line_id]->_type == "Line") {
+                    if(IsInMeasureArea(
+                           dynamic_cast<MeasurementArea_L *>(GetMeasurementArea(line_id)),
+                           dynamic_cast<MeasurementArea_B *>(GetMeasurementArea(id)))) {
+                        _areaIDforMethodE.push_back(id);
+                        _lineIDforMethodE.push_back(line_id);
+                        LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                        if(xMeasurementArea->Attribute("frame_interval")) {
+                            if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                                _timeIntervalE.push_back(
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                                LOG_INFO(
+                                    "Frame interval used for calculating density is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            } else {
+                                _timeIntervalE.push_back(100);
+                            }
                         } else {
                             _timeIntervalE.push_back(100);
                         }
                     } else {
-                        _timeIntervalE.push_back(100);
+                        LOG_WARNING(
+                            "Measurement area id <{}> with line id <{}> will NOT be used for "
+                            "analysis: The line is not located within the measurement area.",
+                            id,
+                            line_id);
                     }
                 } else {
-                    _timeIntervalE.push_back(NULL);
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis: Either type "
+                        "of measurement area ({}) is not BoundingBox, or type of line ({}) "
+                        "is not Line.",
+                        id,
+                        _measurementAreasByIDs[id]->_type,
+                        _measurementAreasByIDs[line_id]->_type);
                 }
             }
         }
@@ -1244,6 +1263,11 @@ vector<int> ArgumentParser::GetAreaIDforMethodG() const
 vector<int> ArgumentParser::GetAreaIDforMethodH() const
 {
     return _areaIDforMethodH;
+}
+
+vector<int> ArgumentParser::GetLineIDforMethodE() const
+{
+    return _lineIDforMethodE;
 }
 
 vector<int> ArgumentParser::GetLineIDforMethodF() const

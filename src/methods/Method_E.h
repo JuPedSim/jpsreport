@@ -16,17 +16,13 @@ class Method_E
 public:
     Method_E();
     virtual ~Method_E();
-    void SetMeasurementAreaLine(MeasurementArea_L * area);
-    void SetMeasurementAreaBox(MeasurementArea_B * area);
+    void SetMeasurementArea(MeasurementArea_B * area);
+    void SetLine(MeasurementArea_L * area);
     void SetTimeInterval(int deltaT);
-    bool Process(
-        const PedData & peddata,
-        const double & zPos_measureArea);
+    bool Process(const PedData & peddata, const double & zPos_measureArea);
 
 private:
     fs::path _trajName;
-    fs::path _projectRootDir;
-    fs::path _scriptsLocation;
     fs::path _outputLocation;
 
     std::map<int, std::vector<int>> _peds_t;
@@ -37,21 +33,15 @@ private:
     float _fps;
 
     std::string _measureAreaId;
+    std::string _lineId;
+    MeasurementArea_B * _areaForMethod_E;
     MeasurementArea_L * _lineForMethod_E;
-    MeasurementArea_B * _boxForMethod_E;
 
     std::vector<bool> _passLine; // which pedestrians have passed the line
-    double _lenLine;
-    int _deltaT; // delta t for flow
-    std::vector<int> _accumPedsPassLine; // accumulative pedestrians that pass the line over frames
-
-    void HandleLineMeasurementArea(
-        const PedData & peddata,
-        const double & zPos_measureArea);
-
-    void OutputDensityLine(int frame, 
-        const std::vector<int> & ids, 
-        std::ofstream & fRho);
+    int _deltaT;
+    double _dx;
+    double _dy;
+    double _accumDensityDeltaT;
 
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
@@ -66,21 +56,17 @@ private:
         double pt2_X,
         double pt2_Y);
 
-    void OutputFlow(float fps, 
-        const std::vector<int> & AccumPeds, 
-        std::ofstream & fFlow);
+    void OutputFlow(float fps, std::ofstream & fFlow, int accumPeds);
 
-    void HandleBoxMeasurementArea(
-        const PedData & peddata,
-        const double & zPos_measureArea);
+    void OutputVelocity(float fps, std::ofstream & fV, int accumPeds);
 
-    void OutputDensityBox(
+    void OutputDensity(
         int frmNr,
         const std::vector<double> & XInFrame,
         const std::vector<double> & YInFrame,
         std::ofstream & fRho);
 
-    std::ofstream GetFile(std::string rhoFlow);
+    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
 };
 
 #endif /* METHOD_E_H_ */

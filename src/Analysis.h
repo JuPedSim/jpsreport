@@ -149,8 +149,8 @@ private:
     std::vector<MeasurementArea_B *> _areasForMethodB;
     std::vector<MeasurementArea_B *> _areasForMethodC;
     std::vector<MeasurementArea_B *> _areasForMethodD;
+    std::vector<MeasurementArea_B *> _areasForMethodE;
     std::vector<MeasurementArea_L *> _linesForMethodE;
-    std::vector<MeasurementArea_B *> _boxesForMethodE;
     std::vector<MeasurementArea_B *> _areasForMethodF;
     std::vector<MeasurementArea_L *> _linesForMethodF;
     std::vector<MeasurementArea_B *> _areasForMethodG;

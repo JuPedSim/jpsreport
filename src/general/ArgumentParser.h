@@ -87,6 +87,7 @@ private:
     std::vector<int> _timeIntervalG;
     std::vector<int> _timeIntervalH;
     std::vector<int> _lineIDforMethodF;
+    std::vector<int> _lineIDforMethodE;
 
 
     std::map<int, MeasurementArea *> _measurementAreasByIDs;
@@ -147,6 +148,7 @@ public:
     std::vector<int> GetAreaIDforMethodG() const;
     std::vector<int> GetAreaIDforMethodH() const;
     std::vector<int> GetLineIDforMethodF() const;
+    std::vector<int> GetLineIDforMethodE() const;
     bool GetIsOutputGraph() const;
     double GetSteadyStart() const;
     double GetSteadyEnd() const;

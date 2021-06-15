@@ -47,11 +47,7 @@ private:
     std::vector<int> _tIn; // the time for each pedestrian that enters the measurement area
     std::vector<int> _tOut; // the time for each pedestrian that exits the measurement area
 
-    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
-
     void OutputDensityV(int numFrames, std::ofstream & fRhoV);
-
-    std::vector<std::vector<int>> GetTinToutIndividual(int numFrames, polygon_2d polygon);
 
     polygon_list GetCutPolygons();
 };

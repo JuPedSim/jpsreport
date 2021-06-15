@@ -46,16 +46,6 @@ private:
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
 
-    bool IsPassLine(
-        double Line_startX,
-        double Line_startY,
-        double Line_endX,
-        double Line_endY,
-        double pt1_X,
-        double pt1_Y,
-        double pt2_X,
-        double pt2_Y);
-
     void OutputFlow(float fps, std::ofstream & fFlow, int accumPeds);
 
     void OutputVelocity(float fps, std::ofstream & fV, int accumPeds);
@@ -65,8 +55,6 @@ private:
         const std::vector<double> & XInFrame,
         const std::vector<double> & YInFrame,
         std::ofstream & fRho);
-
-    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
 };
 
 #endif /* METHOD_E_H_ */

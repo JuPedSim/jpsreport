@@ -1,6 +1,7 @@
 #include "../Analysis.h"
 #include "../general/Logger.h"
 #include "Method_F.h"
+#include "../general/MethodFunctions.h"
 
 #include <fstream>
 #include <iostream>
@@ -46,7 +47,7 @@ bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
     }
 
     if(_areaForMethod_F->_lengthOrthogonal < 0) {
-        LOG_WARNING("The measurement area length orthogonal to movement direction (delta y) for method F" 
+        LOG_WARNING("The measurement area length orthogonal to movement direction (delta y) for method F " 
             "is not assigned! Cannot calculate density and velocity!");
         exit(EXIT_FAILURE);
     } else {
@@ -56,7 +57,10 @@ bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
             _areaForMethod_F->_lengthOrthogonal);
     }
 
-    GetTinTout(peddata.GetNumFrames());
+    vector<vector<int>> TinTout = GetTinTout(
+        peddata.GetNumFrames(), _areaForMethod_F->_poly, _numPeds, _peds_t, _xCor, _yCor);
+    _tIn = TinTout[0];
+    _tOut = TinTout[1];
     OutputVelocity();
     if(!_averageV == NULL) {
         OutputDensityLine(peddata, zPos_measureArea);
@@ -65,62 +69,9 @@ bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
     return true;
 }
 
-std::ofstream Method_F::GetFile(string whatOutput, string idCombination)
-{
-    // TODO put this function somewhere so that all methods can access it (and modify it
-    // accordingly)
-
-    fs::path tmp("_" + idCombination + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_F" /
-          (whatOutput + "_" + _trajName.string() + tmp.string());
-    string filename   = tmp.string();
-    fs::path filepath = fs::path(filename.c_str()).parent_path();
-    if(fs::is_directory(filepath) == false) {
-        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
-            LOG_ERROR("cannot create the directory <{}>", filepath.string());
-            exit(EXIT_FAILURE);
-        }
-        LOG_INFO("create the directory <{}>", filepath.string());
-    }
-    std::ofstream file(tmp.string());
-    return file;
-}
-
-void Method_F::GetTinTout(int numFrames)
-{
-    // TODO put this function somewhere so that all methods can access it (and modify it 
-    // accordingly)
-
-    vector<bool> IsinMeasurezone;
-    for(int i = 0; i < _numPeds; i++) {
-        IsinMeasurezone.push_back(false);
-        _tIn.push_back(0);
-        _tOut.push_back(0);
-    }
-
-    for(int frameNr = 0; frameNr < numFrames; frameNr++) {
-        vector<int> ids = _peds_t[frameNr];
-        for(unsigned int i = 0; i < ids.size(); i++) {
-            int ID = ids[i];
-            int x  = _xCor(ID, frameNr);
-            int y  = _yCor(ID, frameNr);
-            if(within(make<point_2d>((x), (y)), _areaForMethod_F->_poly) &&
-               !(IsinMeasurezone[ID])) {
-                _tIn[ID]            = frameNr;
-                IsinMeasurezone[ID] = true;
-            }
-            if((!within(make<point_2d>((x), (y)), _areaForMethod_F->_poly)) &&
-               IsinMeasurezone[ID]) {
-                _tOut[ID]           = frameNr;
-                IsinMeasurezone[ID] = false;
-            }
-        }
-    }
-}
-
 void Method_F::OutputVelocity() 
 {
-    std::ofstream fV     = GetFile("v", "id_" + _measureAreaId);
+    std::ofstream fV = GetFile("v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_F");
     if(!fV.is_open()) {
         LOG_ERROR("Cannot open file to write velocity data for method F!\n");
         exit(EXIT_FAILURE);
@@ -153,7 +104,8 @@ void Method_F::OutputDensityLine(
     const PedData & peddata,
     const double & zPos_measureArea)
 {
-    std::ofstream fRho   = GetFile("rho", "id_" + _measureAreaId + "_line_" + _lineId);
+    string idCombination = "id_" + _measureAreaId + "_line_" + _lineId;
+    std::ofstream fRho   = GetFile("rho", idCombination, _outputLocation, _trajName, "Method_F");
     if(!fRho.is_open()) {
         LOG_ERROR("Cannot open file to write density and flow data for method F!\n");
         exit(EXIT_FAILURE);
@@ -190,8 +142,6 @@ void Method_F::OutputDensityLine(
 int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
 {
     // returns number of pedestrians that passed the line during this frame
-    // TODO put this function somewhere so that all methods can access it (and modify it
-    // accordingly)
     int framePassLine = 0;
     for(auto const i : ids) {
         bool IspassLine = false;
@@ -212,29 +162,6 @@ int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
         }
     }
     return framePassLine;
-}
-
-bool Method_F::IsPassLine(
-    double Line_startX,
-    double Line_startY,
-    double Line_endX,
-    double Line_endY,
-    double pt1_X,
-    double pt1_Y,
-    double pt2_X,
-    double pt2_Y)
-{
-    // TODO put this function somewhere so that all methods can access it
-
-    point_2d Line_pt0(Line_startX, Line_startY);
-    point_2d Line_pt1(Line_endX, Line_endY);
-    segment edge0(Line_pt0, Line_pt1);
-
-    point_2d Traj_pt0(pt1_X, pt1_Y);
-    point_2d Traj_pt1(pt2_X, pt2_Y);
-    segment edge1(Traj_pt0, Traj_pt1);
-
-    return (intersects(edge0, edge1));
 }
 
 void Method_F::SetMeasurementArea(MeasurementArea_B * area)

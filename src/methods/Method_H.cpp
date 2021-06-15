@@ -1,6 +1,7 @@
 #include "../Analysis.h"
 #include "../general/Logger.h"
 #include "Method_H.h"
+#include "../general/MethodFunctions.h"
 
 #include <fstream>
 #include <iostream>
@@ -35,7 +36,8 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
     _firstFrame     = peddata.GetFirstFrame();
 
     _measureAreaId           = boost::lexical_cast<string>(_areaForMethod_H->_id);
-    std::ofstream fRhoVFlow = GetFile("flow_rho_v", _measureAreaId);
+    std::ofstream fRhoVFlow =
+        GetFile("flow_rho_v", _measureAreaId, _outputLocation, _trajName, "Method_H");
     if(!fRhoVFlow.is_open()) {
         LOG_ERROR("Cannot open file to write density, flow and velocity data for method H!\n");
         exit(EXIT_FAILURE);
@@ -57,27 +59,6 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
     fRhoVFlow.close();
 
     return true;
-}
-
-std::ofstream Method_H::GetFile(string whatOutput, string idCombination)
-{
-    // TODO put this function somewhere so that all methods can access it (and modify it
-    // accordingly)
-
-    fs::path tmp("_" + idCombination + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_H" /
-          (whatOutput + "_" + _trajName.string() + tmp.string());
-    string filename   = tmp.string();
-    fs::path filepath = fs::path(filename.c_str()).parent_path();
-    if(fs::is_directory(filepath) == false) {
-        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
-            LOG_ERROR("cannot create the directory <{}>", filepath.string());
-            exit(EXIT_FAILURE);
-        }
-        LOG_INFO("create the directory <{}>", filepath.string());
-    }
-    std::ofstream file(tmp.string());
-    return file;
 }
 
 void Method_H::GetTinToutEntExt(int numFrames)

@@ -15,6 +15,7 @@ set(source_files
         Analysis.cpp
         general/ArgumentParser.cpp
         general/Logger.cpp
+        general/MethodFunctions.cpp
 )
 
 set (header_files
@@ -35,6 +36,7 @@ set (header_files
         general/Compiler.h
         general/Macros.h
         general/Logger.h
+        general/MethodFunctions.h
 )
 
 add_library(report STATIC

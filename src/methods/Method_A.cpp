@@ -30,6 +30,7 @@
 
 #include "../Analysis.h"
 #include "../general/Logger.h"
+#include "../general/MethodFunctions.h"
 
 #include <fstream>
 #include <iostream>
@@ -149,27 +150,6 @@ void Method_A::GetAccumFlowVelocity(
     }
     _accumPedsPassLine.push_back(_classicFlow);
     _accumVPassLine.push_back(_vDeltaT);
-}
-
-bool Method_A::IsPassLine(
-    double Line_startX,
-    double Line_startY,
-    double Line_endX,
-    double Line_endY,
-    double pt1_X,
-    double pt1_Y,
-    double pt2_X,
-    double pt2_Y)
-{
-    point_2d Line_pt0(Line_startX, Line_startY);
-    point_2d Line_pt1(Line_endX, Line_endY);
-    segment edge0(Line_pt0, Line_pt1);
-
-    point_2d Traj_pt0(pt1_X, pt1_Y);
-    point_2d Traj_pt1(pt2_X, pt2_Y);
-    segment edge1(Traj_pt0, Traj_pt1);
-
-    return (intersects(edge0, edge1));
 }
 
 void Method_A::FlowRate_Velocity(

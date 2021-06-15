@@ -2,6 +2,7 @@
 
 #include "../Analysis.h"
 #include "../general/Logger.h"
+#include "../general/MethodFunctions.h"
 
 #include <fstream>
 #include <iostream>
@@ -59,9 +60,10 @@ bool Method_E::Process(
             _areaForMethod_E->_lengthOrthogonal);
     }
 
-    std::ofstream fRho  = GetFile("rho", "id_" + _measureAreaId + "_line_" + _lineId);
-    std::ofstream fFlow = GetFile("flow", "id_" + _measureAreaId + "_line_" + _lineId);
-    std::ofstream fV = GetFile("v", "id_" + _measureAreaId + "_line_" + _lineId);
+    string idCombination = "id_" + _measureAreaId + "_line_" + _lineId;
+    std::ofstream fRho = GetFile("rho", idCombination, _outputLocation, _trajName, "Method_E");
+    std::ofstream fFlow = GetFile("flow", idCombination, _outputLocation, _trajName, "Method_E");
+    std::ofstream fV = GetFile("v", idCombination, _outputLocation, _trajName, "Method_E");
 
     if(!(fRho.is_open() && fFlow.is_open() && fV.is_open())) {
         LOG_ERROR("Cannot open files to write data for method E!\n");
@@ -102,50 +104,8 @@ bool Method_E::Process(
             accumPedsDeltaT = 0;
         }
     }
-    
+
     return true;
-}
-
-std::ofstream Method_E::GetFile(string whatOutput, string idCombination)
-{
-    // TODO put this function somewhere so that all methods can access it
-    // (modify parameters for this)
-    
-    fs::path tmp("_" + idCombination + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_E" /
-          (whatOutput + "_" + _trajName.string() + tmp.string());
-    string filename   = tmp.string();
-    fs::path filepath = fs::path(filename.c_str()).parent_path();
-    if(fs::is_directory(filepath) == false) {
-        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
-            LOG_ERROR("cannot create the directory <{}>", filepath.string());
-            exit(EXIT_FAILURE);
-        }
-        LOG_INFO("create the directory <{}>", filepath.string());
-    }
-    std::ofstream file(tmp.string());
-    return file;
-}
-
-bool Method_E::IsPassLine(
-    double Line_startX,
-    double Line_startY,
-    double Line_endX,
-    double Line_endY,
-    double pt1_X,
-    double pt1_Y,
-    double pt2_X,
-    double pt2_Y)
-{
-    point_2d Line_pt0(Line_startX, Line_startY);
-    point_2d Line_pt1(Line_endX, Line_endY);
-    segment edge0(Line_pt0, Line_pt1);
-
-    point_2d Traj_pt0(pt1_X, pt1_Y);
-    point_2d Traj_pt1(pt2_X, pt2_Y);
-    segment edge1(Traj_pt0, Traj_pt1);
-
-    return (intersects(edge0, edge1));
 }
 
 int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)

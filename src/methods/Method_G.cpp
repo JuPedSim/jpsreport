@@ -1,6 +1,7 @@
 #include "../Analysis.h"
 #include "../general/Logger.h"
 #include "Method_G.h"
+#include "../general/MethodFunctions.h"
 
 #include <fstream>
 #include <iostream>
@@ -18,6 +19,7 @@ Method_G::Method_G()
     _numPeds         = NULL;
     _deltaX          = NULL;
     _dx              = NULL;
+    _dt              = NULL;
 }
 
 Method_G::~Method_G() {}
@@ -38,7 +40,7 @@ bool Method_G::Process(
     _firstFrame      = peddata.GetFirstFrame();
 
     _measureAreaId = boost::lexical_cast<string>(_areaForMethod_G->_id);
-    std::ofstream fRhoV = GetFile("rho_v", _measureAreaId);
+    std::ofstream fRhoV = GetFile("rho_v", _measureAreaId, _outputLocation, _trajName, "Method_G");
     if(!fRhoV.is_open()) {
         LOG_ERROR("Cannot open file to write density and velocity data for method G!\n");
         exit(EXIT_FAILURE);
@@ -57,7 +59,8 @@ bool Method_G::Process(
 
     polygon_list cutPolygons = GetCutPolygons();
     for(int i = 0; i < cutPolygons.size(); i += 1) {
-        vector<vector<int>> TinTout = GetTinToutIndividual(peddata.GetNumFrames(), cutPolygons[i]);
+        vector<vector<int>> TinTout =
+            GetTinTout(peddata.GetNumFrames(), cutPolygons[i], _numPeds, _peds_t, _xCor, _yCor);
         // Is this the most efficient way to iterate through all
         // frames, pedestrians and cut measurement areas?
     }
@@ -164,63 +167,6 @@ polygon_list Method_G::GetCutPolygons()
         cutPolygons.push_back(polygon);
     }
     return cutPolygons;
-}
-
-std::ofstream Method_G::GetFile(string whatOutput, string idCombination)
-{
-    // TODO put this function somewhere so that all methods can access it (and modify it
-    // accordingly)
-
-    fs::path tmp("_" + idCombination + ".dat");
-    tmp = _outputLocation / "Fundamental_Diagram" / "Method_G" /
-          (whatOutput + "_" + _trajName.string() + tmp.string());
-    string filename   = tmp.string();
-    fs::path filepath = fs::path(filename.c_str()).parent_path();
-    if(fs::is_directory(filepath) == false) {
-        if(fs::create_directories(filepath) == false && fs::is_directory(filepath) == false) {
-            LOG_ERROR("cannot create the directory <{}>", filepath.string());
-            exit(EXIT_FAILURE);
-        }
-        LOG_INFO("create the directory <{}>", filepath.string());
-    }
-    std::ofstream file(tmp.string());
-    return file;
-}
-
-vector<vector<int>> Method_G::GetTinToutIndividual(int numFrames, polygon_2d polygon)
-{
-    vector<bool> IsinMeasurezone;
-    vector<int> tIn;
-    vector<int> tOut;
-    for(int i = 0; i < _numPeds; i++) {
-        IsinMeasurezone.push_back(false);
-        tIn.push_back(0);
-        tOut.push_back(0);
-    }
-
-    for(int frameNr = 0; frameNr < numFrames; frameNr++) {
-        vector<int> ids = _peds_t[frameNr];
-        for(unsigned int i = 0; i < ids.size(); i++) {
-            int ID = ids[i];
-            int x  = _xCor(ID, frameNr);
-            int y  = _yCor(ID, frameNr);
-            if(within(make<point_2d>((x), (y)), polygon) &&
-               !(IsinMeasurezone[ID])) {
-                tIn[ID]             = frameNr;
-                IsinMeasurezone[ID] = true;
-            }
-            if((!within(make<point_2d>((x), (y)), polygon)) &&
-               IsinMeasurezone[ID]) {
-                tOut[ID]            = frameNr;
-                IsinMeasurezone[ID] = false;
-            }
-        }
-    }
-
-    vector<vector<int>> output;
-    output.push_back(tIn);
-    output.push_back(tOut);
-    return output;
 }
 
 void Method_G::OutputDensityV(int numFrames, std::ofstream & fRhoV)

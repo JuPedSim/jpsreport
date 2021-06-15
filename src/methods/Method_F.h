@@ -23,7 +23,6 @@ public:
 
 private:
     fs::path _trajName;
-    fs::path _scriptsLocation;
     fs::path _outputLocation;
 
     std::map<int, std::vector<int>> _peds_t;
@@ -46,10 +45,6 @@ private:
     double _averageV;
     std::vector<bool> _passLine; // which pedestrians have passed the line
 
-    std::ofstream GetFile(std::string whatOutput, std::string idCombination);
-
-    void GetTinTout(int numFrames);
-
     void OutputVelocity();
 
     void OutputDensityLine(
@@ -58,16 +53,6 @@ private:
 
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
-
-    bool IsPassLine(
-        double Line_startX,
-        double Line_startY,
-        double Line_endX,
-        double Line_endY,
-        double pt1_X,
-        double pt1_Y,
-        double pt2_X,
-        double pt2_Y);
 };
 
 #endif /* METHOD_F_H_ */

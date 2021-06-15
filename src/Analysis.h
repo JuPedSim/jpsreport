@@ -125,8 +125,10 @@ private:
     std::vector<int> _deltaTMethodE;
     std::vector<int> _deltaTMethodF;
     std::vector<int> _deltaTMethodG;
-    std::vector<int> _dtMethodG;
     std::vector<int> _deltaTMethodH;
+    std::vector<int> _dtMethodG;
+    std::vector<int> _numberPolygonsMethodG;
+    std::vector<std::vector<point_2d>> _pointsMethodG;
     bool _DoesUseMethodA;     // Method A (Zhang2011a)
     bool _DoesUseMethodB;     // Method B (Zhang2011a)
     bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file

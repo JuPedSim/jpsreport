@@ -716,33 +716,65 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 int id = xmltoi(xMeasurementArea->Attribute("id"));
                 
                 if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
-                    _areaIDforMethodG.push_back(id);
-                    LOG_INFO("Measurement area id <{}> will be used for analysis", id);
-                    if(xMeasurementArea->Attribute("frame_interval")) {
-                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
-                            _timeIntervalG.push_back(
-                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
-                            LOG_INFO(
-                                "Frame interval used for calculation is <{}> frames",
-                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                    TiXmlElement * xPoint1 = xMainNode->FirstChildElement("method_G")
+                                                 ->FirstChildElement("measurement_area")
+                                                 ->FirstChildElement("point_1");
+                    TiXmlElement * xPoint2 = xMainNode->FirstChildElement("method_G")
+                                                 ->FirstChildElement("measurement_area")
+                                                 ->FirstChildElement("point_2");
+                    TiXmlElement * numberPolygons = xMainNode->FirstChildElement("method_G")
+                                                 ->FirstChildElement("measurement_area")
+                                                 ->FirstChildElement("number_areas");
+
+                    if(xPoint1->Attribute("x") && xPoint1->Attribute("y") &&
+                         xPoint2->Attribute("x") && xPoint2->Attribute("y")) {
+                        _areaIDforMethodG.push_back(id);
+                        LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                        if(xMeasurementArea->Attribute("frame_interval")) {
+                            if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                                _timeIntervalG.push_back(
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                                LOG_INFO(
+                                    "Frame interval used for calculation is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            } else {
+                                _timeIntervalG.push_back(100);
+                            }
                         } else {
                             _timeIntervalG.push_back(100);
                         }
-                    } else {
-                        _timeIntervalG.push_back(100);
-                    }
-                    if(xMeasurementArea->Attribute("dt")) {
-                        if(string(xMeasurementArea->Attribute("dt")) != "None") {
-                            _dtMethodG.push_back(
-                                xmltoi(xMeasurementArea->Attribute("dt")));
-                            LOG_INFO(
-                                "Small frame interval (dt) used for calculation is <{}> frames",
-                                xmltoi(xMeasurementArea->Attribute("dt")));
+                        if(xMeasurementArea->Attribute("dt")) {
+                            if(string(xMeasurementArea->Attribute("dt")) != "None") {
+                                _dtMethodG.push_back(xmltoi(xMeasurementArea->Attribute("dt")));
+                                LOG_INFO(
+                                    "Small frame interval (dt) used for calculation is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("dt")));
+                            } else {
+                                _dtMethodG.push_back(4); // what is a good default value?
+                            }
                         } else {
                             _dtMethodG.push_back(4); // what is a good default value?
                         }
+                        if(numberPolygons->Attribute("n")) {
+                            _numberPolygonsMethodG.push_back(xmltoi(numberPolygons->Attribute("n")));
+                        } else {
+                            _numberPolygonsMethodG.push_back(10); // what is a good default value?
+                        }
+
+                        vector<point_2d> tmpPoints;
+                        double x = xmltof(xPoint1->Attribute("x")) * M2CM;
+                        double y = xmltof(xPoint1->Attribute("y")) * M2CM;
+                        tmpPoints.push_back(boost::geometry::make<point_2d>(x, y));
+                        x = xmltof(xPoint2->Attribute("x")) * M2CM;
+                        y = xmltof(xPoint2->Attribute("y")) * M2CM;
+                        tmpPoints.push_back(boost::geometry::make<point_2d>(x, y));
+                        _pointsMethodG.push_back(tmpPoints);
                     } else {
-                        _dtMethodG.push_back(4); // what is a good default value?
+                        LOG_WARNING(
+                            "Measurement area id <{}> will NOT be used for analysis "
+                            "(no side of measurement area was given)",
+                            id,
+                            _measurementAreasByIDs[id]->_type);
                     }
                 } else {
                     LOG_WARNING(
@@ -1291,6 +1323,16 @@ vector<int> ArgumentParser::GetLineIDforMethodE() const
 vector<int> ArgumentParser::GetLineIDforMethodF() const
 {
     return _lineIDforMethodF;
+}
+
+std::vector<vector<point_2d>> ArgumentParser::GetPointsMethodG() const
+{
+    return _pointsMethodG;
+}
+
+std::vector<int> ArgumentParser::GetNumPolyMethodG() const
+{
+    return _numberPolygonsMethodG;
 }
 
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)

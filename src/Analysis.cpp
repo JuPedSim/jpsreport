@@ -209,8 +209,10 @@ void Analysis::InitArgs(ArgumentParser * args)
             _areasForMethodG.push_back(dynamic_cast<MeasurementArea_B *>(
                 args->GetMeasurementArea(Measurement_Area_IDs[i])));
         }
-        _deltaTMethodG = args->GetTimeIntervalG();
-        _dtMethodG = args->GetDtMethodG();
+        _deltaTMethodG         = args->GetTimeIntervalG();
+        _dtMethodG             = args->GetDtMethodG();
+        _numberPolygonsMethodG = args->GetNumPolyMethodG();
+        _pointsMethodG         = args->GetPointsMethodG();
     }
 
     if(args->GetIsMethodH()) {
@@ -509,6 +511,8 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             method_G.SetMeasurementArea(_areasForMethodG[i]);
             method_G.SetTimeInterval(_deltaTMethodG[i]);
             method_G.SetDt(_dtMethodG[i]);
+            method_G.SetNumberPolygons(_numberPolygonsMethodG[i]);
+            method_G.SetPoints(_pointsMethodG[i]);
             bool result_G = method_G.Process(data, _areasForMethodG[i]->_zPos);
             if(result_G) {
                 LOG_INFO(

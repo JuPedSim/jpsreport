@@ -89,7 +89,8 @@ private:
     std::vector<int> _lineIDforMethodF;
     std::vector<int> _lineIDforMethodE;
     std::vector<int> _dtMethodG;
-
+    std::vector<std::vector<point_2d>> _pointsMethodG;
+    std::vector<int> _numberPolygonsMethodG;
 
     std::map<int, MeasurementArea *> _measurementAreasByIDs;
     std::vector<polygon_2d> _geometry;
@@ -151,6 +152,8 @@ public:
     std::vector<int> GetAreaIDforMethodH() const;
     std::vector<int> GetLineIDforMethodF() const;
     std::vector<int> GetLineIDforMethodE() const;
+    std::vector<std::vector<point_2d>> GetPointsMethodG() const;
+    std::vector<int> GetNumPolyMethodG() const;
     bool GetIsOutputGraph() const;
     double GetSteadyStart() const;
     double GetSteadyEnd() const;

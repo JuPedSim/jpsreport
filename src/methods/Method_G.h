@@ -19,6 +19,8 @@ public:
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
     void SetDt(int dt);
+    void SetNumberPolygons(int n);
+    void SetPoints(std::vector<point_2d> points);
     bool Process(
         const PedData & peddata,
         const double & zPos_measureArea);
@@ -43,6 +45,8 @@ private:
     double _dx;
     int _deltaT;
     int _dt;
+    int _n;
+    std::vector<point_2d> _points;
     std::vector<int> _pedsInMeasureArea;
 
     void OutputDensityVdx(

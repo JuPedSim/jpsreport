@@ -20,6 +20,7 @@ Method_G::Method_G()
     _deltaX          = NULL;
     _dx              = NULL;
     _dt              = NULL;
+    _n               = NULL;
 }
 
 Method_G::~Method_G() {}
@@ -122,13 +123,6 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
 
 polygon_list Method_G::GetCutPolygons()
 {
-    // hardcoded parameters for testing purposes
-    double n           = 10; // number of polygons
-    double x1          = 8.0;
-    double y1          = 0.5;
-    double x2          = 8.0;
-    double y2          = 1.5;
-
     /* 
        These parameters are normally given by the ini-file
        The coordinates describe two points, which are one side of the 
@@ -150,7 +144,7 @@ polygon_list Method_G::GetCutPolygons()
     allPoints.pop_back(); // last point is the same as the first point
     int posPointD  = -1;
     int posPointA  = -1;
-    int posPointC  = -1; 
+    int posPointC  = -1;
     if(allPoints.size() != 4) {
         // this does not check whether its a rectangle
         // only checks the number of boundary points
@@ -160,7 +154,7 @@ polygon_list Method_G::GetCutPolygons()
     for(int i = 0; i < 4; i++) {
         // find the index of the given points to find point C
         point_2d point = allPoints[0];
-        if(point.x() == x1 / CMtoM && point.y() == y1 / CMtoM) {
+        if(point.x() == _points[0].x() && point.y() == _points[0].y()) {
             // point D was found
             posPointD = i;
             // now check which neighbouring point is point A
@@ -177,10 +171,10 @@ polygon_list Method_G::GetCutPolygons()
             }
             point_2d p1 = allPoints[idx1];
             point_2d p2 = allPoints[idx2];
-            if(p1.x() == x2 / CMtoM && p1.y() == y2 / CMtoM) {
+            if(p1.x() == _points[1].x() && p1.y() == _points[1].y()) {
                 posPointA = idx1;
                 posPointC = idx2;
-            } else if(p2.x() == x2 / CMtoM && p2.y() == y2 / CMtoM) {
+            } else if(p2.x() == _points[1].x() && p2.y() == _points[1].y()) {
                 posPointC = idx1;
                 posPointA = idx2;
             }
@@ -192,7 +186,7 @@ polygon_list Method_G::GetCutPolygons()
         exit(EXIT_FAILURE);
     }
 
-    _dx    = distance(allPoints[posPointA], allPoints[posPointD]) / n;
+    _dx    = distance(allPoints[posPointA], allPoints[posPointD]) / _n;
     int d1 = allPoints[posPointD].x();
     int d2 = allPoints[posPointD].y();
     int a1 = allPoints[posPointA].x();
@@ -201,20 +195,20 @@ polygon_list Method_G::GetCutPolygons()
     int c2 = allPoints[posPointC].y();
 
     polygon_list cutPolygons;
-    for (double k = 0; k < n; k++) {
+    for(double k = 0; k < _n; k++) {
         polygon_2d polygon;
         {
             const double coor[][2] = {
-                {d1 - k / n * d1 + k / n * a1, 
-                 d2 - k / n * d2 + k / n * a2},
-                {c1 - k / n * d1 + k / n * a1, 
-                 c2 - k / n * d2 + k / n * a2},
-                {d1 - (k + 1) / n * d1 + (k + 1) / n * a1, 
-                 d2 - (k + 1) / n * d2 + (k + 1) / n * a2},
-                {c1 - (k + 1) / n * d1 + (k + 1) / n * a1,
-                 c2 - (k + 1) / n * d2 + (k + 1) / n * a2},
-                {d1 - k / n * d1 + k / n * a1,
-                 d2 - k / n * d2 + k / n * a2} // closing point is opening point
+                {d1 - k / _n * d1 + k / _n * a1, 
+                 d2 - k / _n * d2 + k / _n * a2},
+                {c1 - k / _n * d1 + k / _n * a1, 
+                 c2 - k / _n * d2 + k / _n * a2},
+                {d1 - (k + 1) / _n * d1 + (k + 1) / _n * a1, 
+                 d2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
+                {c1 - (k + 1) / _n * d1 + (k + 1) / _n * a1,
+                 c2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
+                {d1 - k / _n * d1 + k / _n * a1,
+                 d2 - k / _n * d2 + k / _n * a2} // closing point is opening point
             };
             assign_points(polygon, coor);
         }
@@ -265,4 +259,12 @@ void Method_G::SetTimeInterval(int deltaT)
 
 void Method_G::SetDt(int dt) {
     _dt = dt;
+}
+
+void Method_G::SetNumberPolygons(int n) {
+    _n = n;
+}
+
+void Method_G::SetPoints(std::vector<point_2d> points) {
+    _points = points;
 }

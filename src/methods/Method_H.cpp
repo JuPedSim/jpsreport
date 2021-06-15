@@ -105,8 +105,8 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
             _yCor(i, frameNr) = _yCor(i, frameNr) * CMtoM;
         }
     }
-
-    for(int i = _deltaT; i < numFrames; i += _deltaT) {
+    // is this loop correct?
+    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         double sumTime        = 0;
         double sumDistance  = 0;
         for(int j = 0; j < _numPeds; j++) {

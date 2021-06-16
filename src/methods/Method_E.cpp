@@ -18,7 +18,6 @@ Method_E::Method_E()
     _fps             = 16;
     _areaForMethod_E  = nullptr;
     _lineForMethod_E = nullptr;
-    _accumDensityDeltaT = NULL;
     _dx                 = NULL;
     _dy                 = NULL;
 }
@@ -70,9 +69,9 @@ bool Method_E::Process(
         exit(EXIT_FAILURE);
     }
 
-    fRho << "#framerate:\t" << std::to_string(_fps) << "\n\n#frame\tdensity(m ^ (-1))\tdensity(m ^ (-2))\n";
+    fRho << "#framerate:\t" << _fps << "\n\n#frame\tdensity(m ^ (-1))\tdensity(m ^ (-2))\n";
     fFlow << "#flow rate(1/s)\tspecific flow rate(1/(ms))\n";
-    fV << "#average speed(m/s)\n";
+    fV << "#framerate:\t" << _fps << "\n\n#frame\taverage speed(m/s)\n";
 
     for(int i = 0; i < peddata.GetNumPeds(); i++) {
         _passLine.push_back(false);
@@ -80,7 +79,6 @@ bool Method_E::Process(
 
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
 
-    _accumDensityDeltaT   = 0;
     int accumPedsDeltaT = 0;
     for(const auto & [frameNr, ids] : _peds_t) {
         int frid = frameNr + _minFrame;
@@ -96,11 +94,11 @@ bool Method_E::Process(
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
         OutputDensity(frameNr, XInFrame, YInFrame, fRho);
 
-        if((frameNr % _deltaT) == 0 && frameNr != 0) {
+        if(((frameNr + 1) % _deltaT) == 0 && frameNr != 0) {
             OutputFlow(_fps, fFlow, accumPedsDeltaT);
-            OutputVelocity(_fps, fV, accumPedsDeltaT);
+            OutputVelocity(_fps, fV, accumPedsDeltaT, frameNr + 1);
 
-            _accumDensityDeltaT = 0;
+            _densityPerFrame.clear();
             accumPedsDeltaT = 0;
         }
     }
@@ -139,11 +137,15 @@ void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) {
     fFlow << flow << "\t" << specificFlow << "\n";
 }
 
-void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds)
+void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame)
 {
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
-    double avgVelocity  = specificFlow / (_accumDensityDeltaT / _deltaT);
-    fV << avgVelocity << "\n";
+    int frameNr         = frame - _deltaT;
+    for(int i = 0; i < _densityPerFrame.size(); i++) {
+        double velocity = specificFlow / _densityPerFrame[i];
+        fV << frameNr << "\t" << velocity << "\n";
+        frameNr++;
+    }
 }
 
 void Method_E::OutputDensity(
@@ -162,8 +164,7 @@ void Method_E::OutputDensity(
 
     double density = pedsInMA / _dx;
     double densityDeltaY = pedsInMA / (_dx * _dy);
-
-    _accumDensityDeltaT += densityDeltaY;
+    _densityPerFrame.push_back(densityDeltaY);
 
     fRho << frmNr << "\t" << density << "\t" << densityDeltaY << "\n";
 }

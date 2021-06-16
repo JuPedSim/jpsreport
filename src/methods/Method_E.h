@@ -41,14 +41,14 @@ private:
     int _deltaT;
     double _dx;
     double _dy;
-    double _accumDensityDeltaT;
+    std::vector<double> _densityPerFrame;
 
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
     // returns number of pedestrians that passed the line during this frame
 
     void OutputFlow(float fps, std::ofstream & fFlow, int accumPeds);
 
-    void OutputVelocity(float fps, std::ofstream & fV, int accumPeds);
+    void OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame);
 
     void OutputDensity(
         int frmNr,

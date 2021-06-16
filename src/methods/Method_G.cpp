@@ -48,7 +48,7 @@ bool Method_G::Process(
         LOG_ERROR("Cannot open files to write data method G (fixed area)!\n");
         exit(EXIT_FAILURE);
     }
-    fRhoDx << "#denisty(m ^ (-1))\n";
+    fRhoDx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#denisty(m ^ (-1))\n";
     fVdx << "#harmonic mean velocity(m/s)\n";
 
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
@@ -69,11 +69,21 @@ bool Method_G::Process(
         // Is this the most efficient way to iterate through all
         // frames, pedestrians and cut measurement areas?
         OutputDensityVdx(peddata.GetNumFrames(), TinTout[0], TinTout[1], fRhoDx, fVdx);
+
         fRhoDx << "\n";
         fVdx << "\n";
+        ring allPoints = cutPolygons[i].outer();
+        for(int p = 0; p < 4; p++) {
+            fRhoDx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
+            fVdx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
+        }
+        fRhoDx << "\n";
+        fVdx << "\n";
+
         // structure of these files:
-        // each row is one piece of the measurement area
-        // each column is one frame interval
+        // rows -> pieces of the measurement area
+        // first row: values of density or velocity per frame interval
+        // second row: coordinates of the piece of the measurement area)
     }
     fRhoDx.close();
     fVdx.close();
@@ -124,7 +134,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
 polygon_list Method_G::GetCutPolygons()
 {
     /* 
-       These parameters are normally given by the ini-file
+       These parameters are given by the ini-file
        The coordinates describe two points, which are one side of the 
        rectangle (measurement area)
 

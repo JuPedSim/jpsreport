@@ -117,12 +117,13 @@ void Method_F::OutputDensityLine(
 
     int framesPassed = 0;
     int accumPedsDeltaT = 0;
-    fRho << "#number pedestrians\tdensity(m^(-2))\tflow rate(1/s)\tspecific flow rate(1/s)\n";
+    fRho << "#number pedestrians\tdensity(m^(-2))\tflow rate(1/s)\tspecific flow rate(1/(ms))\n";
     // should the number of pedestrians be removed from output?
     for(const auto & [frameNr, ids] : _peds_t) {
         vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
+        framesPassed++;
 
         if(framesPassed == _deltaT) {
             double density = accumPedsDeltaT / ((_deltaT / _fps) * _dy) * (1 / _averageV);
@@ -132,8 +133,6 @@ void Method_F::OutputDensityLine(
                  << "\n";
             accumPedsDeltaT = 0;
             framesPassed = 0;
-        } else {
-            framesPassed++;
         }
     }
     fRho.close();

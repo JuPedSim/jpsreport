@@ -96,6 +96,7 @@ ArgumentParser::ArgumentParser()
     _isMethodC              = false;
     _isMethodD              = false;
     _isMethodE              = false;
+    _isMethodF              = false;
     _isMethodG              = false;
     _isMethodH              = false;
     _steadyStart            = 100;

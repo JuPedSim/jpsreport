@@ -94,7 +94,7 @@ void Method_F::OutputVelocity()
         LOG_WARNING("No person passing the measurement area given by Method F!\n");
     } else {
         _averageV = sumV / numberPeds;
-        fV << "\n\n#average velocity (m / s)\t" << _averageV;
+        fV << "\n\n#average velocity (m / s)\n" << _averageV;
         // should this rather be included in the density file (or be left out entirely)?
     }
     fV.close();
@@ -105,7 +105,7 @@ void Method_F::OutputDensityLine(
     const double & zPos_measureArea)
 {
     string idCombination = "id_" + _measureAreaId + "_line_" + _lineId;
-    std::ofstream fRho   = GetFile("rho", idCombination, _outputLocation, _trajName, "Method_F");
+    std::ofstream fRho   = GetFile("rho_flow", idCombination, _outputLocation, _trajName, "Method_F");
     if(!fRho.is_open()) {
         LOG_ERROR("Cannot open file to write density and flow data for method F!\n");
         exit(EXIT_FAILURE);

@@ -48,7 +48,7 @@ bool Method_G::Process(
         LOG_ERROR("Cannot open files to write data method G (fixed area)!\n");
         exit(EXIT_FAILURE);
     }
-    fRhoDx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#denisty(m ^ (-1))\n";
+    fRhoDx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#density(m ^ (-1))\n";
     fVdx << "#harmonic mean velocity(m/s)\n";
 
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
@@ -101,14 +101,13 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
         LOG_ERROR("Cannot open files to write data method G (fixed time)!\n");
         exit(EXIT_FAILURE);
     }
-    fRhoVFlow << "#harmonic mean velocity(m/s)\tdenisty(m ^ (-2))\tflow rate(1/s)\n";
+    fRhoVFlow << "#harmonic mean velocity(m/s)\tdensity(m ^ (-1))\tflow rate(1/s)\n";
 
     vector<vector<int>> TinTout =
         GetTinTout(numFrames, _areaForMethod_G->_poly, _numPeds, _peds_t, _xCor, _yCor);
     vector<int> tIn = TinTout[0];
     vector<int> tOut = TinTout[1];
 
-    // is this loop correct?
     for(int i = 0; i < (numFrames - _dt); i += _dt) {
         int pedsInMeasureArea = 0;
         double sumDistance    = 0;
@@ -116,15 +115,15 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _dt is end of time interval
-            if(tIn[j] <= (i + _dt) && tOut[j] <= (i + _dt) && tOut[j] > i) {
-                // pedestian passed the measurement area during this time interval
+            if(tIn[j] <= i && tOut[j] >= (i + _dt) && tOut[j] > i) {
+                // pedestian is in the measurement area during this time interval
                 pedsInMeasureArea++;
-                sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
+                sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor) * CMtoM;
             }
         }
         double density      = pedsInMeasureArea / _deltaX;
-        double meanVelocity = sumDistance / (pedsInMeasureArea * _dt);
-        double flow         = sumDistance / (_deltaX * _dt);
+        double meanVelocity = sumDistance / (pedsInMeasureArea * (_dt / _fps));
+        double flow         = sumDistance / (_deltaX * (_dt/ _fps));
 
         fRhoVFlow << meanVelocity << "\t" << density << "\t" << flow << "\n";
     }
@@ -196,7 +195,7 @@ polygon_list Method_G::GetCutPolygons()
         exit(EXIT_FAILURE);
     }
 
-    _dx    = distance(allPoints[posPointA], allPoints[posPointD]) / _n;
+    _dx    = distance(allPoints[posPointA], allPoints[posPointD]) / _n * CMtoM;
     int d1 = allPoints[posPointD].x();
     int d2 = allPoints[posPointD].y();
     int a1 = allPoints[posPointA].x();
@@ -213,10 +212,10 @@ polygon_list Method_G::GetCutPolygons()
                  d2 - k / _n * d2 + k / _n * a2},
                 {c1 - k / _n * d1 + k / _n * a1, 
                  c2 - k / _n * d2 + k / _n * a2},
-                {d1 - (k + 1) / _n * d1 + (k + 1) / _n * a1, 
-                 d2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
                 {c1 - (k + 1) / _n * d1 + (k + 1) / _n * a1,
                  c2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
+                {d1 - (k + 1) / _n * d1 + (k + 1) / _n * a1,
+                 d2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
                 {d1 - k / _n * d1 + k / _n * a1,
                  d2 - k / _n * d2 + k / _n * a2} // closing point is opening point
             };
@@ -235,7 +234,6 @@ void Method_G::OutputDensityVdx(
     std::ofstream & fRho,
     std::ofstream & fV)
 {
-    // is this for loop correct?
     for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;
         double sumTime        = 0;
@@ -243,7 +241,7 @@ void Method_G::OutputDensityVdx(
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
-            if(tIn[j] <= (i + _deltaT) && tOut[j] <= (i + _deltaT) && tOut[j] > i) {
+            if(tIn[j] <= (i + _deltaT) && tOut[j] <= (i + _deltaT) && tOut[j] > i && tIn[j] >= i) {
                 // pedestian passed the measurement area during this time interval
                 pedsInMeasureArea++;
                 sumTime += (tOut[j] - tIn[j] * 1.0) / _fps;

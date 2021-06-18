@@ -80,8 +80,13 @@ vector<vector<int>> GetTinTout(
             if(within(make<point_2d>((x), (y)), polygon) && !(IsinMeasurezone[ID])) {
                 tIn[ID]             = frameNr;
                 IsinMeasurezone[ID] = true;
-            }
-            if((!within(make<point_2d>((x), (y)), polygon)) && IsinMeasurezone[ID]) {
+            } else if(
+                !within(make<point_2d>((x), (y)), polygon) &&
+                covered_by(make<point_2d>((x), (y)), polygon) &&
+                !(IsinMeasurezone[ID])) {
+                tIn[ID]             = frameNr;
+                IsinMeasurezone[ID] = true;
+            } else if((!within(make<point_2d>((x), (y)), polygon)) && IsinMeasurezone[ID]) {
                 tOut[ID]            = frameNr;
                 IsinMeasurezone[ID] = false;
             }

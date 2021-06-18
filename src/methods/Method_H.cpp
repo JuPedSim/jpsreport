@@ -85,8 +85,14 @@ void Method_H::GetTinToutEntExt(int numFrames)
                 IsinMeasurezone[ID] = true;
                 _entrancePoint[ID].x(x * CMtoM);
                 _entrancePoint[ID].y(y * CMtoM);
-            }
-            if((!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly)) &&
+            } else if(!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
+                covered_by(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
+                !(IsinMeasurezone[ID])) {
+                _tIn[ID]            = frameNr;
+                IsinMeasurezone[ID] = true;
+                _entrancePoint[ID].x(x * CMtoM);
+                _entrancePoint[ID].y(y * CMtoM);
+            } else if((!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly)) &&
                IsinMeasurezone[ID]) {
                 _tOut[ID] = frameNr;
                 _exitPoint[ID].x(x * CMtoM);
@@ -105,7 +111,6 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
             _yCor(i, frameNr) = _yCor(i, frameNr) * CMtoM;
         }
     }
-    // is this loop correct?
     for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         double sumTime        = 0;
         double sumDistance  = 0;
@@ -118,7 +123,8 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
                 // pedestian is in the measurement area during this time interval
                 
                 double tmpTime;
-                if((i < _tIn[j] < (i + _deltaT)) && (i < _tOut[j] < (i + _deltaT))) {
+                if((i < _tIn[j] && _tIn[j] < (i + _deltaT)) &&
+                   (i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
                     // entrance and exit are during the time interval
                     tmpTime = (_tOut[j] - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], _tOut[j], _xCor, _yCor);
@@ -127,21 +133,20 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
                     // (or exactly the same)
                     tmpTime = (_deltaT * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, i + _deltaT, _xCor, _yCor);
-                } else if((i < _tOut[j] < (i + _deltaT))) {
+                } else if((i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
                     // only exit is during the time interval
                     tmpTime = (_tOut[j] - i * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, _tOut[j], _xCor, _yCor);
-                } else if((i < _tIn[j] < (i + _deltaT))) {
+                } else if((i < _tIn[j] && _tIn[j] < (i + _deltaT))) {
                     // only entrance is during the time interval
                     tmpTime = (i + _deltaT - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT, _xCor, _yCor);
                 }
-                // TODO check whether these conditions are correct
                 sumTime += tmpTime;
             }
         }
-        double flow     = sumDistance / (_dx * _deltaT);
-        double density  = sumTime / (_dx * _deltaT);
+        double flow     = sumDistance / (_dx * (_deltaT / _fps));
+        double density  = sumTime / (_dx * (_deltaT / _fps));
         double velocity = sumDistance / sumTime;
         fRhoVFlow << flow << "\t" << density << "\t" << velocity << "\n";
     }

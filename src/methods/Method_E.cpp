@@ -160,7 +160,13 @@ void Method_E::OutputDensity(
         if(within(make<point_2d>(XInFrame[i], YInFrame[i]), _areaForMethod_E->_poly)) {
             pedsInMA++;
         }
+        // TODO decide which of these functions is more fitting:
+        // - within -> ignores the pedestrians directly on the border of the MA
+        // - covered_by -> includes those pedestrians
     }
+    // Is this the most efficient way to find the pedestrians in the MA?
+    // Would it be more efficient to use tIn and tOut (find them in the Process function, 
+    // and then give them as paramater)?
 
     double density = pedsInMA / _dx;
     double densityDeltaY = pedsInMA / (_dx * _dy);

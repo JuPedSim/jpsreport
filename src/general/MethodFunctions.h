@@ -8,6 +8,16 @@ typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<dou
 namespace ub = boost::numeric::ublas;
 using namespace boost::geometry;
 
+/**
+ * returns a file with the given parameters and creates the needed directories
+ * @param whatOutput what will be the content of the file (e.g. rho_v)
+ * @param idCombination id of measurement area or id combination of line and measurement area (e.g. 
+ * id_1_line_2)
+ * @param outputLocation general location of output
+ * @param trajName name of the trajectory file
+ * @param folderName the folder in which the file is saved (within outputLocation)
+ * @return file with the given parameters
+ */
 std::ofstream GetFile(
     std::string whatOutput,
     std::string idCombination,
@@ -33,6 +43,15 @@ std::vector<std::vector<int>> GetTinTout(
     ub::matrix<double> xCor,
     ub::matrix<double> yCor);
 
+/**
+ * returns the distance which a pedestrian has traveled from firstFrame to lastFrame
+ * @param pedId id of the pedestrian
+ * @param firstFrame first frame of the time interval
+ * @param lastFrame last frame of the time interval
+ * @param xCor matrix of x coordinates and ids
+ * @param yCor matrix of y coordinates and ids
+ * @return distance which a pedestrian has traveled from firstFrame to lastFrame
+ */
 double GetExactDistance(
     int pedId,
     int firstFrame,

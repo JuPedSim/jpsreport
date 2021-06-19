@@ -18,7 +18,7 @@ public:
     virtual ~Method_H();
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
-    bool Process(const PedData & peddata, const double & zPos_measureArea);
+    bool Process(const PedData & peddata);
 
 private:
     fs::path _trajName;
@@ -44,8 +44,11 @@ private:
     std::vector<point_2d> _entrancePoint; // where pedestrian enters the measurement area
     std::vector<point_2d> _exitPoint;     // where pedestrian leaves the measurement area
 
-    void GetTinToutEntExt(int numFrames); 
-    // get time of exit/entry and entry/exit position for each pedestrian that enters the area
+    
+    /** 
+    get time of exit/entry and entry/exit position for each pedestrian that enters the area
+     */
+    void GetTinToutEntExt(int numFrames);
 
     void OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow);
 };

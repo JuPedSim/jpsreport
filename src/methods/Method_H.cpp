@@ -12,17 +12,17 @@ using std::vector;
 
 Method_H::Method_H()
 {
-    _dx              = NULL;
-    _minFrame        = NULL;
+    _dx              = 0;
+    _minFrame        = 0;
     _deltaT          = 100;
     _fps             = 16;
     _areaForMethod_H = nullptr;
-    _numPeds         = NULL;
+    _numPeds         = 0;
 }
 
-Method_H::~Method_H() {}
+Method_H::~Method_H() = default;
 
-bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
+bool Method_H::Process(const PedData & peddata)
 {
     _trajName       = peddata.GetTrajName();
     _projectRootDir = peddata.GetProjectRootDir();
@@ -34,6 +34,10 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
     _minFrame       = peddata.GetMinFrame();
     _fps            = peddata.GetFps();
     _firstFrame     = peddata.GetFirstFrame();
+    _tIn            = std::vector<int>(_numPeds, 0);
+    _tOut           = std::vector<int>(_numPeds, 0);
+    _entrancePoint  = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
+    _exitPoint      = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
 
     _measureAreaId           = boost::lexical_cast<string>(_areaForMethod_H->_id);
     std::ofstream fRhoVFlow =
@@ -63,37 +67,31 @@ bool Method_H::Process(const PedData & peddata, const double & zPos_measureArea)
 
 void Method_H::GetTinToutEntExt(int numFrames)
 {
-    vector<bool> IsinMeasurezone;
-    for(int i = 0; i < _numPeds; i++) {
-        IsinMeasurezone.push_back(false);
-        _tIn.push_back(0);
-        _tOut.push_back(0);
-        _entrancePoint.push_back(boost::geometry::make<point_2d>(0, 0));
-        _exitPoint.push_back(boost::geometry::make<point_2d>(0, 0));
-    }
+    vector<bool> IsinMeasurezone(_numPeds, false);
 
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
         vector<int> ids       = _peds_t[frameNr];
         int pedsinMeasureArea = 0;
-        for(unsigned int i = 0; i < ids.size(); i++) {
-            int ID = ids[i];
-            int x  = _xCor(ID, frameNr);
-            int y  = _yCor(ID, frameNr);
+        for(int ID : ids) {
+            int x = _xCor(ID, frameNr);
+            int y = _yCor(ID, frameNr);
             if(within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
                !(IsinMeasurezone[ID])) {
                 _tIn[ID]            = frameNr;
                 IsinMeasurezone[ID] = true;
                 _entrancePoint[ID].x(x * CMtoM);
                 _entrancePoint[ID].y(y * CMtoM);
-            } else if(!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
+            } else if(
+                !within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
                 covered_by(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
                 !(IsinMeasurezone[ID])) {
                 _tIn[ID]            = frameNr;
                 IsinMeasurezone[ID] = true;
                 _entrancePoint[ID].x(x * CMtoM);
                 _entrancePoint[ID].y(y * CMtoM);
-            } else if((!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly)) &&
-               IsinMeasurezone[ID]) {
+            } else if(
+                (!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly)) &&
+                IsinMeasurezone[ID]) {
                 _tOut[ID] = frameNr;
                 _exitPoint[ID].x(x * CMtoM);
                 _exitPoint[ID].y(y * CMtoM);

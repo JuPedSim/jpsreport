@@ -12,22 +12,20 @@ using std::vector;
 
 Method_G::Method_G()
 {
-    _minFrame        = NULL;
+    _minFrame        = 0;
     _deltaT          = 100;
     _fps             = 16;
     _areaForMethod_G = nullptr;
-    _numPeds         = NULL;
-    _deltaX          = NULL;
-    _dx              = NULL;
-    _dt              = NULL;
-    _n               = NULL;
+    _numPeds         = 0;
+    _deltaX          = 0;
+    _dx              = std::numeric_limits<double>::quiet_NaN();
+    _dt              = 4;
+    _n               = 10;
 }
 
-Method_G::~Method_G() {}
+Method_G::~Method_G() = default;
 
-bool Method_G::Process(
-    const PedData & peddata,
-    const double & zPos_measureArea)
+bool Method_G::Process(const PedData & peddata)
 {
     _trajName        = peddata.GetTrajName();
     _projectRootDir  = peddata.GetProjectRootDir();
@@ -63,16 +61,16 @@ bool Method_G::Process(
     }
 
     polygon_list cutPolygons = GetCutPolygons();
-    for(int i = 0; i < cutPolygons.size(); i += 1) {
+    for(polygon_2d polygon : cutPolygons) {
         vector<vector<int>> TinTout =
-            GetTinTout(peddata.GetNumFrames(), cutPolygons[i], _numPeds, _peds_t, _xCor, _yCor);
+            GetTinTout(peddata.GetNumFrames(), polygon, _numPeds, _peds_t, _xCor, _yCor);
         // Is this the most efficient way to iterate through all
         // frames, pedestrians and cut measurement areas?
         OutputDensityVdx(peddata.GetNumFrames(), TinTout[0], TinTout[1], fRhoDx, fVdx);
 
         fRhoDx << "\n";
         fVdx << "\n";
-        ring allPoints = cutPolygons[i].outer();
+        ring allPoints = polygon.outer();
         for(int p = 0; p < 4; p++) {
             fRhoDx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
             fVdx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
@@ -83,7 +81,7 @@ bool Method_G::Process(
         // structure of these files:
         // rows -> pieces of the measurement area
         // first row: values of density or velocity per frame interval
-        // second row: coordinates of the piece of the measurement area)
+        // second row: coordinates of the piece of the measurement area
     }
     fRhoDx.close();
     fVdx.close();

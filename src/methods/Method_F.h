@@ -19,7 +19,7 @@ public:
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetLine(MeasurementArea_L * area);
     void SetTimeInterval(int deltaT);
-    bool Process(const PedData & peddata, const double & zPos_measureArea);
+    bool Process(const PedData & peddata, double zPos_measureArea);
 
 private:
     fs::path _trajName;
@@ -51,8 +51,13 @@ private:
         const PedData & peddata,
         const double & zPos_measureArea);
 
+    /**
+     * returns number of pedestrians that passed the line during this frame
+     * @param frame current frame
+     * @param ids of pedestrians to check
+     * @return number of pedestrians that passed the line during this frame
+     */
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
-    // returns number of pedestrians that passed the line during this frame
 };
 
 #endif /* METHOD_F_H_ */

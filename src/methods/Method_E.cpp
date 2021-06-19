@@ -13,20 +13,20 @@ using std::vector;
 
 Method_E::Method_E()
 {
-    _minFrame        = NULL;
-    _deltaT          = 100;
-    _fps             = 16;
+    _minFrame         = 0;
+    _deltaT           = 100;
+    _fps              = 16;
     _areaForMethod_E  = nullptr;
-    _lineForMethod_E = nullptr;
-    _dx                 = NULL;
-    _dy                 = NULL;
+    _lineForMethod_E  = nullptr;
+    _dx               = 0;
+    _dy               = 0;
 }
 
 Method_E::~Method_E() = default;
 
 bool Method_E::Process(
     const PedData & peddata,
-    const double & zPos_measureArea)
+    double zPos_measureArea)
 {
     _trajName        = peddata.GetTrajName();
     _outputLocation  = peddata.GetOutputLocation();
@@ -36,6 +36,7 @@ bool Method_E::Process(
     _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
+    _passLine        = std::vector<bool>(peddata.GetNumPeds(), false);
 
     if(_areaForMethod_E->_length < 0) {
         LOG_WARNING("The measurement area length for method E is not assigned! Cannot calculate "
@@ -72,10 +73,6 @@ bool Method_E::Process(
     fRho << "#framerate:\t" << _fps << "\n\n#frame\tdensity(m ^ (-1))\tdensity(m ^ (-2))\n";
     fFlow << "#flow rate(1/s)\tspecific flow rate(1/(ms))\n";
     fV << "#framerate:\t" << _fps << "\n\n#frame\taverage speed(m/s)\n";
-
-    for(int i = 0; i < peddata.GetNumPeds(); i++) {
-        _passLine.push_back(false);
-    }
 
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
 
@@ -131,18 +128,19 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
     return framePassLine;
 }
 
-void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) {
+void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const
+{
     double flow = accumPeds / (_deltaT * 1.0 / fps);
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
     fFlow << flow << "\t" << specificFlow << "\n";
 }
 
-void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame)
+void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const
 {
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
     int frameNr         = frame - _deltaT;
-    for(int i = 0; i < _densityPerFrame.size(); i++) {
-        double velocity = specificFlow / _densityPerFrame[i];
+    for(double density : _densityPerFrame) {
+        double velocity = specificFlow / density;
         fV << frameNr << "\t" << velocity << "\n";
         frameNr++;
     }

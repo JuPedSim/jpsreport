@@ -62,14 +62,9 @@ vector<vector<int>> GetTinTout(
     ub::matrix<double> xCor, 
     ub::matrix<double> yCor)
 {
-    vector<bool> IsinMeasurezone;
-    vector<int> tIn;
-    vector<int> tOut;
-    for(int i = 0; i < numPeds; i++) {
-        IsinMeasurezone.push_back(false);
-        tIn.push_back(0);
-        tOut.push_back(0);
-    }
+    vector<bool> IsinMeasurezone(numPeds, false);
+    vector<int> tIn(numPeds, 0);
+    vector<int> tOut(numPeds, 0);
 
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
         vector<int> ids = peds_t[frameNr];

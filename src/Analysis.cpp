@@ -513,7 +513,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             method_G.SetDt(_dtMethodG[i]);
             method_G.SetNumberPolygons(_numberPolygonsMethodG[i]);
             method_G.SetPoints(_pointsMethodG[i]);
-            bool result_G = method_G.Process(data, _areasForMethodG[i]->_zPos);
+            bool result_G = method_G.Process(data);
             if(result_G) {
                 LOG_INFO(
                     "Success with Method G using measurement area id {}!\n",
@@ -536,7 +536,7 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
             Method_H method_H;
             method_H.SetMeasurementArea(_areasForMethodH[i]);
             method_H.SetTimeInterval(_deltaTMethodH[i]);
-            bool result_H = method_H.Process(data, _areasForMethodH[i]->_zPos);
+            bool result_H = method_H.Process(data);
             if(result_H) {
                 LOG_INFO(
                     "Success with Method H using measurement area id {}!\n",

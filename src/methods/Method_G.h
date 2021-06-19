@@ -21,9 +21,7 @@ public:
     void SetDt(int dt);
     void SetNumberPolygons(int n);
     void SetPoints(std::vector<point_2d> points);
-    bool Process(
-        const PedData & peddata,
-        const double & zPos_measureArea);
+    bool Process(const PedData & peddata);
 
 private:
     fs::path _trajName;
@@ -56,9 +54,13 @@ private:
         std::ofstream & fRho,
         std::ofstream & fV);
 
-    polygon_list GetCutPolygons();
-
     void OutputDensityVFlowDt(int numFrames);
+    
+    /**
+     * returns a list of the cut polygons using the paramters given in the inifile
+     * @return list of the cut polygons using the paramters given in the inifile
+     */
+    polygon_list GetCutPolygons();
 };
 
 #endif /* METHOD_G_H_ */

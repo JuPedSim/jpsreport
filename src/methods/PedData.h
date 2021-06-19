@@ -98,8 +98,8 @@ private:
         int Tpast,
         int Tfuture,
         int ID,
-        std::vector<int> Tfirst,
-        std::vector<int> Tlast,
+        const std::vector<int> & Tfirst,
+        const std::vector<int> & Tlast,
         const ub::matrix<double> & Xcor,
         const ub::matrix<double> & Ycor) const;
     double GetInstantaneousVelocity1(
@@ -107,8 +107,8 @@ private:
         int Tpast,
         int Tfuture,
         int ID,
-        std::vector<int> Tfirst,
-        std::vector<int> Tlast,
+        const std::vector<int> & Tfirst,
+        const std::vector<int> & Tlast,
         const ub::matrix<double> & Xcor,
         const ub::matrix<double> & Ycor) const;
 

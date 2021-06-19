@@ -463,8 +463,8 @@ double PedData::GetInstantaneousVelocity(
     int Tpast,
     int Tfuture,
     int ID,
-    std::vector<int> Tfirst,
-    std::vector<int> Tlast,
+    const std::vector<int> & Tfirst,
+    const std::vector<int> & Tlast,
     const ub::matrix<double> & Xcor,
     const ub::matrix<double> & Ycor) const
 {
@@ -527,8 +527,8 @@ double PedData::GetInstantaneousVelocity1(
     int Tpast,
     int Tfuture,
     int ID,
-    std::vector<int> Tfirst,
-    std::vector<int> Tlast,
+    const std::vector<int> & Tfirst,
+    const std::vector<int> & Tlast,
     const ub::matrix<double> & Xcor,
     const ub::matrix<double> & Ycor) const
 {
@@ -609,6 +609,10 @@ void PedData::CreateGlobalVariables(int numPeds, int numFrames)
     _id = ub::matrix<double>(numPeds, numFrames);
     LOG_INFO("allocate memory for vComp");
     _vComp = ub::matrix<std::string>(numPeds, numFrames);
+    LOG_INFO("allocate memory for firstFrame");
+    _firstFrame = std::vector<int>(numPeds, std::numeric_limits<int>::max());
+    LOG_INFO("allocate memory for lastFrame");
+    _lastFrame = std::vector<int>(numPeds, std::numeric_limits<int>::max());
     LOG_INFO("Finished memory allocation");
     for(int i = 0; i < numPeds; i++) {
         for(int j = 0; j < numFrames; j++) {
@@ -617,8 +621,6 @@ void PedData::CreateGlobalVariables(int numPeds, int numFrames)
             _zCor(i, j)  = 0;
             _vComp(i, j) = "B";
         }
-        _firstFrame.push_back(INT_MAX);
-        _lastFrame.push_back(INT_MIN);
     }
     LOG_INFO("Leave CreateGlobalVariables()");
 }
@@ -677,6 +679,7 @@ std::vector<int> PedData::GetFirstFrame() const
 {
     return _firstFrame;
 }
+
 std::vector<int> PedData::GetLastFrame() const
 {
     return _lastFrame;

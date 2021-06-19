@@ -16,15 +16,15 @@ Method_F::Method_F()
     _fps             = 16;
     _areaForMethod_F = nullptr;
     _lineForMethod_F = nullptr;
-    _numPeds         = NULL;
-    _dx              = NULL;
-    _dy              = NULL;
-    _averageV        = NULL;
+    _numPeds         = 0;
+    _dx              = 0;
+    _dy              = 0;
+    _averageV        = std::numeric_limits<double>::quiet_NaN();
 }
 
 Method_F::~Method_F() = default;
 
-bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
+bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
 {
     _trajName       = peddata.GetTrajName();
     _outputLocation = peddata.GetOutputLocation();
@@ -34,6 +34,7 @@ bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
     _yCor           = peddata.GetYCor();
     _fps            = peddata.GetFps();
     _firstFrame     = peddata.GetFirstFrame();
+    _passLine       = std::vector<bool>(_numPeds, false);
 
     LOG_INFO("------------------------Analyzing with Method F-----------------------------");
 
@@ -62,7 +63,7 @@ bool Method_F::Process(const PedData & peddata, const double & zPos_measureArea)
     _tIn = TinTout[0];
     _tOut = TinTout[1];
     OutputVelocity();
-    if(!_averageV == NULL) {
+    if(isnan(_averageV)) {
         OutputDensityLine(peddata, zPos_measureArea);
     }
 
@@ -109,10 +110,6 @@ void Method_F::OutputDensityLine(
     if(!fRho.is_open()) {
         LOG_ERROR("Cannot open file to write density and flow data for method F!\n");
         exit(EXIT_FAILURE);
-    }
-
-    for(int i = 0; i < peddata.GetNumPeds(); i++) {
-        _passLine.push_back(false);
     }
 
     int framesPassed = 0;

@@ -113,10 +113,24 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _dt is end of time interval
-            if(tIn[j] <= i && tOut[j] >= (i + _dt) && tOut[j] > i) {
+            if(!((tIn[j] > (i + _dt) && tOut[j] >= (i + _dt)) ||
+                 (tIn[j] <= i && tOut[j] < i))) {
                 // pedestian is in the measurement area during this time interval
                 pedsInMeasureArea++;
-                sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor) * CMtoM;
+                if((i < tIn[j] && tIn[j] < (i + _dt)) && (i < tOut[j] && tOut[j] < (i + _dt))) {
+                    // entrance and exit are during the time interval
+                    sumDistance += GetExactDistance(j, tIn[j], tOut[j], _xCor, _yCor);
+                } else if((tIn[j] <= i) && (tOut[j] >= (i + _dt))) {
+                    // entrance and exit are both outside the time interval
+                    // (or exactly the same)
+                    sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
+                } else if((i < tOut[j] && tOut[j] < (i + _dt))) {
+                    // only exit is during the time interval
+                    sumDistance += GetExactDistance(j, i, tOut[j], _xCor, _yCor);
+                } else if((i < tIn[j] && tIn[j] < (i + _dt))) {
+                    // only entrance is during the time interval
+                    sumDistance += GetExactDistance(j, tIn[j], i + _dt, _xCor, _yCor);
+                }
             }
         }
         double density      = pedsInMeasureArea / _deltaX;

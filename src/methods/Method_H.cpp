@@ -75,27 +75,26 @@ void Method_H::GetTinToutEntExt(int numFrames)
         for(int ID : ids) {
             int x = _xCor(ID, frameNr);
             int y = _yCor(ID, frameNr);
-            if(within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
-               !(IsinMeasurezone[ID])) {
-                _tIn[ID]            = frameNr;
-                IsinMeasurezone[ID] = true;
-                _entrancePoint[ID].x(x * CMtoM);
-                _entrancePoint[ID].y(y * CMtoM);
-            } else if(
-                !within(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
-                covered_by(make<point_2d>((x), (y)), _areaForMethod_H->_poly) &&
-                !(IsinMeasurezone[ID])) {
-                _tIn[ID]            = frameNr;
-                IsinMeasurezone[ID] = true;
-                _entrancePoint[ID].x(x * CMtoM);
-                _entrancePoint[ID].y(y * CMtoM);
-            } else if(
-                (!within(make<point_2d>((x), (y)), _areaForMethod_H->_poly)) &&
-                IsinMeasurezone[ID]) {
-                _tOut[ID] = frameNr;
-                _exitPoint[ID].x(x * CMtoM);
-                _exitPoint[ID].y(y * CMtoM);
-                IsinMeasurezone[ID] = false;
+
+            int nextX, nextY;
+            if((frameNr + 1) < numFrames) {
+                nextX = _xCor(ID, frameNr + 1);
+                nextY = _yCor(ID, frameNr + 1);
+
+                if(within(make<point_2d>((nextX), (nextY)), _areaForMethod_H->_poly) &&
+                   !(IsinMeasurezone[ID])) {
+                    _tIn[ID]             = frameNr;
+                    IsinMeasurezone[ID] = true;
+                    _entrancePoint[ID].x(x * CMtoM);
+                    _entrancePoint[ID].y(y * CMtoM);
+                } else if(
+                    (!covered_by(make<point_2d>((nextX), (nextY)), _areaForMethod_H->_poly)) &&
+                    IsinMeasurezone[ID]) {
+                    _tOut[ID]            = frameNr;
+                    IsinMeasurezone[ID] = false;
+                    _exitPoint[ID].x(x * CMtoM);
+                    _exitPoint[ID].y(y * CMtoM);
+                }
             }
         }
     }
@@ -103,12 +102,6 @@ void Method_H::GetTinToutEntExt(int numFrames)
 
 void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
 {
-    for(int i = 0; i < _numPeds; i++) {
-        for(int frameNr = 0; frameNr < numFrames; frameNr++) {
-            _xCor(i, frameNr) = _xCor(i, frameNr) * CMtoM;
-            _yCor(i, frameNr) = _yCor(i, frameNr) * CMtoM;
-        }
-    }
     for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         double sumTime        = 0;
         double sumDistance  = 0;
@@ -126,7 +119,7 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
                     // entrance and exit are during the time interval
                     tmpTime = (_tOut[j] - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], _tOut[j], _xCor, _yCor);
-                } else if((_tIn[j] <= i) && (_tOut[j] <= (i + _deltaT))) {
+                } else if((_tIn[j] <= i) && (_tOut[j] >= (i + _deltaT))) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
                     tmpTime = (_deltaT * 1.0) / _fps;

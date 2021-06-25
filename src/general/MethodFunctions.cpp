@@ -68,22 +68,23 @@ vector<vector<int>> GetTinTout(
 
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
         vector<int> ids = peds_t[frameNr];
-        for(unsigned int i = 0; i < ids.size(); i++) {
-            int ID = ids[i];
+        for(int ID : ids) {
             int x  = xCor(ID, frameNr);
             int y  = yCor(ID, frameNr);
-            if(within(make<point_2d>((x), (y)), polygon) && !(IsinMeasurezone[ID])) {
-                tIn[ID]             = frameNr;
-                IsinMeasurezone[ID] = true;
-            } else if(
-                !within(make<point_2d>((x), (y)), polygon) &&
-                covered_by(make<point_2d>((x), (y)), polygon) &&
-                !(IsinMeasurezone[ID])) {
-                tIn[ID]             = frameNr;
-                IsinMeasurezone[ID] = true;
-            } else if((!within(make<point_2d>((x), (y)), polygon)) && IsinMeasurezone[ID]) {
-                tOut[ID]            = frameNr;
-                IsinMeasurezone[ID] = false;
+            int nextX, nextY;
+            if((frameNr + 1) < numFrames) {
+                nextX = xCor(ID, frameNr + 1);
+                nextY = yCor(ID, frameNr + 1);
+
+                if(within(make<point_2d>((nextX), (nextY)), polygon) && !(IsinMeasurezone[ID])) {
+                    tIn[ID]             = frameNr;
+                    IsinMeasurezone[ID] = true;
+                } else if(
+                    (!covered_by(make<point_2d>((nextX), (nextY)), polygon)) &&
+                    IsinMeasurezone[ID]) {
+                    tOut[ID]            = frameNr;
+                    IsinMeasurezone[ID] = false;
+                }
             }
         }
     }
@@ -109,7 +110,7 @@ double GetExactDistance(
         double y1  = yCor(pedId, i);
         double dxq = (xCor(pedId, i - 1) - xCor(pedId, i)) * (xCor(pedId, i - 1) - xCor(pedId, i));
         double dyq = (yCor(pedId, i - 1) - yCor(pedId, i)) * (yCor(pedId, i - 1) - yCor(pedId, i));
-        totalDist += sqrt(dxq + dyq);
+        totalDist += sqrt(dxq + dyq) * CMtoM;
     }
     return totalDist;
 }

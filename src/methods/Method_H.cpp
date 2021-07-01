@@ -109,31 +109,32 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
-            if(!((_tIn[j] > (i + _deltaT) && _tOut[j] >= (i + _deltaT)) ||
-                 (_tIn[j] <= i && _tOut[j] < i))) {
+            if(!((_tIn[j] > (i + _deltaT) && _tOut[j] > (i + _deltaT)) ||
+                 (_tIn[j] < i && _tOut[j] < i)) &&
+               !(_tIn[j] == 0 && _tOut[j] == 0) &&
+               !(_tOut[j] == 0 && (_tIn[j] < i || _tIn[j] > (i + _deltaT)))) {
                 // pedestian is in the measurement area during this time interval
                 
                 double tmpTime;
                 if((i < _tIn[j] && _tIn[j] < (i + _deltaT)) &&
                    (i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
                     // entrance and exit are during the time interval
-                    tmpTime = (_tOut[j] - _tIn[j] * 1.0) / _fps;
+                    sumTime += (_tOut[j] - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], _tOut[j], _xCor, _yCor);
                 } else if((_tIn[j] <= i) && (_tOut[j] >= (i + _deltaT))) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
-                    tmpTime = (_deltaT * 1.0) / _fps;
+                    sumTime += (_deltaT * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, i + _deltaT, _xCor, _yCor);
                 } else if((i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
                     // only exit is during the time interval
-                    tmpTime = (_tOut[j] - i * 1.0) / _fps;
+                    sumTime += (_tOut[j] - i * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, _tOut[j], _xCor, _yCor);
                 } else if((i < _tIn[j] && _tIn[j] < (i + _deltaT))) {
                     // only entrance is during the time interval
-                    tmpTime = (i + _deltaT - _tIn[j] * 1.0) / _fps;
+                    sumTime += (i + _deltaT - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT, _xCor, _yCor);
                 }
-                sumTime += tmpTime;
             }
         }
         double flow     = sumDistance / (_dx * (_deltaT / _fps));

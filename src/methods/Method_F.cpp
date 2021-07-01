@@ -63,7 +63,7 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
     _tIn = TinTout[0];
     _tOut = TinTout[1];
     OutputVelocity();
-    if(isnan(_averageV)) {
+    if(!isnan(_averageV)) {
         OutputDensityLine(peddata, zPos_measureArea);
     }
 
@@ -78,13 +78,11 @@ void Method_F::OutputVelocity()
         exit(EXIT_FAILURE);
     }
 
-    double sumV = 0;
     int numberPeds = 0;
     fV << "#person index\tvelocity_i(m /s)\n";
     for(int i = 0; i < _numPeds; i++) {
-        if(!(_tOut[i] == 0 && _tIn[i] == 0)) {
+        if(_tOut[i] != 0) {
             double velocity = _dx / ((_tOut[i] - _tIn[i] * 1.0) / _fps);
-            sumV += velocity;
             numberPeds++;
             fV << i << "\t" << velocity << "\n";
         }
@@ -93,10 +91,6 @@ void Method_F::OutputVelocity()
     }
     if (numberPeds == 0) {
         LOG_WARNING("No person passing the measurement area given by Method F!\n");
-    } else {
-        _averageV = sumV / numberPeds;
-        fV << "\n\n#average velocity (m / s)\n" << _averageV;
-        // should this rather be included in the density file (or be left out entirely)?
     }
     fV.close();
 }
@@ -120,7 +114,6 @@ void Method_F::OutputDensityLine(
         vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
-        framesPassed++;
 
         if(framesPassed == _deltaT) {
             double density = accumPedsDeltaT / ((_deltaT / _fps) * _dy) * (1 / _averageV);
@@ -131,6 +124,8 @@ void Method_F::OutputDensityLine(
             accumPedsDeltaT = 0;
             framesPassed = 0;
         }
+
+        framesPassed++;
     }
     fRho.close();
 }

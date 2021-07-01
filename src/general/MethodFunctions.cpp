@@ -76,12 +76,11 @@ vector<vector<int>> GetTinTout(
                 nextX = xCor(ID, frameNr + 1);
                 nextY = yCor(ID, frameNr + 1);
 
-                if(within(make<point_2d>((nextX), (nextY)), polygon) && !(IsinMeasurezone[ID])) {
+                // this is variant 4
+                if(covered_by(make<point_2d>(x, y), polygon) && !(IsinMeasurezone[ID])) {
                     tIn[ID]             = frameNr;
                     IsinMeasurezone[ID] = true;
-                } else if(
-                    (!covered_by(make<point_2d>((nextX), (nextY)), polygon)) &&
-                    IsinMeasurezone[ID]) {
+                } else if((!within(make<point_2d>(x, y), polygon)) && IsinMeasurezone[ID]) {
                     tOut[ID]            = frameNr;
                     IsinMeasurezone[ID] = false;
                 }

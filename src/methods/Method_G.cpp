@@ -47,7 +47,7 @@ bool Method_G::Process(const PedData & peddata)
         exit(EXIT_FAILURE);
     }
     fRhoDx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#density(m ^ (-1))\n";
-    fVdx << "#harmonic mean velocity(m/s)\n";
+    fVdx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#harmonic mean velocity(m/s)\n";
 
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
 
@@ -113,8 +113,9 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _dt is end of time interval
-            if(!((tIn[j] > (i + _dt) && tOut[j] >= (i + _dt)) ||
-                 (tIn[j] <= i && tOut[j] < i))) {
+            if(!((tIn[j] > (i + _dt) && tOut[j] > (i + _dt)) || (tIn[j] < i && tOut[j] < i)) &&
+               !(tIn[j] == 0 && tOut[j] == 0) &&
+               !(tOut[j] == 0 && (tIn[j] < i || tIn[j] > (i + _dt)))) {
                 // pedestian is in the measurement area during this time interval
                 pedsInMeasureArea++;
                 if((i < tIn[j] && tIn[j] < (i + _dt)) && (i < tOut[j] && tOut[j] < (i + _dt))) {
@@ -137,7 +138,8 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
         double meanVelocity = sumDistance / (pedsInMeasureArea * (_dt / _fps));
         double flow         = sumDistance / (_deltaX * (_dt/ _fps));
 
-        fRhoVFlow << meanVelocity << "\t" << density << "\t" << flow << "\n";
+        fRhoVFlow << i << "\t" << i + _dt << "\t" << meanVelocity << "\t" << density << "\t" << flow
+                  << "\n";
     }
     fRhoVFlow.close();
 }
@@ -174,7 +176,7 @@ polygon_list Method_G::GetCutPolygons()
     }
     for(int i = 0; i < 4; i++) {
         // find the index of the given points to find point C
-        point_2d point = allPoints[0];
+        point_2d point = allPoints[i];
         if(point.x() == _points[0].x() && point.y() == _points[0].y()) {
             // point D was found
             posPointD = i;

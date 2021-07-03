@@ -625,10 +625,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                                     "Frame interval used for calculating density is <{}> frames",
                                     xmltoi(xMeasurementArea->Attribute("frame_interval")));
                             } else {
-                                _timeIntervalE.push_back(100);
+                                _timeIntervalE.push_back(-1);
                             }
                         } else {
-                            _timeIntervalE.push_back(100);
+                            _timeIntervalE.push_back(-1);
                         }
                     } else {
                         LOG_WARNING(
@@ -679,10 +679,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                                     "Frame interval used for calculating density is <{}> frames",
                                     xmltoi(xMeasurementArea->Attribute("frame_interval")));
                             } else {
-                                _timeIntervalF.push_back(100);
+                                _timeIntervalF.push_back(-1);
                             }
                         } else {
-                            _timeIntervalF.push_back(100);
+                            _timeIntervalF.push_back(-1);
                         }
                     } else {
                         LOG_WARNING(
@@ -739,10 +739,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                                     "Frame interval used for calculation is <{}> frames",
                                     xmltoi(xMeasurementArea->Attribute("frame_interval")));
                             } else {
-                                _timeIntervalG.push_back(100);
+                                _timeIntervalG.push_back(-1);
                             }
                         } else {
-                            _timeIntervalG.push_back(100);
+                            _timeIntervalG.push_back(-1);
                         }
                         if(xMeasurementArea->Attribute("dt")) {
                             if(string(xMeasurementArea->Attribute("dt")) != "None") {
@@ -811,10 +811,10 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                                 "Frame interval for calculation is <{}> frames",
                                 xmltoi(xMeasurementArea->Attribute("frame_interval")));
                         } else {
-                            _timeIntervalH.push_back(100);
+                            _timeIntervalH.push_back(-1);
                         }
                     } else {
-                        _timeIntervalH.push_back(100);
+                        _timeIntervalH.push_back(-1);
                     }
                 } else {
                     LOG_WARNING(

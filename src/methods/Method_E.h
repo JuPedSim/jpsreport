@@ -42,16 +42,14 @@ private:
     double _dx;
     double _dy;
     std::vector<double> _densityPerFrame;
+    std::vector<int> _tIn;  // the time at which each pedestrian enters the measurement area
+    std::vector<int> _tOut; // the time at which each pedestrian exits the measurement area
 
     void OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const;
 
     void OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const;
 
-    void OutputDensity(
-        int frmNr,
-        const std::vector<double> & XInFrame,
-        const std::vector<double> & YInFrame,
-        std::ofstream & fRho);
+    void OutputDensity(int frmNr, int numPeds, std::ofstream & fRho);
 
     /**
      * returns number of pedestrians that passed the line during this frame

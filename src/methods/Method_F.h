@@ -45,7 +45,7 @@ private:
     double _averageV;
     std::vector<bool> _passLine; // which pedestrians have passed the line
 
-    void OutputVelocity();
+    void OutputVelocity(const PedData & peddata);
 
     void OutputDensityLine(
         const PedData & peddata,

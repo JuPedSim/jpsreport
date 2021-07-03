@@ -13,7 +13,7 @@ using std::vector;
 Method_G::Method_G()
 {
     _minFrame        = 0;
-    _deltaT          = 100;
+    _deltaT          = -1;
     _fps             = 16;
     _areaForMethod_G = nullptr;
     _numPeds         = 0;
@@ -37,6 +37,9 @@ bool Method_G::Process(const PedData & peddata)
     _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
+    if(_deltaT == -1) {
+        _deltaT = peddata.GetNumFrames();
+    }
 
     _measureAreaId      = boost::lexical_cast<string>(_areaForMethod_G->_id);
     std::ofstream fRhoDx = GetFile("rho", _measureAreaId, _outputLocation, _trajName, "Method_G");
@@ -106,7 +109,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
     vector<int> tIn = TinTout[0];
     vector<int> tOut = TinTout[1];
 
-    for(int i = 0; i < (numFrames - _dt); i += _dt) {
+    for(int i = 0; i <= (numFrames - _dt); i += _dt) {
         int pedsInMeasureArea = 0;
         double sumDistance    = 0;
         for(int j = 0; j < _numPeds; j++) {
@@ -117,21 +120,25 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
                !(tIn[j] == 0 && tOut[j] == 0) &&
                !(tOut[j] == 0 && (tIn[j] < i || tIn[j] > (i + _dt)))) {
                 // pedestian is in the measurement area during this time interval
-                pedsInMeasureArea++;
                 if((i < tIn[j] && tIn[j] < (i + _dt)) && (i < tOut[j] && tOut[j] < (i + _dt))) {
                     // entrance and exit are during the time interval
+                    pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], tOut[j], _xCor, _yCor);
                 } else if((tIn[j] <= i) && (tOut[j] >= (i + _dt))) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
+                    pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
                 } else if((i < tOut[j] && tOut[j] < (i + _dt))) {
                     // only exit is during the time interval
+                    pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, tOut[j], _xCor, _yCor);
                 } else if((i < tIn[j] && tIn[j] < (i + _dt))) {
                     // only entrance is during the time interval
+                    pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], i + _dt, _xCor, _yCor);
                 }
+                // TODO: check if these conditions could be reduced in some way (after general testing)
             }
         }
         double density      = pedsInMeasureArea / _deltaX;
@@ -248,7 +255,7 @@ void Method_G::OutputDensityVdx(
     std::ofstream & fRho,
     std::ofstream & fV)
 {
-    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
+    for(int i = 0; i <= (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;
         double sumTime        = 0;
         for(int j = 0; j < _numPeds; j++) {

@@ -14,7 +14,7 @@ using std::vector;
 Method_E::Method_E()
 {
     _minFrame         = 0;
-    _deltaT           = 100;
+    _deltaT           = -1;
     _fps              = 16;
     _areaForMethod_E  = nullptr;
     _lineForMethod_E  = nullptr;
@@ -25,7 +25,7 @@ Method_E::Method_E()
 Method_E::~Method_E() = default;
 
 bool Method_E::Process(
-    const PedData & peddata,
+    const PedData & peddata, 
     double zPos_measureArea)
 {
     _trajName        = peddata.GetTrajName();
@@ -37,6 +37,9 @@ bool Method_E::Process(
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
     _passLine        = std::vector<bool>(peddata.GetNumPeds(), false);
+    if(_deltaT == -1) {
+        _deltaT = peddata.GetNumFrames();
+    }
 
     if(_areaForMethod_E->_length < 0) {
         LOG_WARNING("The measurement area length for method E is not assigned! Cannot calculate "
@@ -76,6 +79,16 @@ bool Method_E::Process(
 
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
 
+    vector<vector<int>> TinTout = GetTinTout(
+        peddata.GetNumFrames(),
+        _areaForMethod_E->_poly,
+        peddata.GetNumPeds(),
+        _peds_t,
+        _xCor,
+        _yCor);
+    _tIn  = TinTout[0];
+    _tOut = TinTout[1];
+
     int accumPedsDeltaT = 0;
     for(const auto & [frameNr, ids] : _peds_t) {
         int frid = frameNr + _minFrame;
@@ -85,11 +98,9 @@ bool Method_E::Process(
 
         const vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
-        const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
-        const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
 
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
-        OutputDensity(frameNr, XInFrame, YInFrame, fRho);
+        OutputDensity(frameNr, peddata.GetNumPeds(), fRho);
 
         if(((frameNr + 1) % _deltaT) == 0 && frameNr != 0) {
             OutputFlow(_fps, fFlow, accumPedsDeltaT);
@@ -146,25 +157,14 @@ void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int 
     }
 }
 
-void Method_E::OutputDensity(
-    int frmNr,
-    const vector<double> & XInFrame,
-    const vector<double> & YInFrame,
-    std::ofstream & fRho)
+void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)
 {
-    int numPedsInFrame = XInFrame.size();
     int pedsInMA = 0;
-    for(int i = 0; i < numPedsInFrame; i++) {
-        if(within(make<point_2d>(XInFrame[i], YInFrame[i]), _areaForMethod_E->_poly)) {
+    for(int i = 0; i < numPeds; i++) {
+        if(frmNr >= _tIn[i] && frmNr <= _tOut[i] && _tOut[i] != 0) {
             pedsInMA++;
         }
-        // TODO decide which of these functions is more fitting:
-        // - within -> ignores the pedestrians directly on the border of the MA
-        // - covered_by -> includes those pedestrians
     }
-    // Is this the most efficient way to find the pedestrians in the MA?
-    // Would it be more efficient to use tIn and tOut (find them in the Process function, 
-    // and then give them as paramater)?
 
     double density = pedsInMA / _dx;
     double densityDeltaY = pedsInMA / (_dx * _dy);

@@ -12,7 +12,7 @@ using std::vector;
 
 Method_F::Method_F()
 {
-    _deltaT          = 100;
+    _deltaT          = -1;
     _fps             = 16;
     _areaForMethod_F = nullptr;
     _lineForMethod_F = nullptr;
@@ -35,6 +35,9 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
     _fps            = peddata.GetFps();
     _firstFrame     = peddata.GetFirstFrame();
     _passLine       = std::vector<bool>(_numPeds, false);
+    if (_deltaT == -1) {
+        _deltaT = peddata.GetNumFrames();
+    }
 
     LOG_INFO("------------------------Analyzing with Method F-----------------------------");
 
@@ -62,7 +65,7 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
         peddata.GetNumFrames(), _areaForMethod_F->_poly, _numPeds, _peds_t, _xCor, _yCor);
     _tIn = TinTout[0];
     _tOut = TinTout[1];
-    OutputVelocity();
+    OutputVelocity(peddata);
     if(!isnan(_averageV)) {
         OutputDensityLine(peddata, zPos_measureArea);
     }
@@ -70,27 +73,52 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
     return true;
 }
 
-void Method_F::OutputVelocity() 
+void Method_F::OutputVelocity(const PedData & peddata)
 {
-    std::ofstream fV = GetFile("v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_F");
+    string idCombination = "id_" + _measureAreaId;
+    // does not have to include line id because this file is only specific to the measurement area
+    std::ofstream fV     = GetFile("v", idCombination, _outputLocation, _trajName, "Method_F");
     if(!fV.is_open()) {
         LOG_ERROR("Cannot open file to write velocity data for method F!\n");
         exit(EXIT_FAILURE);
     }
 
+
+    double sumV = 0;
     int numberPeds = 0;
     fV << "#person index\tvelocity_i(m /s)\n";
     for(int i = 0; i < _numPeds; i++) {
         if(_tOut[i] != 0) {
+            if(_tIn[i] == 0) {
+                // If pedestrian is in measurement area at frame 0
+                // it is not certain whether this would be the entrance frame.
+                // With the positions at tIn/tOut and the frame difference
+                // the position of the pedestian at frame -1 is predicted.
+                // If this is in the measurement area, frame 0 is not the entrance frame
+                // and the velocity for this pedestrian cannot be calculated.
+
+                double predictedX = _xCor(i, 0) - (_xCor(i, _tOut[i]) - _xCor(i, 0)) /
+                                                        (_tOut[i] - _tIn[i] * 1.0);
+                double predictedY = _yCor(i, 0) - (_yCor(i, _tOut[i]) - _yCor(i, 0)) /
+                                                        (_tOut[i] - _tIn[i] * 1.0);
+                if(covered_by(make<point_2d>(predictedX, predictedY), _areaForMethod_F->_poly)) {
+                    // this condition has to be adjusted if another variant is used for tIn/tOut!
+                    // here variant 4 is used
+                    continue;
+                }
+            }
             double velocity = _dx / ((_tOut[i] - _tIn[i] * 1.0) / _fps);
+            sumV += velocity;
             numberPeds++;
-            fV << i << "\t" << velocity << "\n";
+            fV << peddata.GetId(_tOut[i], i) << "\t" << velocity << "\n";
         }
         // should the pedestrians that do not pass the measurement area also be added to the output 
-        // (with e.g. nan as value)?
+        // (with e.g. nan as value)? (this is what is done in method B)
     }
     if (numberPeds == 0) {
         LOG_WARNING("No person passing the measurement area given by Method F!\n");
+    } else {
+        _averageV = sumV / numberPeds;
     }
     fV.close();
 }
@@ -115,6 +143,7 @@ void Method_F::OutputDensityLine(
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
 
+        framesPassed++;
         if(framesPassed == _deltaT) {
             double density = accumPedsDeltaT / ((_deltaT / _fps) * _dy) * (1 / _averageV);
             double specificFlow = accumPedsDeltaT / ((_deltaT / _fps) * _dy);
@@ -124,8 +153,6 @@ void Method_F::OutputDensityLine(
             accumPedsDeltaT = 0;
             framesPassed = 0;
         }
-
-        framesPassed++;
     }
     fRho.close();
 }

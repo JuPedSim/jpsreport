@@ -14,7 +14,7 @@ Method_H::Method_H()
 {
     _dx              = 0;
     _minFrame        = 0;
-    _deltaT          = 100;
+    _deltaT          = -1;
     _fps             = 16;
     _areaForMethod_H = nullptr;
     _numPeds         = 0;
@@ -38,6 +38,9 @@ bool Method_H::Process(const PedData & peddata)
     _tOut           = std::vector<int>(_numPeds, 0);
     _entrancePoint  = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
     _exitPoint      = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
+    if(_deltaT == -1) {
+        _deltaT = peddata.GetNumFrames();
+    }
 
     _measureAreaId           = boost::lexical_cast<string>(_areaForMethod_H->_id);
     std::ofstream fRhoVFlow =
@@ -102,7 +105,7 @@ void Method_H::GetTinToutEntExt(int numFrames)
 
 void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
 {
-    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
+    for(int i = 0; i <= (numFrames - _deltaT); i += _deltaT) {
         double sumTime        = 0;
         double sumDistance  = 0;
         for(int j = 0; j < _numPeds; j++) {

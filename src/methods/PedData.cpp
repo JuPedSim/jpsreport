@@ -424,6 +424,11 @@ vector<int> PedData::GetIdInFrame(int frame, const vector<int> & ids) const
     return IdInFrame;
 }
 
+int PedData::GetId(int frame, int id) const
+{
+    return _id(id, frame);
+}
+
 vector<int> PedData::GetIndexInFrame(int frame, const vector<int> & ids, double zPos) const
 {
     vector<int> IdInFrame;

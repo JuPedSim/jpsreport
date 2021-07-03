@@ -80,7 +80,7 @@ bool Method_B::Process(const PedData & peddata)
     } else {
         LOG_INFO("The measurement area length for method B is {:.3f}", _areaForMethod_B->_length);
     }
-    GetFundamentalTinTout(_DensityPerFrame, _areaForMethod_B->_length);
+    GetFundamentalTinTout(_DensityPerFrame, _areaForMethod_B->_length, peddata);
 
     delete[] _tIn;
     delete[] _tOut;
@@ -126,7 +126,10 @@ void Method_B::GetTinTout(int numFrames)
     delete[] IsinMeasurezone;
 }
 
-void Method_B::GetFundamentalTinTout(double * DensityPerFrame, double LengthMeasurementarea)
+void Method_B::GetFundamentalTinTout(
+    double * DensityPerFrame,
+    double LengthMeasurementarea,
+    const PedData & peddata)
 {
     FILE * fFD_TinTout;
     LOG_INFO(" Fundamental diagram with Method B will be calculated");
@@ -143,20 +146,49 @@ void Method_B::GetFundamentalTinTout(double * DensityPerFrame, double LengthMeas
     }
     fprintf(fFD_TinTout, "#person Index\t	density_i(m^(-2))\t	velocity_i(m/s)\n");
     for(int i = 0; i < _NumPeds; i++) {
-        if(LengthMeasurementarea < 0) {
-            double dxq = (_entrancePoint[i].x() - _exitPoint[i].x()) *
-                         (_entrancePoint[i].x() - _exitPoint[i].x());
-            double dyq = (_entrancePoint[i].y() - _exitPoint[i].y()) *
-                         (_entrancePoint[i].y() - _exitPoint[i].y());
-            LengthMeasurementarea = std::sqrt(dxq + dyq);
+        if(_tOut[i] != 0) {
+            // if person enters measurement area, but does not exit, the velocity cannot
+            // be calculated correctly (if _tOut[i] == 0)
+
+            if(_tIn[i] == 0) {
+                // If pedestrian is in measurement area at frame 0
+                // it is not certain whether this would be the entrance frame.
+                // With the positions at tIn/tOut and the frame difference
+                // the position of the pedestian at frame -1 is predicted.
+                // If this is in the measurement area, frame 0 is not the entrance frame
+                // and the velocity for this pedestrian cannot be calculated.
+
+                double predictedX =
+                    _xCor(i, 0) - (_xCor(i, _tOut[i]) - _xCor(i, 0)) / (_tOut[i] - _tIn[i] * 1.0);
+                double predictedY =
+                    _yCor(i, 0) - (_yCor(i, _tOut[i]) - _yCor(i, 0)) / (_tOut[i] - _tIn[i] * 1.0);
+                if(within(make<point_2d>(predictedX, predictedY), _areaForMethod_B->_poly)) {
+                    // this condition has to be adjusted if another variant is used for tIn/tOut!
+                    // here within is used
+                    continue;
+                }
+            }
+
+            if(LengthMeasurementarea < 0) {
+                double dxq = (_entrancePoint[i].x() - _exitPoint[i].x()) *
+                             (_entrancePoint[i].x() - _exitPoint[i].x());
+                double dyq = (_entrancePoint[i].y() - _exitPoint[i].y()) *
+                             (_entrancePoint[i].y() - _exitPoint[i].y());
+                LengthMeasurementarea = std::sqrt(dxq + dyq);
+            }
+            double velocity_temp = _fps * LengthMeasurementarea / (_tOut[i] - _tIn[i]);
+            double density_temp  = 0;
+            for(int j = _tIn[i]; j < _tOut[i]; j++) {
+                density_temp += DensityPerFrame[j];
+            }
+            density_temp /= (_tOut[i] - _tIn[i]);
+            fprintf(
+                fFD_TinTout,
+                "%d\t%f\t%f\n",
+                peddata.GetId(_tOut[i], i),
+                density_temp,
+                velocity_temp);
         }
-        double velocity_temp = _fps * LengthMeasurementarea / (_tOut[i] - _tIn[i]);
-        double density_temp  = 0;
-        for(int j = _tIn[i]; j < _tOut[i]; j++) {
-            density_temp += DensityPerFrame[j];
-        }
-        density_temp /= (_tOut[i] - _tIn[i]);
-        fprintf(fFD_TinTout, "%d\t%f\t%f\n", i + 1, density_temp, velocity_temp);
     }
     fclose(fFD_TinTout);
 }

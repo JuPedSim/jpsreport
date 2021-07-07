@@ -36,6 +36,7 @@ private:
     int _minFrame;
     int _numPeds;
     float _fps;
+    int _numFrames;
 
     std::string _measureAreaId;
     MeasurementArea_B * _areaForMethod_G;
@@ -52,7 +53,8 @@ private:
         std::vector<int> tIn,
         std::vector<int> tOut,
         std::ofstream & fRho,
-        std::ofstream & fV);
+        std::ofstream & fV,
+        polygon_2d polygon);
 
     void OutputDensityVFlowDt(int numFrames);
     

@@ -17,6 +17,7 @@ Method_G::Method_G()
     _fps             = 16;
     _areaForMethod_G = nullptr;
     _numPeds         = 0;
+    _numFrames       = 0;
     _deltaX          = 0;
     _dx              = std::numeric_limits<double>::quiet_NaN();
     _dt              = 4;
@@ -37,20 +38,26 @@ bool Method_G::Process(const PedData & peddata)
     _minFrame        = peddata.GetMinFrame();
     _fps             = peddata.GetFps();
     _firstFrame      = peddata.GetFirstFrame();
+    _numFrames       = peddata.GetNumFrames();
     if(_deltaT == -1) {
-        _deltaT = peddata.GetNumFrames();
+        _deltaT = _numFrames;
     }
 
     _measureAreaId      = boost::lexical_cast<string>(_areaForMethod_G->_id);
-    std::ofstream fRhoDx = GetFile("rho", _measureAreaId, _outputLocation, _trajName, "Method_G");
-    std::ofstream fVdx  = GetFile("v", _measureAreaId, _outputLocation, _trajName, "Method_G");
+    std::ofstream fRhoDx =
+        GetFile("rho", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
+    std::ofstream fVdx =
+        GetFile("v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
+    std::ofstream fCoordDx =
+        GetFile("coordinates", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
 
-    if(!(fRhoDx.is_open() && fVdx.is_open())) {
+    if(!(fRhoDx.is_open() && fVdx.is_open() && fCoordDx.is_open())) {
         LOG_ERROR("Cannot open files to write data method G (fixed area)!\n");
         exit(EXIT_FAILURE);
     }
-    fRhoDx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#density(m ^ (-1))\n";
-    fVdx << "#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n#harmonic mean velocity(m/s)\n";
+    fRhoDx << "#density(m^(-1))\n";
+    fVdx << "#harmonic mean velocity(m/s)\n";
+    fCoordDx << "#coordinates of cut polygons\n#form of coordinates: x1\ty1\tx2\ty2\tetc.\n\n";
 
     LOG_INFO("------------------------Analyzing with Method G-----------------------------");
 
@@ -66,37 +73,35 @@ bool Method_G::Process(const PedData & peddata)
     polygon_list cutPolygons = GetCutPolygons();
     for(polygon_2d polygon : cutPolygons) {
         vector<vector<int>> TinTout =
-            GetTinTout(peddata.GetNumFrames(), polygon, _numPeds, _peds_t, _xCor, _yCor);
+            GetTinTout(_numFrames, polygon, _numPeds, _peds_t, _xCor, _yCor);
         // Is this the most efficient way to iterate through all
         // frames, pedestrians and cut measurement areas?
-        OutputDensityVdx(peddata.GetNumFrames(), TinTout[0], TinTout[1], fRhoDx, fVdx);
 
-        fRhoDx << "\n";
-        fVdx << "\n";
+        OutputDensityVdx(_numFrames, TinTout[0], TinTout[1], fRhoDx, fVdx, polygon);
+
         ring allPoints = polygon.outer();
         for(int p = 0; p < 4; p++) {
-            fRhoDx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
-            fVdx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
+            fCoordDx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
         }
+        fCoordDx << "\n";
+
         fRhoDx << "\n";
         fVdx << "\n";
-
         // structure of these files:
-        // rows -> pieces of the measurement area
-        // first row: values of density or velocity per frame interval
-        // second row: coordinates of the piece of the measurement area
+        // rows -> values of density or velocity of the measurement area
+        // column -> value per frame interval
     }
     fRhoDx.close();
     fVdx.close();
 
-    OutputDensityVFlowDt(peddata.GetNumFrames());
+    OutputDensityVFlowDt(_numFrames);
     
     return true;
 }
 
 void Method_G::OutputDensityVFlowDt(int numFrames) {
     std::ofstream fRhoVFlow =
-        GetFile("rho_flow_v", _measureAreaId, _outputLocation, _trajName, "Method_G");
+        GetFile("rho_flow_v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
 
     if(!fRhoVFlow.is_open()) {
         LOG_ERROR("Cannot open files to write data method G (fixed time)!\n");
@@ -109,44 +114,49 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
     vector<int> tIn = TinTout[0];
     vector<int> tOut = TinTout[1];
 
-    for(int i = 0; i <= (numFrames - _dt); i += _dt) {
+    for(int i = 0; i < (numFrames - _dt); i += _dt) {
+        // <= does not work here, needs to be <
+
         int pedsInMeasureArea = 0;
         double sumDistance    = 0;
         for(int j = 0; j < _numPeds; j++) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _dt is end of time interval
-            if(!((tIn[j] > (i + _dt) && tOut[j] > (i + _dt)) || (tIn[j] < i && tOut[j] < i)) &&
-               !(tIn[j] == 0 && tOut[j] == 0) &&
-               !(tOut[j] == 0 && (tIn[j] < i || tIn[j] > (i + _dt)))) {
-                // pedestian is in the measurement area during this time interval
+            
+            if(!((tIn[j] > (i + _dt) && tOut[j] > (i + _dt)) ||
+                 (tIn[j] < i && tOut[j] < i && tOut[j] != 0)) &&
+               !(tIn[j] == 0 && tOut[j] == 0) && !(tOut[j] == 0 && tIn[j] > (i + _dt))) {
                 if((i < tIn[j] && tIn[j] < (i + _dt)) && (i < tOut[j] && tOut[j] < (i + _dt))) {
                     // entrance and exit are during the time interval
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], tOut[j], _xCor, _yCor);
-                } else if((tIn[j] <= i) && (tOut[j] >= (i + _dt))) {
+                } else if(
+                    (tIn[j] <= i && tOut[j] >= (i + _dt)) ||
+                    (tOut[j] == 0 && tIn[j] < i && (i + _dt) < _numFrames)) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
-                } else if((i < tOut[j] && tOut[j] < (i + _dt))) {
+                } else if((i < tOut[j] && tOut[j] <= (i + _dt))) {
                     // only exit is during the time interval
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, tOut[j], _xCor, _yCor);
-                } else if((i < tIn[j] && tIn[j] < (i + _dt))) {
+                } else if((i <= tIn[j] && tIn[j] < (i + _dt))) {
                     // only entrance is during the time interval
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], i + _dt, _xCor, _yCor);
                 }
-                // TODO: check if these conditions could be reduced in some way (after general testing)
+
+                // TODO: check if these conditions could be reduced in some way (after general
+                // testing)
             }
         }
         double density      = pedsInMeasureArea / _deltaX;
         double meanVelocity = sumDistance / (pedsInMeasureArea * (_dt / _fps));
         double flow         = sumDistance / (_deltaX * (_dt/ _fps));
 
-        fRhoVFlow << i << "\t" << i + _dt << "\t" << meanVelocity << "\t" << density << "\t" << flow
-                  << "\n";
+        fRhoVFlow << meanVelocity << "\t" << density << "\t" << flow << "\n";
     }
     fRhoVFlow.close();
 }
@@ -253,7 +263,8 @@ void Method_G::OutputDensityVdx(
     vector<int> tIn,
     vector<int> tOut,
     std::ofstream & fRho,
-    std::ofstream & fV)
+    std::ofstream & fV,
+    polygon_2d polygon)
 {
     for(int i = 0; i <= (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;
@@ -262,10 +273,32 @@ void Method_G::OutputDensityVdx(
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
-            if(tIn[j] <= (i + _deltaT) && tOut[j] <= (i + _deltaT) && tOut[j] > i && tIn[j] >= i) {
-                // pedestian passed the measurement area during this time interval
-                pedsInMeasureArea++;
-                sumTime += (tOut[j] - tIn[j] * 1.0) / _fps;
+            if(tOut[j] != 0) {
+                if(tIn[j] == 0) {
+                    // If pedestrian is in measurement area at frame 0
+                    // it is not certain whether this would be the entrance frame.
+                    // With the positions at tIn/tOut and the frame difference
+                    // the position of the pedestian at frame -1 is predicted.
+                    // If this is in the measurement area, frame 0 is not the entrance frame
+                    // and the velocity for this pedestrian cannot be calculated.
+
+                    double predictedX = _xCor(j, 0) - (_xCor(j, tOut[j]) - _xCor(j, 0)) /
+                                                          (tOut[j] - tIn[j] * 1.0);
+                    double predictedY = _yCor(j, 0) - (_yCor(i, tOut[j]) - _yCor(j, 0)) /
+                                                          (tOut[j] - tIn[j] * 1.0);
+                    if(covered_by(
+                           make<point_2d>(predictedX, predictedY), polygon)) {
+                        // this condition has to be adjusted if another variant is used for
+                        // tIn/tOut! here variant 4 is used
+                        continue;
+                    }
+                }
+                if(tIn[j] <= (i + _deltaT) && tOut[j] <= (i + _deltaT) && tOut[j] > i &&
+                   tIn[j] >= i) {
+                    // pedestian passed the measurement area during this time interval
+                    pedsInMeasureArea++;
+                    sumTime += (tOut[j] - tIn[j] * 1.0) / _fps;
+                }
             }
         }
         double density      = sumTime / ((_deltaT / _fps) * _dx);

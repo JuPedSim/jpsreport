@@ -103,3 +103,52 @@ def write_trajectory_random_start_position(numPeds, startPosX, startPosY,
 
     # returns the number of frames -> this value is needed as deltaT in some tests (if frame interval = all frames)
     return last_frame - first_frame + 1
+
+def write_trajectory_to_file_delete_outside_geometry(numPedsX, numPedsY, startPosX, startPosY, 
+                                                     ped_distance, v, fps, file_name, sim_frames, 
+                                                     x_range, y_range):
+    geometry_file = "geometry.xml"
+
+    # define fixed ellipse parameters to allow visualization with jpsvis
+    a = 0.2
+    b = 0.2
+    angle = 0.0
+    color = 220
+
+    if not os.path.exists(os.path.join(os.getcwd(), os.path.dirname(file_name))):
+        os.makedirs(os.path.join(os.getcwd(), os.path.dirname(file_name)))
+
+    f = open(file_name, "w")
+    # write header
+
+    f.write("#framerate: {:.2f}\n#geometry: {}".format(fps, geometry_file))
+
+    f.write(
+        "\n#ID: the agent ID \n#FR: the current frame\n#X,Y,Z: the agents coordinates (in metres)"
+        "\n#A, B: semi-axes of the ellipse\n#ANGLE: orientation of the ellipse\n#COLOR: color of the ellipse"
+        "\n\n#ID\tFR\tX\tY\tZ\tA\tB\tANGLE\tCOLOR\n")
+
+    for frame in range(sim_frames):
+
+        # calc position of peds in grid based on start pos
+        for i in range(numPedsX):
+            for j in range(numPedsY):
+                # calc id based on current row and column
+                id = numPedsX * j + i + 1
+
+                xPos = startPosX - i * ped_distance
+                yPos = startPosY - j * ped_distance
+
+                if x_range[0] <= xPos <= x_range[1] and y_range[0] <= yPos <= y_range[1]:
+                    # only written to file if it is in the given ranges (usually equal to geometry boundaries)
+                    f.write(
+                        "{:6d}\t{:6d}\t{:.6f}\t{:.6f}\t{:.6f}\t{:.2f}\t{:.2f}\t{:.2f}\t{:d}\n".format(id, frame + 1,
+                                                                                                      xPos,
+                                                                                                      yPos,
+                                                                                                      0.0, a, b,
+                                                                                                      angle, color))
+
+        # move grid to the right for next frame
+        startPosX += v / fps
+
+    f.close()

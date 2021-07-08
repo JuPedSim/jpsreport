@@ -23,9 +23,9 @@ from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 from scipy.stats import ks_2samp
 import numpy as np
-from test_functions import get_velocity_range, get_density_range, runtest_method_G
+from test_functions import runtest_method_G
 
-######### REFERENCE VALUES ########################################
+######### GENERAL REFERENCE VALUES ################################
 
 real_velocity = 1 # value of actual velocity
 
@@ -41,23 +41,23 @@ dx = length_cut_side / n_polygon # length of cut polygons
 dt_seconds = dt_frames/fps # length of small time interval in seconds
 delta_t_seconds = delta_t_frames/fps # length of general time interval in seconds
 
-peds_y = 7
-num_columns = 1
-# columns of peds in the MA at all time
-number_pass_area = peds_y * num_columns # number of peds that pass the general MA (delta x, not dx) during dt
-number_pass_cut_area = [8 * peds_y for i in range(n_polygon)]
-# number of pedestrians that pass the cut polygon areas (for each polygon) -> dx
+######## NUMPED & DISTANCE REFERENCE VALUES ########################
 
-abs_tolerance = 0.00001 
-# values are rounded differently in output files -> +- 0.00001 as tolerance
+number_pass_cut_area = [56 for i in range(n_polygon)]
+# number of pedestrians that pass the cut polygon areas (for each polygon and delta T) -> dx
+number_time_intervals = int(num_frames / dt_frames) - 1
+number_pass_area = [7 for i in range(number_time_intervals)]
+# number of pedestrians that pass the cut polygon areas (for each small time interval dt) -> dt
+distances_per_dt = [0.875 for i in range(number_time_intervals)]
+# sum of distances all pedestrians pass during each small time interval dt
 
 def runtest(inifile, trajfile):
-    success = runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
+    success = runtest_method_G(trajfile,
+                               dt_frames, dt_seconds, delta_t_seconds, num_frames,
                                delta_x, n_polygon, dx, 
                                real_velocity, 
                                fps, 
-                               abs_tolerance,
-                               number_pass_cut_area, number_pass_area)
+                               number_pass_cut_area, number_pass_area, distances_per_dt)
 
     if not success:
         logging.critical("%s exits with FAILURE" % (argv[0]))

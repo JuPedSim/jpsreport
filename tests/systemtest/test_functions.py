@@ -2,6 +2,7 @@
 import logging
 import math
 import numpy as np
+from utils import FAILURE
 
 
 def get_velocity_range(distance, real_v, fps, tolerance):
@@ -9,8 +10,7 @@ def get_velocity_range(distance, real_v, fps, tolerance):
     if real_frames.is_integer():
         return [real_v, real_v]
     elif math.floor(real_frames) == 0:
-        # combination of these factors: distance too small,
-        # real_v too large, fps too small
+        # combination of these factors: distance too small, real_v too large, fps too small
         logging.critical("jpsreport might not detect velocity correctly; minimum of detected frames is 0")
         max_seconds = math.ceil(real_frames) / fps
         return [distance/max_seconds, distance/max_seconds]
@@ -24,26 +24,119 @@ def get_density_range(distance, real_v, fps, tolerance, num_peds, delta_t):
     if real_frames.is_integer():
         density = ((num_peds * real_frames) / fps) / (delta_t * distance)
         return [density, density]
-    elif math.floor(real_frames) == 0:
-        # combination of these factors: distance too small,
-        # real_v too large, fps too small
-        logging.critical("jpsreport might not detect density correctly; minimum of detected frames is 0")
-        max_seconds = math.ceil(real_frames) / fps
-        return [(num_peds * max_seconds) / (delta_t * distance), 
-                (num_peds * max_seconds) / (delta_t * distance)]
     else:
         min_seconds = math.floor(real_frames) / fps
         max_seconds = math.ceil(real_frames) / fps
         return [(num_peds * min_seconds) / (delta_t * distance) - tolerance, 
                 (num_peds * max_seconds) / (delta_t * distance) + tolerance]
 
-def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
+    if math.floor(real_frames) == 0:
+        # combination of these factors: distance too small, real_v too large, fps too small
+        logging.critical("jpsreport might not detect density correctly; minimum of detected frames is 0")
+
+def get_num_peds_distance_per_dt(start_pos_x, dist, num_columns, peds_y, 
+                                 dt_frames, dt_seconds, velocity, num_frames, x0, x1):
+    number_time_intervals = int(num_frames / dt_frames) - 1
+    dist_per_dt = velocity * dt_seconds
+    dist_per_frame = velocity * dt_seconds / dt_frames
+    column_position_t0 = [start_pos_x - num_column * dist for num_column in range(num_columns)]
+    column_position_t1 = [start_pos_x - num_column * dist + dist_per_dt for num_column in range(num_columns)]
+
+    num_peds_per_dt = []
+    distance_per_dt = []
+    for i in range(number_time_intervals):
+        num_columns_dt = 0
+        sum_distance = 0
+        for column_idx in range(num_columns):
+            x_pos_t0 = column_position_t0[column_idx]
+            x_pos_t1 = column_position_t1[column_idx]
+            distance_1 = [
+                x_pos_t0 == x0 and x_pos_t1 == x1,
+                x_pos_t0 == x0 and x_pos_t1 > x0,
+                x_pos_t0 < x1 and x_pos_t1 == x1,
+                x_pos_t0 > x0 and x_pos_t1 < x1,
+                ]
+            distance_2 = [
+                x_pos_t0 < x0 and x_pos_t1 > x1,
+                x_pos_t0 < x0 and x_pos_t1 > x0,
+                x_pos_t0 < x1 and x_pos_t1 > x1
+                ]
+            if True in distance_1:
+                num_columns_dt += 1
+                sum_distance += (x_pos_t1 - x_pos_t0) * peds_y
+            if True in distance_2:
+                num_columns_dt += 1
+                if distance_2[0]:
+                    first_x = x_pos_t0
+                    while first_x < x0:
+                        first_x += dist_per_frame
+                    last_x = x_pos_t1
+                    while last_x > x1:
+                        last_x -= dist_per_frame
+                    sum_distance += (last_x - first_x) * peds_y
+                elif distance_2[1]:
+                    first_x = x_pos_t0
+                    while first_x < x0:
+                        first_x += dist_per_frame
+                    sum_distance += (x_pos_t1 - first_x) * peds_y
+                else:
+                    last_x = x_pos_t1
+                    while last_x > x1:
+                        last_x -= dist_per_frame
+                    sum_distance += (last_x - x_pos_t0) * peds_y
+        column_position_t0 = column_position_t1
+        column_position_t1 = [pos + dist_per_dt for pos in column_position_t0]
+        num_peds_per_dt.append(num_columns_dt * peds_y)
+        distance_per_dt.append(sum_distance)
+
+    return [num_peds_per_dt, distance_per_dt]
+
+def get_num_peds_per_dx(start_pos_x, dist, num_columns, peds_y, 
+                        delta_t_frames, delta_t_seconds, velocity, num_frames, x0, dx, num_poly):
+    # x0 has to be lower boundary of x-range of MA and MA has to be not rotated
+
+    number_time_intervals = int(num_frames / delta_t_frames)
+    dist_per_delta_t = velocity * delta_t_seconds
+
+    num_peds_per_dx = []
+    distance_per_dx = []
+    for polygon_idx in range(num_poly):
+        column_position_t0 = [start_pos_x - num_column * dist for num_column in range(num_columns)]
+        column_position_t1 = [start_pos_x - num_column * dist + dist_per_delta_t for num_column in range(num_columns)]
+        x0_poly = x0 + polygon_idx * dx
+        x1_poly = x0 + (polygon_idx + 1) * dx
+
+        num_columns_delta_t = []
+        for i in range(number_time_intervals):
+            current_num_columns = 0
+            for column_idx in range(num_columns):
+                x_pos_t0 = column_position_t0[column_idx]
+                x_pos_t1 = column_position_t1[column_idx]
+
+                if x_pos_t0 <= x0_poly and x_pos_t1 >= x1_poly:
+                    current_num_columns += 1
+
+            column_position_t0 = column_position_t1
+            column_position_t1 = [pos + dist_per_delta_t for pos in column_position_t0]
+            num_columns_delta_t.append(current_num_columns * peds_y)
+        if len(num_columns_delta_t) == 1:
+            num_peds_per_dx.append(num_columns_delta_t[0])
+        else:
+            num_peds_per_dx.append(num_columns_delta_t)
+        # at the moment only trajectories with one delta t are used
+        # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
+
+    return num_peds_per_dx
+
+def runtest_method_G(trajfile,
+                     dt_frames, dt_seconds, delta_t_seconds, num_frames,
                      delta_x, n_polygon, dx, 
                      real_velocity, 
-                     fps, 
-                     abs_tolerance,
-                     number_pass_cut_area, number_pass_area):
+                     fps,
+                     number_pass_cut_area, number_pass_area, distances_per_dt):
     success = True
+    abs_tolerance = 0.0001
+    # values are rounded differently in output files -> +- 0.0001 as tolerance
     general_output_path = os.path.join('./Output', 'Fundamental_Diagram', 'Method_G')
 
     logging.info("===== Method G =========================")
@@ -64,6 +157,7 @@ def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
 
     #### CHECK DX (FIXED PLACE) ###############
 
+    # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
     if out_v.ndim > 1:
         # should be one time interval in these scenarios
         # else the array has to be handled differently below
@@ -101,6 +195,7 @@ def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
             # (also distances are not discrete, but frames are)
 
             # iterate though all polygons and the velocity/density values
+            # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
             idx_polygon = 0
             for v_value in out_v:
                 logging.info(f'---- cut polygon {idx_polygon} ----')
@@ -126,6 +221,7 @@ def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
                 # reason: last frame(s) in which no pedestrian passes the whole area (or a whole polygon)
                 # to get the actual density one would have to subtract these frame(s) or this part of a frame
                 # from delta_t_seconds (after converting it to seconds)
+                # this is the reason why the formula is used to check results
 
                 rho_range_dx = get_density_range(dx, real_velocity, fps, abs_tolerance, number_pass_cut_area[idx_polygon], delta_t_seconds)
                 if rho_range_dx[0] == rho_range_dx[1]:
@@ -152,17 +248,12 @@ def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
         logging.info('correct number of time intervals for dt (fixed time)')
 
         # check all velocity, density and flow values
-        # should all be the same in these scenarios
 
-        sum_distance = real_velocity * dt_seconds * number_pass_area
-        real_density = number_pass_area / delta_x
-        real_flow = sum_distance / (delta_x * dt_seconds)
-        # here no ranges are needed -> frames for time calculations are discrete, distances however
-        # are not discrete -> here flow and density are calculated with distances, not durations
-
-        reference_v = np.full(number_time_intervals, real_velocity)
-        reference_rho = np.full(number_time_intervals, real_density)
-        reference_flow = np.full(number_time_intervals, real_flow)
+        reference_v = np.array([distances_per_dt[number_pass_area.index(num_peds_dt)] / (dt_seconds * num_peds_dt) 
+                                for num_peds_dt in number_pass_area])
+        reference_rho = np.array([num_peds_dt / delta_x for num_peds_dt in number_pass_area])
+        reference_flow = np.array([distances_per_dt[number_pass_area.index(num_peds_dt)] / (dt_seconds * delta_x) 
+                                   for num_peds_dt in number_pass_area])
 
         if not np.allclose(reference_v, out_rho_flow_v[:, 0], atol=abs_tolerance):
             success = False
@@ -172,13 +263,13 @@ def runtest_method_G(dt_frames, dt_seconds, delta_t_seconds, num_frames,
 
         if not np.allclose(reference_rho, out_rho_flow_v[:, 1], atol=abs_tolerance):
             success = False
-            logging.critical(f'wrong density values for dt (fixed time); real density {real_density} 1/m')
+            logging.critical('wrong density values for dt (fixed time)')
         else:
             logging.info('correct density values for dt (fixed time)')
 
         if not np.allclose(reference_flow, out_rho_flow_v[:, 2], atol=abs_tolerance):
             success = False
-            logging.critical(f'wrong flow values for dt (fixed time); real flow {real_flow} 1/s')
+            logging.critical('wrong flow values for dt (fixed time)')
         else:
             logging.info('correct flow values for dt (fixed time)')
 

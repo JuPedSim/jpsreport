@@ -94,7 +94,7 @@ bool Method_G::Process(const PedData & peddata)
     fRhoDx.close();
     fVdx.close();
 
-    OutputDensityVFlowDt(_numFrames);
+    OutputDensityVFlowDt(_numFrames - (_numFrames % _deltaT));
     
     return true;
 }
@@ -284,8 +284,7 @@ void Method_G::OutputDensityVdx(
 
                     double predictedX = _xCor(j, 0) - (_xCor(j, tOut[j]) - _xCor(j, 0)) /
                                                           (tOut[j] - tIn[j] * 1.0);
-                    double predictedY = _yCor(j, 0) - (_yCor(i, tOut[j]) - _yCor(j, 0)) /
-                                                          (tOut[j] - tIn[j] * 1.0);
+                    double predictedY = _yCor(j, 0) - (_yCor(j, tOut[j]) - _yCor(j, 0)) / (tOut[j] - tIn[j] * 1.0);
                     if(covered_by(
                            make<point_2d>(predictedX, predictedY), polygon)) {
                         // this condition has to be adjusted if another variant is used for

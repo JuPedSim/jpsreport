@@ -6,7 +6,7 @@
 	<output location="Output"/>
 
 	<trajectories format="txt" unit="m">
-		<file name="traj_1.txt" />
+		<file name="traj.txt" />
 	</trajectories>
 
 	<measurement_areas unit="m">

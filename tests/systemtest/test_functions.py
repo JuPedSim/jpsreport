@@ -253,10 +253,11 @@ def runtest_method_G(trajfile,
     #### CHECK DT (FIXED TIME) ###############
     
     logging.info('---- check dt values ----')
-    if (num_frames / dt_frames).is_integer():
-        number_time_intervals = int(num_frames / dt_frames - 1)
+    delta_t_frames = delta_t_seconds * fps
+    if ((num_frames - (num_frames % delta_t_frames)) / dt_frames).is_integer():
+        number_time_intervals = int((num_frames - (num_frames % delta_t_frames)) / dt_frames - 1)
     else:
-        number_time_intervals = int(num_frames / dt_frames)
+        number_time_intervals = int((num_frames - (num_frames % delta_t_frames)) / dt_frames)
     if out_rho_flow_v.shape[0] != number_time_intervals:
         # check number of time intervals
         success = False

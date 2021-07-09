@@ -51,22 +51,28 @@ def get_num_peds_distance_per_dt(start_pos_x, dist, num_columns, peds_y,
             x_pos_t0 = column_position_t0[column_idx]
             x_pos_t1 = column_position_t1[column_idx]
             distance_1 = [
-                x_pos_t0 == x0 and x_pos_t1 == x1,
-                x_pos_t0 == x0 and x_pos_t1 > x0,
-                x_pos_t0 < x1 and x_pos_t1 == x1,
+                math.isclose(x_pos_t0, x0, abs_tol=0.00001) and math.isclose(x_pos_t1, x1, abs_tol=0.00001),
+                math.isclose(x_pos_t0, x0, abs_tol=0.00001) and x_pos_t1 > x0,
+                x_pos_t0 < x1 and math.isclose(x_pos_t1, x1, abs_tol=0.00001),
                 x_pos_t0 > x0 and x_pos_t1 < x1,
                 ]
+            # have to use isclose because of rounding deviations
             distance_2 = [
-                x_pos_t0 < x0 and x_pos_t1 > x1,
-                x_pos_t0 < x0 and x_pos_t1 > x0,
+                x_pos_t0 < x0 and x_pos_t1 > x1 
+                and not math.isclose(x_pos_t0, x0, abs_tol=0.00001) 
+                and not math.isclose(x_pos_t1, x1, abs_tol=0.00001),
+                x_pos_t0 < x0 and x_pos_t1 > x0
+                and not math.isclose(x_pos_t1, x0, abs_tol=0.00001),
                 x_pos_t0 < x1 and x_pos_t1 > x1
+                and not math.isclose(x_pos_t0, x1, abs_tol=0.00001)
                 ]
             if True in distance_1:
                 num_columns_dt += 1
                 sum_distance += (x_pos_t1 - x_pos_t0) * peds_y
-            if True in distance_2:
-                num_columns_dt += 1
+            elif True in distance_2:
+                # have to use elif because of rounding deviations
                 if distance_2[0]:
+                    num_columns_dt += 1
                     first_x = x_pos_t0
                     while first_x < x0:
                         first_x += dist_per_frame
@@ -78,11 +84,14 @@ def get_num_peds_distance_per_dt(start_pos_x, dist, num_columns, peds_y,
                     first_x = x_pos_t0
                     while first_x < x0:
                         first_x += dist_per_frame
-                    sum_distance += (x_pos_t1 - first_x) * peds_y
+                    if not math.isclose(first_x, x_pos_t1, abs_tol=0.00001):
+                        num_columns_dt += 1
+                        sum_distance += (x_pos_t1 - first_x) * peds_y
                 else:
-                    last_x = x_pos_t1
-                    while last_x > x1:
-                        last_x -= dist_per_frame
+                    num_columns_dt += 1
+                    last_x = x_pos_t0
+                    while last_x < x1:
+                        last_x += dist_per_frame
                     sum_distance += (last_x - x_pos_t0) * peds_y
         column_position_t0 = column_position_t1
         column_position_t1 = [pos + dist_per_dt for pos in column_position_t0]
@@ -96,7 +105,8 @@ def get_num_peds_per_dx(start_pos_x, dist, num_columns, peds_y,
     # x0 has to be lower boundary of x-range of MA and MA has to be not rotated
 
     number_time_intervals = int(num_frames / delta_t_frames)
-    dist_per_delta_t = velocity * delta_t_seconds
+    fps = delta_t_frames/delta_t_seconds
+    dist_per_delta_t = velocity * (delta_t_frames - 1) / fps
 
     num_peds_per_dx = []
     distance_per_dx = []
@@ -151,12 +161,13 @@ def runtest_method_G(trajfile,
 
     # check if files were output correctly
 
-    out_v = np.loadtxt(out_v_fname)
-    out_rho = np.loadtxt(out_rho_fname)
-    out_rho_flow_v = np.loadtxt(out_rho_flow_v_fname)
+    out_v = np.genfromtxt(out_v_fname)
+    out_rho = np.genfromtxt(out_rho_fname)
+    out_rho_flow_v = np.genfromtxt(out_rho_flow_v_fname)
 
     #### CHECK DX (FIXED PLACE) ###############
 
+    logging.info('---- check dx values ----')
     # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
     if out_v.ndim > 1:
         # should be one time interval in these scenarios
@@ -201,7 +212,9 @@ def runtest_method_G(trajfile,
                 logging.info(f'---- cut polygon {idx_polygon} ----')
 
                 # check velocity value
-                if v_range_dx[0] == v_range_dx[1]:
+                if number_pass_cut_area[idx_polygon] == 0:
+                    condition = not np.isnan(v_value)
+                elif v_range_dx[0] == v_range_dx[1]:
                     condition = not math.isclose(v_value, v_range_dx[0], abs_tol=abs_tolerance)
                 else:
                     condition = v_range_dx[0] > v_value or v_value > v_range_dx[1]
@@ -238,8 +251,12 @@ def runtest_method_G(trajfile,
                 idx_polygon += 1
 
     #### CHECK DT (FIXED TIME) ###############
-
-    number_time_intervals = int(num_frames / dt_frames) - 1
+    
+    logging.info('---- check dt values ----')
+    if (num_frames / dt_frames).is_integer():
+        number_time_intervals = int(num_frames / dt_frames - 1)
+    else:
+        number_time_intervals = int(num_frames / dt_frames)
     if out_rho_flow_v.shape[0] != number_time_intervals:
         # check number of time intervals
         success = False
@@ -248,14 +265,21 @@ def runtest_method_G(trajfile,
         logging.info('correct number of time intervals for dt (fixed time)')
 
         # check all velocity, density and flow values
-
-        reference_v = np.array([distances_per_dt[number_pass_area.index(num_peds_dt)] / (dt_seconds * num_peds_dt) 
-                                for num_peds_dt in number_pass_area])
+        dt_idx = 0
+        reference_v = []
+        reference_flow = []
+        for num_peds_dt in number_pass_area:
+            if num_peds_dt != 0:
+                reference_v.append(distances_per_dt[dt_idx] / (dt_seconds * num_peds_dt))
+            else:
+                reference_v.append(np.nan)
+            reference_flow.append(distances_per_dt[dt_idx] / (dt_seconds * delta_x))
+            dt_idx += 1
+        reference_v = np.array(reference_v)
+        reference_flow = np.array(reference_flow)
         reference_rho = np.array([num_peds_dt / delta_x for num_peds_dt in number_pass_area])
-        reference_flow = np.array([distances_per_dt[number_pass_area.index(num_peds_dt)] / (dt_seconds * delta_x) 
-                                   for num_peds_dt in number_pass_area])
 
-        if not np.allclose(reference_v, out_rho_flow_v[:, 0], atol=abs_tolerance):
+        if not np.allclose(reference_v, out_rho_flow_v[:, 0], atol=abs_tolerance, equal_nan=True):
             success = False
             logging.critical(f'wrong velocity values for dt (fixed time); real velocity {real_velocity} m/s')
         else:

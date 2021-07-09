@@ -6,6 +6,7 @@
 # -> MA length in movement direction = 1.5 m
 # -> number of cut polygons = 3
 # -> dx = 0.5 m
+# -> dt = 1 frame; delta t = 97 frames
 # real density = 4.6667 1/m, real flow = 4.6667 1/s
 # number of peds in y direction = 7
 # number of counted ped columns at all time = 1
@@ -45,7 +46,10 @@ delta_t_seconds = delta_t_frames/fps # length of general time interval in second
 
 number_pass_cut_area = [56 for i in range(n_polygon)]
 # number of pedestrians that pass the cut polygon areas (for each polygon and delta T) -> dx
-number_time_intervals = int(num_frames / dt_frames) - 1
+if (num_frames / dt_frames).is_integer():
+    number_time_intervals = num_frames / dt_frames - 1
+else:
+    number_time_intervals = int(num_frames / dt_frames)
 number_pass_area = [7 for i in range(number_time_intervals)]
 # number of pedestrians that pass the cut polygon areas (for each small time interval dt) -> dt
 distances_per_dt = [0.875 for i in range(number_time_intervals)]
@@ -65,6 +69,6 @@ def runtest(inifile, trajfile):
 
 if __name__ == "__main__":
     test = JPSRunTestDriver(1, argv0=argv[0], testdir=path[0], utestdir=utestdir, jpsreport=argv[1])
-    test.run_analysis(trajfile="traj_1.txt", testfunction=runtest)
+    test.run_analysis(trajfile="traj.txt", testfunction=runtest)
     logging.info("%s exits with SUCCESS" % (argv[0]))
     exit(SUCCESS)

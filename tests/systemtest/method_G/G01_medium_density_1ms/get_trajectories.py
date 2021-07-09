@@ -17,4 +17,4 @@ sim_frames = 100
 
 create_traj.write_trajectory_to_file_delete_outside_geometry(
 	numPedsX, numPedsY, startPosX, startPosY, ped_distance, velocity, fps, 
-	"traj_1.txt", sim_frames, [0, 10], [0, 10])
+	"traj.txt", sim_frames, [0, 10], [0, 10])

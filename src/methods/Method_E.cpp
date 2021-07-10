@@ -63,8 +63,10 @@ bool Method_E::Process(
             _areaForMethod_E->_lengthOrthogonal);
     }
 
+    std::ofstream fRho =
+        GetFile("rho", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_E");
+    // density is the same regardless of line position -> only one file for all lines
     string idCombination = "id_" + _measureAreaId + "_line_" + _lineId;
-    std::ofstream fRho = GetFile("rho", idCombination, _outputLocation, _trajName, "Method_E");
     std::ofstream fFlow = GetFile("flow", idCombination, _outputLocation, _trajName, "Method_E");
     std::ofstream fV = GetFile("v", idCombination, _outputLocation, _trajName, "Method_E");
 
@@ -161,8 +163,22 @@ void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)
 {
     int pedsInMA = 0;
     for(int i = 0; i < numPeds; i++) {
-        if(frmNr >= _tIn[i] && frmNr <= _tOut[i] && _tOut[i] != 0) {
-            pedsInMA++;
+        if(frmNr == 0 && _tIn[i] == 0 && _tOut[i] == 0) {
+            double predictedX =
+                2 * _xCor(i, 0) - _xCor(i, 1);
+            double predictedY =
+                2 * _yCor(i, 0) - _yCor(i, 1);
+            if(within(make<point_2d>(predictedX, predictedY), _areaForMethod_E->_poly)) {
+                // this condition has to be adjusted if another variant is used for tIn/tOut!
+                // here variant 4 is used -> for this to be the real exit frame
+                // the last frame has had to be within the area (not covered_by)
+                pedsInMA++;
+            }
+        } else {
+            if((frmNr >= _tIn[i] && frmNr <= _tOut[i] && _tOut[i] != 0) || 
+                (frmNr >= _tIn[i] && _tOut[i] == 0 && _tIn[i] != 0)) {
+                pedsInMA++;
+            }
         }
     }
 

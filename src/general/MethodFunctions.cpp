@@ -77,6 +77,15 @@ vector<vector<int>> GetTinTout(
                 tIn[ID]             = frameNr;
                 IsinMeasurezone[ID] = true;
             } else if((!within(make<point_2d>(x, y), polygon)) && IsinMeasurezone[ID]) {
+                if (tIn[ID] == 0 && frameNr == 1) {
+                    if(!within(make<point_2d>(xCor(ID, 0), yCor(ID, 0)), polygon)) {
+                        // edge case -> if first frame in general is exactly on the upper boundary
+                        // of MA, this is not the entrance frame, but the exit frame
+                        tOut[ID]            = 0;
+                        IsinMeasurezone[ID] = false;
+                        continue;
+                    }
+                }
                 tOut[ID]            = frameNr;
                 IsinMeasurezone[ID] = false;
             }

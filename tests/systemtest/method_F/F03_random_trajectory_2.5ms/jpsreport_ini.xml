@@ -35,8 +35,8 @@
 	<velocity frame_step="10" set_movement_direction="None" ignore_backward_movement="false"/>
 
 	<method_F enabled="true">
-		<measurement_area id="1" frame_interval="100" line_id="2"/>
-    <measurement_area id="1" frame_interval="100" line_id="3"/>
-    <measurement_area id="1" frame_interval="100" line_id="4"/>
+		<measurement_area id="1" frame_interval="None" line_id="2"/>
+    <measurement_area id="1" frame_interval="None" line_id="3"/>
+    <measurement_area id="1" frame_interval="None" line_id="4"/>
 	</method_F>
 </JPSreport>

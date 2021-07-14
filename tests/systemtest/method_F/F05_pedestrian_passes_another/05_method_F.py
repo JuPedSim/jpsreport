@@ -37,10 +37,10 @@ vel_peds = [1, 1 / (0.75 - 1 / (fps * delta_x))] # velocity of pedestrians
 # (view tests 03 and 04 for method F) -> adjust these aspects if neccessary
 
 delta_y = 10 # length of measurement area orthogonal to movement direction
-delta_t_seconds = 49/fps # length of time interval in seconds
+delta_t_seconds = 48/fps # length of time interval in seconds
 
-abs_tolerance = 0.00001 
-# values are rounded differently in output files -> +- 0.00001 as tolerance
+abs_tolerance = 0.0001 
+# values are rounded differently in output files -> +- 0.0001 as tolerance
 
 def runtest(inifile, trajfile):
     success = True

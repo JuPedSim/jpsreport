@@ -114,7 +114,7 @@ def write_trajectory_random_start_position(numPeds, startPosX, startPosY,
     f.close()
 
     # returns the number of frames -> this value is needed as deltaT in some tests (if frame interval = all frames)
-    return last_frame - first_frame + 1
+    return last_frame - first_frame
 
 
 # write_trajectory_to_file_delete_outside_geometry does almost the same as write_trajectory_grid_to_file.

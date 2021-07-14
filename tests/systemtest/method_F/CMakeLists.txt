@@ -1,8 +1,8 @@
-add_test(NAME 01_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test01/01_method_F.py ${jpsreport_exe})
-add_test(NAME 02_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test02/02_method_F.py ${jpsreport_exe})
-add_test(NAME 03_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test03/03_method_F.py ${jpsreport_exe})
-add_test(NAME 04_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test04/04_method_F.py ${jpsreport_exe})
-add_test(NAME 05_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test05/05_method_F.py ${jpsreport_exe})
+add_test(NAME 01_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/F01_random_starting_position_1ms/01_method_F.py ${jpsreport_exe})
+add_test(NAME 02_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/F02_different_number_peds_1ms/02_method_F.py ${jpsreport_exe})
+add_test(NAME 03_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/F03_random_trajectory_2.5ms/03_method_F.py ${jpsreport_exe})
+add_test(NAME 04_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/F04_different_velocities_1ms_2ms/04_method_F.py ${jpsreport_exe})
+add_test(NAME 05_method_F COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/F05_pedestrian_passes_another/05_method_F.py ${jpsreport_exe})
 
 set_tests_properties(
         01_method_F

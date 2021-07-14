@@ -39,7 +39,7 @@ delta_x = 1 # length of measurement area in movement direction
 n_polygon = 4 # number of cut polygons
 fps = 8 # frames per second of trajectory file
 dt_frames = 1 # frames of small frame interval
-delta_t_frames = 5 # frames of general frame interval
+delta_t_frames = 4 # frames of general frame interval
 num_frames = 5 # number of frames in trajectory
 
 length_cut_side = delta_x # length of the side in which direction the polygons are cut

@@ -24,7 +24,7 @@ from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 from scipy.stats import ks_2samp
 import numpy as np
-from test_functions import runtest_method_G
+from test_functions import runtest_method_G, get_num_time_intervals
 # import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ################################
@@ -61,10 +61,7 @@ delta_t_seconds = delta_t_frames/fps # length of general time interval in second
 
 number_pass_cut_area = [56 for i in range(n_polygon)]
 # number of pedestrians that pass the cut polygon areas (for each polygon and delta T) -> dx
-if ((num_frames - (num_frames % delta_t_frames)) / dt_frames).is_integer():
-    number_time_intervals = int((num_frames - (num_frames % delta_t_frames)) / dt_frames - 1)
-else:
-    number_time_intervals = int((num_frames - (num_frames % delta_t_frames)) / dt_frames)
+number_time_intervals = get_num_time_intervals(num_frames - (num_frames % delta_t_frames) + 1, dt_frames)
 number_pass_area = [7 for i in range(number_time_intervals)]
 # number of pedestrians that pass the cut polygon areas (for each small time interval dt) -> dt
 distances_per_dt = [0.875 for i in range(number_time_intervals)]

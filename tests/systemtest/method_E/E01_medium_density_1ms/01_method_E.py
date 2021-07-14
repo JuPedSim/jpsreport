@@ -34,8 +34,8 @@ delta_y = 10 # length of measurement area orthogonal to movement direction
 line_ids = [2, 3, 4]
 
 fps = 8 # frames per second of trajectory file
-delta_t_frames = 100 # frames of general frame interval
-delta_t_seconds = delta_t_frames/fps # length of general time interval in seconds
+delta_t_frames = 99 # frames of frame interval
+delta_t_seconds = delta_t_frames/fps # length of time interval in seconds
 num_frames = 100 # number of frames in trajectory
 
 ######## GET TRAJECTORIES #########################################

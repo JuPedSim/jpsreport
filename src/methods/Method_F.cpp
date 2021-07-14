@@ -17,6 +17,7 @@ Method_F::Method_F()
     _areaForMethod_F = nullptr;
     _lineForMethod_F = nullptr;
     _numPeds         = 0;
+    _numFrames       = 0;
     _dx              = 0;
     _dy              = 0;
     _averageV        = std::numeric_limits<double>::quiet_NaN();
@@ -28,13 +29,14 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
     _outputLocation = peddata.GetOutputLocation();
     _peds_t         = peddata.GetPedIDsByFrameNr();
     _numPeds        = peddata.GetNumPeds();
+    _numFrames      = peddata.GetNumFrames();
     _xCor           = peddata.GetXCor();
     _yCor           = peddata.GetYCor();
     _fps            = peddata.GetFps();
     _firstFrame     = peddata.GetFirstFrame();
     _passLine       = std::vector<bool>(_numPeds, false);
     if (_deltaT == -1) {
-        _deltaT = peddata.GetNumFrames() - 1;
+        _deltaT = _numFrames - 1;
     }
 
     LOG_INFO("------------------------Analyzing with Method F-----------------------------");
@@ -105,10 +107,14 @@ void Method_F::OutputVelocity(const PedData & peddata)
                     continue;
                 }
             }
-            double velocity = _dx / ((_tOut[i] - _tIn[i] * 1.0) / _fps);
-            sumV += velocity;
-            numberPeds++;
-            fV << peddata.GetId(_tOut[i], i) << "\t" << velocity << "\n";
+            if(_tOut[i] < (_numFrames - ((_numFrames - 1) % _deltaT))) {
+                // velocity values are only output if the pedestrian passes the area during the
+                // frames which are also considered by delta t (to make it consistent)
+                double velocity = _dx / ((_tOut[i] - _tIn[i] * 1.0) / _fps);
+                sumV += velocity;
+                numberPeds++;
+                fV << peddata.GetId(_tOut[i], i) << "\t" << velocity << "\n";
+            }
         }
         // should the pedestrians that do not pass the measurement area also be added to the output 
         // (with e.g. nan as value)? (this is what is done in method B)

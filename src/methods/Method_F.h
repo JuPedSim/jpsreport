@@ -31,6 +31,7 @@ private:
     ub::matrix<double> _yCor;
     std::vector<int> _firstFrame;
     int _numPeds;
+    int _numFrames;
     float _fps;
 
     std::string _measureAreaId;

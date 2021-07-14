@@ -25,6 +25,7 @@ from JPSRunTest import JPSRunTestDriver
 from scipy.stats import ks_2samp
 import numpy as np
 from test_functions import runtest_method_G
+# import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ################################
 
@@ -41,6 +42,20 @@ length_cut_side = delta_x # length of the side in which direction the polygons a
 dx = length_cut_side / n_polygon # length of cut polygons
 dt_seconds = dt_frames/fps # length of small time interval in seconds
 delta_t_seconds = delta_t_frames/fps # length of general time interval in seconds
+
+######## GET TRAJECTORIES #########################################
+
+# numPedsX = 50
+# numPedsY = 10
+# startPosX = 5
+# startPosY = 9.5
+# ped_distance = 0.5
+
+# trajectories are created with this command 
+# (create_trajectories has to be imported as create_traj):
+# create_traj.write_trajectory_to_file_delete_outside_geometry(
+# numPedsX, numPedsY, startPosX, startPosY, ped_distance, real_velocity, fps, 
+# "traj.txt", num_frames, [3, 7], [0, 10])
 
 ######## NUMPED & DISTANCE REFERENCE VALUES ########################
 

@@ -15,7 +15,8 @@ class Method_G
 {
 public:
     Method_G();
-    virtual ~Method_G();
+    Method_G::~Method_G() = default;
+
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
     void SetDt(int dt);
@@ -54,7 +55,7 @@ private:
         std::vector<int> tOut,
         std::ofstream & fRho,
         std::ofstream & fV,
-        polygon_2d polygon);
+        const polygon_2d & polygon);
 
     void OutputDensityVFlowDt(int numFrames);
     

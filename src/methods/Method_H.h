@@ -15,7 +15,8 @@ class Method_H
 {
 public:
     Method_H();
-    virtual ~Method_H();
+    Method_H::~Method_H() = default;
+
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);
     bool Process(const PedData & peddata);

@@ -24,8 +24,6 @@ Method_G::Method_G()
     _n               = 10;
 }
 
-Method_G::~Method_G() = default;
-
 bool Method_G::Process(const PedData & peddata)
 {
     _trajName        = peddata.GetTrajName();
@@ -43,7 +41,7 @@ bool Method_G::Process(const PedData & peddata)
         _deltaT = _numFrames - 1;
     }
 
-    _measureAreaId      = boost::lexical_cast<string>(_areaForMethod_G->_id);
+    _measureAreaId = std::to_string(_areaForMethod_G->_id);
     std::ofstream fRhoDx =
         GetFile("rho", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
     std::ofstream fVdx =
@@ -80,8 +78,9 @@ bool Method_G::Process(const PedData & peddata)
         OutputDensityVdx(_numFrames, TinTout[0], TinTout[1], fRhoDx, fVdx, polygon);
 
         ring allPoints = polygon.outer();
-        for(int p = 0; p < 4; p++) {
-            fCoordDx << allPoints[p].x() * CMtoM << "\t" << allPoints[p].y() * CMtoM << "\t";
+        allPoints.pop_back();
+        for(auto p : allPoints) {
+            fCoordDx << p.x() * CMtoM << "\t" << p.y() * CMtoM << "\t";
         }
         fCoordDx << "\n";
 
@@ -124,32 +123,24 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             // i is start of time interval
             // i + _dt is end of time interval
             
-            if(!((tIn[j] > (i + _dt) && tOut[j] > (i + _dt)) ||
-                 (tIn[j] < i && tOut[j] < i && tOut[j] != 0)) &&
-               !(tIn[j] == 0 && tOut[j] == 0) && !(tOut[j] == 0 && tIn[j] > (i + _dt))) {
-                if((i < tIn[j] && tIn[j] < (i + _dt)) && (i < tOut[j] && tOut[j] < (i + _dt))) {
-                    // entrance and exit are during the time interval
+            auto entryExit = checkEntryExit(tIn[j], tOut[j], i, i + _dt, _numFrames);
+            switch(entryExit) {
+                case EntryExit::EntryAndExit:
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], tOut[j], _xCor, _yCor);
-                } else if(
-                    (tIn[j] <= i && tOut[j] >= (i + _dt)) ||
-                    (tOut[j] == 0 && tIn[j] <= i && (i + _dt) < _numFrames)) {
-                    // entrance and exit are both outside the time interval
-                    // (or exactly the same)
+                    break;
+                case EntryExit::NoEntryNorExit:
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
-                } else if(i <= tOut[j] && tOut[j] < (i + _dt) && tOut[j] != 0) {
-                    // only exit is during the time interval
+                    break;
+                case EntryExit::OnlyExit:
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, tOut[j], _xCor, _yCor);
-                } else if((i <= tIn[j] && tIn[j] < (i + _dt))) {
-                    // only entrance is during the time interval
+                    break;
+                case EntryExit::OnlyEntry:
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], i + _dt, _xCor, _yCor);
-                }
-
-                // TODO: check if these conditions could be reduced in some way (after general
-                // testing)
+                    break;
             }
         }
         double density      = pedsInMeasureArea / _deltaX;
@@ -264,7 +255,7 @@ void Method_G::OutputDensityVdx(
     vector<int> tOut,
     std::ofstream & fRho,
     std::ofstream & fV,
-    polygon_2d polygon)
+    const polygon_2d & polygon)
 {
     for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;

@@ -93,7 +93,7 @@ bool Method_G::Process(const PedData & peddata)
     fRhoDx.close();
     fVdx.close();
 
-    OutputDensityVFlowDt(_numFrames - (_numFrames % _deltaT));
+    OutputDensityVFlowDt(_numFrames - ((_numFrames - 1) % _deltaT));
     
     return true;
 }

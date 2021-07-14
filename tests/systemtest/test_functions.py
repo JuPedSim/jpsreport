@@ -39,7 +39,10 @@ def get_density_range(distance, real_v, fps, tolerance, num_peds, delta_t):
 
 def get_num_peds_distance_per_dt(start_pos_x, dist, num_columns, peds_y, 
                                  dt_frames, dt_seconds, velocity, num_frames, x0, x1):
-    number_time_intervals = int(num_frames / dt_frames) - 1
+    if (num_frames / dt_frames).is_integer():
+        number_time_intervals = int(num_frames / dt_frames) - 1
+    else:
+        number_time_intervals = int(num_frames / dt_frames)
     dist_per_dt = velocity * dt_seconds
     dist_per_frame = velocity * dt_seconds / dt_frames
     column_position_t0 = [start_pos_x - num_column * dist for num_column in range(num_columns)]
@@ -483,5 +486,76 @@ def runtest_method_E(trajfile,
                     logging.critical('wrong velocity values')
                 else:
                     logging.info('correct velocity values')
+
+    return success
+
+###### FUNCTIONS FOR METHOD H ########################
+
+def runtest_method_H(trajfile,
+                     delta_t_frames, delta_t_seconds, num_frames,
+                     delta_x, 
+                     real_velocity, 
+                     fps,
+                     accum_peds_delta_t):
+    success = True
+    abs_tolerance = 0.0001
+    # values are rounded differently in output files -> +- 0.0001 as tolerance
+    general_output_path = os.path.join('./Output', 'Fundamental_Diagram', 'Method_H')
+
+    logging.info("===== Method H =========================")
+
+    out_fname = os.path.join(general_output_path, f'flow_rho_v_{trajfile}_id_1.dat')
+    if not os.path.exists(out_fname):
+        # check if file was output correctly
+        logging.critical("jpsreport did not output results correctly.")
+        exit(FAILURE)
+
+    out_data = np.genfromtxt(out_fname)
+
+    number_time_intervals = 1
+    # adjust this later for tests with more than one time interval
+
+    if not (out_data.shape == (3, number_time_intervals) and number_time_intervals > 1) and \
+            not (out_data.shape == (3,) and number_time_intervals == 1):
+        success = False
+        logging.critical('wrong number of time intervals')
+    else:
+        logging.info('correct number of time intervals')
+
+        if number_time_intervals == 1:
+            ref_rho = accum_peds_delta_t / delta_t_frames / delta_x
+            # accum_peds_delta_t is the sum of the pedestrians that are on the MA at a freme
+            # for each frame -> is "sum of time"
+            # delta_t_frames does not have to be changed to seconds, as the ratio
+            # between accum_peds_delta_t and delta_t_frames matters
+            # -> accum_peds_delta_t / delta_t_frames is the average number of peds
+            # in MA at one frame
+
+            ref_flow = ref_rho * real_velocity
+
+            condition_flow = not math.isclose(ref_flow, out_data[0], abs_tol=abs_tolerance)
+            condition_rho = not math.isclose(ref_rho, out_data[1], abs_tol=abs_tolerance)
+            condition_v = not math.isclose(real_velocity, out_data[2], abs_tol=abs_tolerance)
+        # adjust this later for tests with more than one time interval
+
+        if condition_flow:
+            success = False
+            logging.critical("wrong flow values")
+            logging.info(ref_flow)
+        else:
+            logging.info("correct flow values")
+
+        if condition_rho:
+            success = False
+            logging.critical("wrong density values")
+            logging.info(ref_rho)
+        else:
+            logging.info("correct density values")
+
+        if condition_v:
+            success = False
+            logging.critical("wrong velocity values")
+        else:
+            logging.info("correct velocity values")
 
     return success

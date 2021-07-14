@@ -37,7 +37,7 @@ bool IsPassLine(
 
 std::vector<std::vector<int>> GetTinTout(
     int numFrames,
-    polygon_2d polygon,
+    const polygon_2d & polygon,
     int numPeds,
     std::map<int, std::vector<int>> peds_t,
     ub::matrix<double> xCor,
@@ -58,5 +58,8 @@ double GetExactDistance(
     int lastFrame,
     ub::matrix<double> xCor,
     ub::matrix<double> yCor);
+
+enum class EntryExit { EntryAndExit, NoEntryNorExit, OnlyExit, OnlyEntry, NotInArea };
+EntryExit checkEntryExit(int tIn, int tOut, int t0, int t1, int numFrames);
 
 #endif /* METHOD_FUNCTIONS_H_ */

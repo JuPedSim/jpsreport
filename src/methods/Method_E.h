@@ -15,7 +15,8 @@ class Method_E
 {
 public:
     Method_E();
-    virtual ~Method_E();
+    Method_E::~Method_E() = default;
+
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetLine(MeasurementArea_L * area);
     void SetTimeInterval(int deltaT);

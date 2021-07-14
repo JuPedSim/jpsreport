@@ -22,8 +22,6 @@ Method_F::Method_F()
     _averageV        = std::numeric_limits<double>::quiet_NaN();
 }
 
-Method_F::~Method_F() = default;
-
 bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
 {
     _trajName       = peddata.GetTrajName();
@@ -182,7 +180,7 @@ int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
 void Method_F::SetMeasurementArea(MeasurementArea_B * area)
 {
     _areaForMethod_F = area;
-    _measureAreaId = boost::lexical_cast<string>(_areaForMethod_F->_id);
+    _measureAreaId   = std::to_string(_areaForMethod_F->_id);
 }
 
 void Method_F::SetLine(MeasurementArea_L * area)

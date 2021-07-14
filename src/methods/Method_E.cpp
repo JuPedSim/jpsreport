@@ -22,8 +22,6 @@ Method_E::Method_E()
     _dy               = 0;
 }
 
-Method_E::~Method_E() = default;
-
 bool Method_E::Process(
     const PedData & peddata, 
     double zPos_measureArea)
@@ -195,7 +193,7 @@ void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)
 void Method_E::SetMeasurementArea(MeasurementArea_B * area)
 {
     _areaForMethod_E = area;
-    _measureAreaId   = boost::lexical_cast<string>(_areaForMethod_E->_id);
+    _measureAreaId   = std::to_string(_areaForMethod_E->_id);
 }
 
 void Method_E::SetLine(MeasurementArea_L * area)

@@ -71,7 +71,7 @@ public:
     std::vector<int> GetIndexInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids, double zPos) const;
-    int PedData::GetId(int frame, int id) const;
+    int GetId(int frame, int id) const;
     std::vector<double> GetXInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<double> GetYInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<double> GetXInFrame(int frame, const std::vector<int> & ids) const;

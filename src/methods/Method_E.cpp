@@ -38,7 +38,7 @@ bool Method_E::Process(
     _firstFrame      = peddata.GetFirstFrame();
     _passLine        = std::vector<bool>(peddata.GetNumPeds(), false);
     if(_deltaT == -1) {
-        _deltaT = peddata.GetNumFrames();
+        _deltaT = peddata.GetNumFrames() - 1;
     }
 
     if(_areaForMethod_E->_length < 0) {
@@ -104,11 +104,13 @@ bool Method_E::Process(
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
         OutputDensity(frameNr, peddata.GetNumPeds(), fRho);
 
-        if(((frameNr + 1) % _deltaT) == 0 && frameNr != 0) {
+        if((frameNr % _deltaT) == 0 && frameNr != 0) {
             OutputFlow(_fps, fFlow, accumPedsDeltaT);
-            OutputVelocity(_fps, fV, accumPedsDeltaT, frameNr + 1);
+            OutputVelocity(_fps, fV, accumPedsDeltaT, frameNr);
 
+             double overlappingDensity = _densityPerFrame[0];
             _densityPerFrame.clear();
+             _densityPerFrame.push_back(overlappingDensity);
             accumPedsDeltaT = 0;
         }
     }
@@ -151,12 +153,13 @@ void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const
 void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const
 {
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
-    int frameNr         = frame - _deltaT;
+    int frameNr = frame - _deltaT;
     for(double density : _densityPerFrame) {
         double velocity = specificFlow / density;
         fV << frameNr << "\t" << velocity << "\n";
         frameNr++;
     }
+    fV << "\n";
 }
 
 void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)

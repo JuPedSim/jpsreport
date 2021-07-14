@@ -36,7 +36,7 @@ bool Method_F::Process(const PedData & peddata, double zPos_measureArea)
     _firstFrame     = peddata.GetFirstFrame();
     _passLine       = std::vector<bool>(_numPeds, false);
     if (_deltaT == -1) {
-        _deltaT = peddata.GetNumFrames();
+        _deltaT = peddata.GetNumFrames() - 1;
     }
 
     LOG_INFO("------------------------Analyzing with Method F-----------------------------");
@@ -134,7 +134,6 @@ void Method_F::OutputDensityLine(
         exit(EXIT_FAILURE);
     }
 
-    int framesPassed = 0;
     int accumPedsDeltaT = 0;
     fRho << "#number pedestrians\tdensity(m^(-2))\tflow rate(1/s)\tspecific flow rate(1/(ms))\n";
     // should the number of pedestrians be removed from output?
@@ -143,15 +142,13 @@ void Method_F::OutputDensityLine(
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
 
-        framesPassed++;
-        if(framesPassed == _deltaT) {
+        if((frameNr % _deltaT) == 0 && frameNr != 0) {
             double density = accumPedsDeltaT / ((_deltaT / _fps) * _dy) * (1 / _averageV);
             double specificFlow = accumPedsDeltaT / ((_deltaT / _fps) * _dy);
             double flow         = accumPedsDeltaT / (_deltaT / _fps);
             fRho << accumPedsDeltaT << "\t" << density << "\t" << flow << "\t" << specificFlow
                  << "\n";
             accumPedsDeltaT = 0;
-            framesPassed = 0;
         }
     }
     fRho.close();

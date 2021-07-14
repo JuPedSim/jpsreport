@@ -39,12 +39,12 @@ bool Method_H::Process(const PedData & peddata)
     _entrancePoint  = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
     _exitPoint      = std::vector<point_2d>(_numPeds, boost::geometry::make<point_2d>(0, 0));
     if(_deltaT == -1) {
-        _deltaT = peddata.GetNumFrames();
+        _deltaT = peddata.GetNumFrames() - 1;
     }
 
     _measureAreaId           = boost::lexical_cast<string>(_areaForMethod_H->_id);
     std::ofstream fRhoVFlow =
-        GetFile("flow_rho_v", _measureAreaId, _outputLocation, _trajName, "Method_H");
+        GetFile("flow_rho_v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_H");
     if(!fRhoVFlow.is_open()) {
         LOG_ERROR("Cannot open file to write density, flow and velocity data for method H!\n");
         exit(EXIT_FAILURE);
@@ -79,25 +79,33 @@ void Method_H::GetTinToutEntExt(int numFrames)
             int x = _xCor(ID, frameNr);
             int y = _yCor(ID, frameNr);
 
-            int nextX, nextY;
-            if((frameNr + 1) < numFrames) {
-                nextX = _xCor(ID, frameNr + 1);
-                nextY = _yCor(ID, frameNr + 1);
-
-                if(within(make<point_2d>((nextX), (nextY)), _areaForMethod_H->_poly) &&
-                   !(IsinMeasurezone[ID])) {
-                    _tIn[ID]             = frameNr;
-                    IsinMeasurezone[ID] = true;
-                    _entrancePoint[ID].x(x * CMtoM);
-                    _entrancePoint[ID].y(y * CMtoM);
-                } else if(
-                    (!covered_by(make<point_2d>((nextX), (nextY)), _areaForMethod_H->_poly)) &&
-                    IsinMeasurezone[ID]) {
-                    _tOut[ID]            = frameNr;
-                    IsinMeasurezone[ID] = false;
-                    _exitPoint[ID].x(x * CMtoM);
-                    _exitPoint[ID].y(y * CMtoM);
+            // this is variant 4
+            if(covered_by(make<point_2d>(x, y), _areaForMethod_H->_poly) &&
+                !(IsinMeasurezone[ID])) {
+                _tIn[ID]             = frameNr;
+                IsinMeasurezone[ID] = true;
+                _entrancePoint[ID].x(x * CMtoM);
+                _entrancePoint[ID].y(y * CMtoM);
+            } else if(
+                (!within(make<point_2d>(x, y), _areaForMethod_H->_poly)) &&
+                IsinMeasurezone[ID]) {
+                if(_tIn[ID] == 0 && frameNr == 1) {
+                    if(!within(
+                            make<point_2d>(_xCor(ID, 0), _yCor(ID, 0)),
+                            _areaForMethod_H->_poly)) {
+                        // edge case -> if first frame in general is exactly on the upper
+                        // boundary of MA, this is not the entrance frame, but the exit frame
+                        _tOut[ID] = 0;
+                        _exitPoint[ID].x(_xCor(ID, 0) * CMtoM);
+                        _exitPoint[ID].y(_yCor(ID, 0) * CMtoM);
+                        IsinMeasurezone[ID] = false;
+                        continue;
+                    }
                 }
+                _tOut[ID]            = frameNr;
+                IsinMeasurezone[ID] = false;
+                _exitPoint[ID].x(x * CMtoM);
+                _exitPoint[ID].y(y * CMtoM);
             }
         }
     }
@@ -105,41 +113,40 @@ void Method_H::GetTinToutEntExt(int numFrames)
 
 void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
 {
-    for(int i = 0; i <= (numFrames - _deltaT); i += _deltaT) {
+    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         double sumTime        = 0;
-        double sumDistance  = 0;
+        double sumDistance = 0;
         for(int j = 0; j < _numPeds; j++) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
             if(!((_tIn[j] > (i + _deltaT) && _tOut[j] > (i + _deltaT)) ||
-                 (_tIn[j] < i && _tOut[j] < i)) &&
-               !(_tIn[j] == 0 && _tOut[j] == 0) &&
-               !(_tOut[j] == 0 && (_tIn[j] < i || _tIn[j] > (i + _deltaT)))) {
-                // pedestian is in the measurement area during this time interval
-                
-                double tmpTime;
+                 (_tIn[j] < i && _tOut[j] < i && _tOut[j] != 0)) &&
+               !(_tIn[j] == 0 && _tOut[j] == 0) && !(_tOut[j] == 0 && _tIn[j] > (i + _deltaT))) {
                 if((i < _tIn[j] && _tIn[j] < (i + _deltaT)) &&
                    (i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
                     // entrance and exit are during the time interval
                     sumTime += (_tOut[j] - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], _tOut[j], _xCor, _yCor);
-                } else if((_tIn[j] <= i) && (_tOut[j] >= (i + _deltaT))) {
+                } else if(
+                    (_tIn[j] <= i && _tOut[j] >= (i + _deltaT)) ||
+                    (_tOut[j] == 0 && _tIn[j] <= i && (i + _deltaT) < numFrames)) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
                     sumTime += (_deltaT * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, i + _deltaT, _xCor, _yCor);
-                } else if((i < _tOut[j] && _tOut[j] < (i + _deltaT))) {
+                } else if(i <= _tOut[j] && _tOut[j] < (i + _deltaT) && _tOut[j] != 0) {
                     // only exit is during the time interval
                     sumTime += (_tOut[j] - i * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, i, _tOut[j], _xCor, _yCor);
-                } else if((i < _tIn[j] && _tIn[j] < (i + _deltaT))) {
+                } else if(i <= _tIn[j] && _tIn[j] < (i + _deltaT)) {
                     // only entrance is during the time interval
                     sumTime += (i + _deltaT - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT, _xCor, _yCor);
                 }
             }
         }
+
         double flow     = sumDistance / (_dx * (_deltaT / _fps));
         double density  = sumTime / (_dx * (_deltaT / _fps));
         double velocity = sumDistance / sumTime;

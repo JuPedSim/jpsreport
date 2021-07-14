@@ -40,7 +40,7 @@ bool Method_G::Process(const PedData & peddata)
     _firstFrame      = peddata.GetFirstFrame();
     _numFrames       = peddata.GetNumFrames();
     if(_deltaT == -1) {
-        _deltaT = _numFrames;
+        _deltaT = _numFrames - 1;
     }
 
     _measureAreaId      = boost::lexical_cast<string>(_areaForMethod_G->_id);
@@ -133,12 +133,12 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
                     sumDistance += GetExactDistance(j, tIn[j], tOut[j], _xCor, _yCor);
                 } else if(
                     (tIn[j] <= i && tOut[j] >= (i + _dt)) ||
-                    (tOut[j] == 0 && tIn[j] < i && (i + _dt) < _numFrames)) {
+                    (tOut[j] == 0 && tIn[j] <= i && (i + _dt) < _numFrames)) {
                     // entrance and exit are both outside the time interval
                     // (or exactly the same)
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, i + _dt, _xCor, _yCor);
-                } else if((i < tOut[j] && tOut[j] <= (i + _dt))) {
+                } else if(i <= tOut[j] && tOut[j] < (i + _dt) && tOut[j] != 0) {
                     // only exit is during the time interval
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, i, tOut[j], _xCor, _yCor);
@@ -266,7 +266,7 @@ void Method_G::OutputDensityVdx(
     std::ofstream & fV,
     polygon_2d polygon)
 {
-    for(int i = 0; i <= (numFrames - _deltaT); i += _deltaT) {
+    for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
         int pedsInMeasureArea = 0;
         double sumTime        = 0;
         for(int j = 0; j < _numPeds; j++) {

@@ -54,6 +54,18 @@ def write_trajectory_grid_to_file(numPedsX, numPedsY, startPosX, startPosY, ped_
 
     f.close()
 
+
+# write_trajectory_random_start_position creates a trajectory file in which
+# the starting positions of the pedestrians are randomly chosen inside a radius (startRadius) 
+# around a certain position (startPosX, startPosY).
+# Pedestrians outside certain x- and y-values (accepted range: x_range, y_range) 
+# are not output to the trajectory file to avoid pedestrians outside of the geometry.
+# All pedestrians move at the same constant speed v.
+# numPeds -> total number of all pedestrians
+# fps -> fps of trajectory-file
+# file_name -> name of trajectory-file
+# sim_frames -> number of simulated frames
+
 def write_trajectory_random_start_position(numPeds, startPosX, startPosY, 
                                            v, fps, file_name, sim_frames,
                                            startRadius, x_range, y_range):
@@ -103,6 +115,12 @@ def write_trajectory_random_start_position(numPeds, startPosX, startPosY,
 
     # returns the number of frames -> this value is needed as deltaT in some tests (if frame interval = all frames)
     return last_frame - first_frame + 1
+
+
+# write_trajectory_to_file_delete_outside_geometry does almost the same as write_trajectory_grid_to_file.
+# Pedestrians outside certain x- and y-values (accepted range: x_range, y_range) 
+# are not output to the trajectory file to avoid pedestrians outside of the geometry.
+# This method includes some more parameters (v, fps, file_name, sim_frames) to create different trajectory-files.
 
 def write_trajectory_to_file_delete_outside_geometry(numPedsX, numPedsY, startPosX, startPosY, 
                                                      ped_distance, v, fps, file_name, sim_frames, 

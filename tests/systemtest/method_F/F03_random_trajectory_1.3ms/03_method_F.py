@@ -6,7 +6,7 @@
 # ids of pedestrians are continuous (0 to 19)
 # test with three different lines (at entrance, in middle, at exit)
 # velocity value and fps value can be adjusted below
-# currently set to: v = 2.5, fps = 8
+# currently set to: v = 1.3, fps = 8
 # could also be set randomly and output to command line
 
 import os
@@ -24,7 +24,7 @@ from test_functions import runtest_method_F
 
 ######### REFERENCE VALUES ########################################
 
-real_velocity = 1.4 # value of actual velocity
+real_velocity = 1.3 # value of actual velocity
 
 fps = 8 # frames per second of trajectory file
 min_frame_num = int(16 / real_velocity * fps)
@@ -40,8 +40,8 @@ delta_x = 1 # length of measurement area in movement direction
 delta_y = 10 # length of measurement area orthogonal to movement direction
 
 ped_ids = list(range(0, 20)) # peds that cross the area
-num_peds_line = [20, 20, 20] # number of peds that cross the line
 line_ids = [2, 3, 4] # ids of the lines that are considered
+num_peds_line = [[20] for line in line_ids] # number of peds that cross the line
 
 def runtest(inifile, trajfile):
     success = runtest_method_F(trajfile,

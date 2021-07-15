@@ -185,7 +185,7 @@ polygon_list Method_G::GetCutPolygons()
     for(int i = 0; i < 4; i++) {
         // find the index of the given points to find point C
         point_2d point = allPoints[i];
-        if(point.x() == _points[0].x() && point.y() == _points[0].y()) {
+        if(boost::geometry::distance(point, _points[0]) < 0.1) {
             // point D was found
             posPointD = i;
             // now check which neighbouring point is point A
@@ -202,10 +202,10 @@ polygon_list Method_G::GetCutPolygons()
             }
             point_2d p1 = allPoints[idx1];
             point_2d p2 = allPoints[idx2];
-            if(p1.x() == _points[1].x() && p1.y() == _points[1].y()) {
+            if(boost::geometry::distance(p1, _points[1]) < 0.1) {
                 posPointA = idx1;
                 posPointC = idx2;
-            } else if(p2.x() == _points[1].x() && p2.y() == _points[1].y()) {
+            } else if(boost::geometry::distance(p2, _points[1]) < 0.1) {
                 posPointC = idx1;
                 posPointA = idx2;
             }

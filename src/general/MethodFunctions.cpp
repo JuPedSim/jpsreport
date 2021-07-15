@@ -122,13 +122,24 @@ enum class EntryExit { EntryAndExit, NoEntryNorExit, OnlyExit, OnlyEntry, NotInA
 
 EntryExit checkEntryExit(int tIn, int tOut, int t0, int t1, int numFrames)
 {
+    // This is used in methods G/H to detect whether a pedestrian is in the area
+    // during a time interval and whether entry and/or exit are during this time interval.
+    // Depending on the return value, different values for distance/time in
+    // measurement area are used.
+    
     // tIn -> frame of entry
     // tOut -> frame of exit
     // t0 -> first frame time interval
     // t1 -> last frame time interval
 
-    if(!((tIn > t1 && tOut > t1) || (tIn < t0 && tOut < t0 && tOut != 0)) &&
+    if(!(tIn > t1 && tOut > t1) && !(tIn < t0 && tOut < t0 && tOut != 0) &&
        !(tIn == 0 && tOut == 0) && !(tOut == 0 && tIn > t1)) {
+        // Explanation for conditions:
+        // (tIn > t1 && tOut > t1) -> passes area after time interval
+        // (tIn < t0 && tOut < t0 && tOut != 0) -> passes area before time interval
+        // (tIn == 0 && tOut == 0) -> does not pass area at all
+        // (tOut == 0 && tIn > t1) -> enters area after time interval, does not exit
+
         if((t0 <= tIn && tIn < t1) && (t0 < tOut && tOut <= t1)) {
             // entrance and exit are during time interval or exactly the same
             // no valid case with tOut == 0 possible as exit must be during time interval
@@ -136,17 +147,19 @@ EntryExit checkEntryExit(int tIn, int tOut, int t0, int t1, int numFrames)
         } else if((tIn < t0 && tOut > t1) || (tOut == 0 && tIn < t0 && t1 < numFrames)) {
             // entrance and exit are outside of time interval
             // valid case with tOut == 0 possible as exit is outside of time interval
+            // first condition: general condition, second condition: for tOut == 0
             return EntryExit::NoEntryNorExit;
         } else if(t0 < tOut && tOut <= t1) {
             // only exit is during time interval (or exactly the same as t1)
             // tOut cannot be equal to t0, in this case the distance/time in area would be 0
-            // valid case with tOut == 0 possible as exit is outside of time interval
+            // valid case with tOut == 0 possible as exit must be during time interval
             return EntryExit::OnlyExit;
         } else if(
             (t0 <= tIn && tIn < t1) || (tOut == 0 && t0 <= tIn && tIn < t1 && t1 < numFrames)) {
             // only entry is during time interval (or exactly the same as t0)
             // tIn cannot be equal to t1, in this case the distance/time in area would be 0
             // valid case with tOut == 0 possible as exit is outside of time interval
+            // first condition: general condition, second condition: for tOut == 0
             return EntryExit::OnlyEntry;
         }
     }

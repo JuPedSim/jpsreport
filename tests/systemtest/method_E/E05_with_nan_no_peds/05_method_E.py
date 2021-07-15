@@ -14,16 +14,15 @@
 import os
 from sys import argv, path
 import logging
-import math
 
 utestdir = os.path.abspath(os.path.dirname(os.path.dirname(path[0])))
 path.append(utestdir)
 path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
-import numpy as np
+
 from test_functions import runtest_method_E, get_num_pass_lines, get_num_in_area
-import create_trajectories as create_traj
+# import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ###############################
 
@@ -46,7 +45,8 @@ startPosX = 0
 startPosY = 9.5
 ped_distance = 0.5
 
-# trajectories are created with this command:
+# trajectories are created with this command
+# (create_trajectories has to be imported as create_traj):
 # create_traj.write_trajectory_to_file_delete_outside_geometry(
 # numPedsX, numPedsY, startPosX, startPosY, ped_distance, real_velocity, fps, 
 # "traj.txt", num_frames, [0, 10], [0, 10])

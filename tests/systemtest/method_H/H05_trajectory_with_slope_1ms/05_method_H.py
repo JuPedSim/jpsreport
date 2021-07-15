@@ -9,14 +9,13 @@ import os
 from sys import argv, path
 import logging
 import math
+import numpy as np
 
 utestdir = os.path.abspath(os.path.dirname(os.path.dirname(path[0])))
 path.append(utestdir)
 path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
-from scipy.stats import ks_2samp
-import numpy as np
 
 ######### GENERAL REFERENCE VALUES ################################
 

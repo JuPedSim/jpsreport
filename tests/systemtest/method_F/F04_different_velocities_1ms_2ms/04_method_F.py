@@ -10,15 +10,16 @@ import os
 from sys import argv, path
 import logging
 import math
+import numpy as np
 
 utestdir = os.path.abspath(os.path.dirname(os.path.dirname(path[0])))
 path.append(utestdir)
 path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
-from scipy.stats import ks_2samp
-import numpy as np
+
 import create_trajectories as create_traj
+from test_functions import get_velocity_range
 
 ######### REFERENCE VALUES ########################################
 
@@ -38,21 +39,7 @@ abs_tolerance = 0.0001
 # values are rounded differently in output files -> +- 0.0001 as tolerance
 
 for group in group_properties.values():
-    real_frames = delta_x / group.get("real_v") * fps
-    if(real_frames.is_integer()):
-        group["range_v"] = [group.get("real_v"), group.get("real_v")]
-    else:
-        min_seconds = math.floor(real_frames) / fps
-        max_seconds = math.ceil(real_frames) / fps
-        group["range_v"] = [delta_x/max_seconds - abs_tolerance, delta_x/min_seconds + abs_tolerance]
-        # range in which velocity values are considered as correct
-
-    # explanation for accepted range:
-    # calculation of number of frames which is needed to pass the length of the measurement area (real_frames)
-    # if this value is not an integer, the number of frames in which the pedestrian passes the measurement
-    # area could differ (depending on starting position)
-    # counted frames should either be the next lower integer or the next higher integer value
-    # depending on these frame values, the velocity range is calculated
+    group["range_v"] = get_velocity_range(delta_x, group.get("real_v"), fps, abs_tolerance)
 
 def runtest(inifile, trajfile):
     success = True

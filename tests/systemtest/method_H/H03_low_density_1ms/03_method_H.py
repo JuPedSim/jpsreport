@@ -30,8 +30,9 @@ delta_x = 1.5 # length of measurement area in movement direction
 fps = 8 # frames per second of trajectory file
 delta_t_frames = 99 # frames of general frame interval
 delta_t_seconds = delta_t_frames/fps # length of general time interval in seconds
-accum_peds_delta_t = 7 * delta_t_frames # accumulative pedestrians in MA during delta t
-# adjust this later for tests with more than one time interval
+accum_peds_delta_t = [7 * delta_t_frames]
+# accum_peds_delta_t is the sum of the pedestrians that are on the MA at a frame
+# for each frame -> is "sum of time"
 num_frames = 100 # number of frames in trajectory
 
 ######## GET TRAJECTORIES #########################################

@@ -30,7 +30,7 @@ delta_x = 1 # length of measurement area in movement direction
 delta_y = 10 # length of measurement area orthogonal to movement direction
 
 ped_ids = [3] # ped that crosses the area
-num_peds_line = [1, 2, 3] # number of peds that cross the line
+num_peds_line = [[1], [2], [3]] # number of peds that cross the line
 line_ids = [2, 3, 4] # ids of the lines that are considered
 
 def runtest(inifile, trajfile):

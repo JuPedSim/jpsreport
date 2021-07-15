@@ -29,8 +29,8 @@ delta_x = 1 # length of measurement area in movement direction
 delta_y = 10 # length of measurement area orthogonal to movement direction
 
 ped_ids = list(range(0, 28)) # peds that cross the area
-num_peds_line = [28, 28, 28] # number of peds that cross the line
 line_ids = [2, 3, 4] # ids of the lines that are considered
+num_peds_line = [[28] for line in line_ids] # number of peds that cross the line
 
 def runtest(inifile, trajfile):
     success = runtest_method_F(trajfile,

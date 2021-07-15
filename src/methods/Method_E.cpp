@@ -106,10 +106,17 @@ bool Method_E::Process(
             OutputFlow(_fps, fFlow, accumPedsDeltaT);
             OutputVelocity(_fps, fV, accumPedsDeltaT, frameNr);
 
-             double overlappingDensity = _densityPerFrame[0];
+            double overlappingDensity = _densityPerFrame.back();
             _densityPerFrame.clear();
-             _densityPerFrame.push_back(overlappingDensity);
-            accumPedsDeltaT = 0;
+            _densityPerFrame.push_back(overlappingDensity);
+            accumPedsDeltaT = GetNumberOnLine(frameNr, idsInFrame);
+            // because certain frames are used in two frame intervals (e.g. delta t = 10 -> 0 to 10,
+            // 10 to 20 etc.) these overlapping values have to also be included for the following
+            // time interval
+            // the first frame in the frame interval is handled the same as the general first frame
+            // -> peds on line are counted, the peds that crossed the area at this frame are not
+            // counted (meaning they are now in front of the line and were behind the line at the
+            // last frame)
         }
     }
 
@@ -139,6 +146,26 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
         }
     }
     return framePassLine;
+}
+
+int Method_E::GetNumberOnLine(int frame, const vector<int> & ids)
+{
+    // returns number of pedestrians that are on line at this frame
+    int frameOnLine = 0;
+    for(auto const i : ids) {
+        if(frame > _firstFrame[i]) {
+            point_2d lineP0(_lineForMethod_E->_lineStartX, _lineForMethod_E->_lineStartY);
+            point_2d lineP1(_lineForMethod_E->_lineEndX, _lineForMethod_E->_lineEndY);
+            segment line(lineP0, lineP1);
+            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
+
+            if(boost::geometry::distance(posPed, line) < 0.1) {
+                // distance is lower than 0.0001 m -> "on line"
+                frameOnLine++;
+            }
+        }
+    }
+    return frameOnLine;
 }
 
 void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const

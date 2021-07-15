@@ -152,7 +152,15 @@ void Method_F::OutputDensityLine(
             double flow         = accumPedsDeltaT / (_deltaT / _fps);
             fRho << accumPedsDeltaT << "\t" << density << "\t" << flow << "\t" << specificFlow
                  << "\n";
-            accumPedsDeltaT = 0;
+
+            accumPedsDeltaT = GetNumberOnLine(frameNr, idsInFrame);
+            // because certain frames are used in two frame intervals (e.g. delta t = 10 -> 0 to 10,
+            // 10 to 20 etc.) these overlapping values have to also be included for the following
+            // time interval
+            // the first frame in the frame interval is handled the same as the general first frame
+            // -> peds on line are counted, the peds that crossed the area at this frame are not
+            // counted (meaning they are now in front of the line and were behind the line at the
+            // last frame)
         }
     }
     fRho.close();
@@ -181,6 +189,26 @@ int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
         }
     }
     return framePassLine;
+}
+
+int Method_F::GetNumberOnLine(int frame, const vector<int> & ids)
+{
+    // returns number of pedestrians that are on line at this frame
+    int frameOnLine = 0;
+    for(auto const i : ids) {
+        if(frame > _firstFrame[i]) {
+            point_2d lineP0(_lineForMethod_F->_lineStartX, _lineForMethod_F->_lineStartY);
+            point_2d lineP1(_lineForMethod_F->_lineEndX, _lineForMethod_F->_lineEndY);
+            segment line(lineP0, lineP1);
+            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
+
+            if(boost::geometry::distance(posPed, line) < 0.1) {
+                // distance is lower than 0.0001 m -> "on line"
+                frameOnLine++;
+            }
+        }
+    }
+    return frameOnLine;
 }
 
 void Method_F::SetMeasurementArea(MeasurementArea_B * area)

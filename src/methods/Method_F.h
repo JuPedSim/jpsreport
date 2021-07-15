@@ -60,6 +60,14 @@ private:
      * @return number of pedestrians that passed the line during this frame
      */
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
+
+    /**
+     * returns number of pedestrians that are on the line at this frame
+     * @param frame current frame
+     * @param ids of pedestrians to check
+     * @return number of pedestrians that are on the line at this frame
+     */
+    int GetNumberOnLine(int frame, const std::vector<int> & ids);
 };
 
 #endif /* METHOD_F_H_ */

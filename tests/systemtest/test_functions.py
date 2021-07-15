@@ -48,14 +48,12 @@ def get_density_range(distance, real_v, fps, tolerance, num_peds, delta_t):
         # combination of these factors: distance too small, real_v too large, fps too small
         logging.critical("jpsreport might not detect density correctly; minimum of detected frames is 0")
 
-###### FUNCTIONS FOR METHOD E ########################
-
 def get_num_pass_lines(line_pos, 
                        start_pos_x, dist, num_columns, peds_y, velocity,
                        num_frames, delta_t_frames, delta_t_seconds):
     number_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
     fps = delta_t_frames/delta_t_seconds
-    dist_per_delta_t = velocity * (delta_t_frames - 1) / fps
+    dist_per_delta_t = velocity * delta_t_frames / fps
 
     num_peds_per_line = []
     for x_line in line_pos:
@@ -78,6 +76,8 @@ def get_num_pass_lines(line_pos,
         num_peds_per_line.append(num_columns_delta_t)
 
     return num_peds_per_line
+
+###### FUNCTIONS FOR METHOD E ########################
 
 def get_num_in_area(start_pos_x, dist, num_columns, peds_y, velocity, fps, num_frames, x0, x1):
     dist_per_frame = velocity / fps
@@ -103,23 +103,38 @@ def get_num_in_area(start_pos_x, dist, num_columns, peds_y, velocity, fps, num_f
 
     return num_peds_per_frame
 
-def check_velocity_values_E(out_v, reference_rho, reference_specific_flow, delta_t_frames, abs_tol):
+def check_velocity_values_E(out_v, general_reference_rho, reference_specific_flow, delta_t_frames, 
+                            num_frame_intervals, abs_tol):
+    rho_time_interval_idx = []
+    if num_frame_intervals > 1:
+        frame_nr = 0
+        reference_rho = []
+        for val in general_reference_rho:
+            reference_rho.append(val)
+            if frame_nr % delta_t_frames == 0 and frame_nr != 0:
+                reference_rho.append(val)
+                rho_time_interval_idx.append(frame_nr)
+            frame_nr += 1
+        rho_time_interval_idx.pop()
+    else:
+        reference_rho = general_reference_rho
+
     success = True
-    frame_nr = 0
+    idx_rho = 0
     time_interval_idx = 0
     for v_value in out_v:
-        if not (reference_rho[frame_nr] == 0 or reference_specific_flow[time_interval_idx] == 0):
-            ref_v = reference_specific_flow[time_interval_idx] / reference_rho[frame_nr]
-        elif reference_rho[frame_nr] == 0 and reference_specific_flow[time_interval_idx] == 0:
+        if not (reference_rho[idx_rho] == 0 or reference_specific_flow[time_interval_idx] == 0):
+            ref_v = reference_specific_flow[time_interval_idx] / reference_rho[idx_rho]
+        elif reference_rho[idx_rho] == 0 and reference_specific_flow[time_interval_idx] == 0:
             ref_v = math.nan
-        elif reference_rho[frame_nr] == 0:
+        elif reference_rho[idx_rho] == 0:
             ref_v = math.inf
         success = success and (math.isclose(ref_v, v_value, abs_tol=abs_tol) or (np.isnan(ref_v) and np.isnan(v_value)))
         # isclose returns True if ref_v and v_value are inf, but not if they are nan
 
-        if frame_nr % delta_t_frames == 0 and not frame_nr == 0:
+        if idx_rho in rho_time_interval_idx:
             time_interval_idx += 1
-        frame_nr += 1
+        idx_rho += 1
     return success
 
 def runtest_method_E(trajfile,
@@ -186,7 +201,7 @@ def runtest_method_E(trajfile,
         number_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
 
         # check flow values
-        if not (out_flow.shape == (2, number_time_intervals) and number_time_intervals > 1) and \
+        if not (out_flow.shape == (number_time_intervals, 2) and number_time_intervals > 1) and \
             not (out_flow.shape == (2,) and number_time_intervals == 1):
             success = False
             logging.critical('wrong number of time intervals for flow values')
@@ -200,7 +215,7 @@ def runtest_method_E(trajfile,
                 condition_specific_flow = not math.isclose(reference_specific_flow[0], out_flow[1], abs_tol=abs_tolerance)
             else:
                 condition_flow = not np.allclose(reference_flow, out_flow[:, 0], atol=abs_tolerance)
-                condition_specific_flow = not np.allclose(reference_specific_flow, out_flow[:, 1], abstol=abs_tolerance)
+                condition_specific_flow = not np.allclose(reference_specific_flow, out_flow[:, 1], atol=abs_tolerance)
             
             if condition_flow:
                 success = False
@@ -225,7 +240,7 @@ def runtest_method_E(trajfile,
                 logging.info('correct number of frames for velocity values')
 
                 check_v = check_velocity_values_E(out_v[:, 1], reference_rho_area, reference_specific_flow, 
-                                                  delta_t_frames, abs_tolerance)
+                                                  delta_t_frames, number_time_intervals, abs_tolerance)
                 if not check_v:
                     success = False
                     logging.critical('wrong velocity values')
@@ -236,7 +251,7 @@ def runtest_method_E(trajfile,
 
 ###### FUNCTIONS FOR METHOD F ########################
 
-def check_velocity_values_E(out_v_values, accepted_range):
+def check_velocity_values_F(out_v_values, accepted_range, abs_tolerance):
     success = True
     for v_value in out_v_values:
         if accepted_range[1] == accepted_range[0]:
@@ -275,10 +290,10 @@ def runtest_method_F(trajfile,
 
     # check velocity values for validity
     if out_v.shape != (2,):
-        vel_check = check_velocity_values_E(out_v[:, 1], accepted_range)
+        vel_check = check_velocity_values_F(out_v[:, 1], accepted_range, abs_tolerance)
         out_v_ids = list(out_v[:, 0])
     else:
-        vel_check = check_velocity_values_E([out_v[1]], accepted_range)
+        vel_check = check_velocity_values_F([out_v[1]], accepted_range, abs_tolerance)
         out_v_ids = [out_v[0]]
 
     if vel_check:
@@ -302,31 +317,47 @@ def runtest_method_F(trajfile,
 
         out_rho_flow = np.loadtxt(out_rho_flow_fname)
 
-        # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
-        if out_rho_flow.ndim > 1:
+        number_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
+
+        if not (out_rho_flow.shape == (number_time_intervals, 4) and number_time_intervals > 1) and \
+            not (out_rho_flow.shape == (4,) and number_time_intervals == 1):
             success = False
             logging.critical(f'line id <{line_id}> wrong number of time intervals')
         else:
             logging.info(f'line id <{line_id}> correct number of time intervals')
 
+            if number_time_intervals == 1:
+                out_num_peds = [out_rho_flow[0]]
+                out_rho = [out_rho_flow[1]]
+                out_flow = [out_rho_flow[2]]
+                out_specific_flow = [out_rho_flow[3]]
+            else:
+                out_num_peds = list(out_rho_flow[:, 0])
+                out_rho = out_rho_flow[:, 1]
+                out_flow = out_rho_flow[:, 2]
+                out_specific_flow = out_rho_flow[:, 3]
+
             # check number of pedestrians
-            if out_rho_flow[0] != number_pass_line[line_ids.index(line_id)]:
+            if out_num_peds != number_pass_line[line_ids.index(line_id)]:
                 success = False
                 logging.critical(f'line id <{line_id}> different number of pedestrians counted'
-                                 '({out_rho_flow[0]}, not {number_pass_line[line_ids.index(line_id)]})')
+                                 f'({out_num_peds}, not {number_pass_line[line_ids.index(line_id)]})')
             else:
                 logging.info(f'line id <{line_id}> correct number of pedestrians counted')
                 
             # check flow value
-            if not math.isclose(number_pass_line[line_ids.index(line_id)] / delta_t_seconds, out_rho_flow[2], abs_tol=abs_tolerance):
+            ref_flow = np.array([num_peds_delta_t / delta_t_seconds for num_peds_delta_t in 
+                                 number_pass_line[line_ids.index(line_id)]])
+            if not np.allclose(ref_flow, out_flow, atol=abs_tolerance):
                 success = False
                 logging.critical(f'line id <{line_id}> wrong flow value')
             else:
                 logging.info(f'line id <{line_id}> correct flow value')
             
             # check specific flow value
-            if not math.isclose(number_pass_line[line_ids.index(line_id)] / (delta_t_seconds * delta_y), out_rho_flow[3], 
-                                abs_tol=abs_tolerance):
+            ref_specific_flow = np.array([num_peds_delta_t / (delta_t_seconds * delta_y) for num_peds_delta_t in 
+                                          number_pass_line[line_ids.index(line_id)]])
+            if not np.allclose(ref_specific_flow, out_specific_flow, atol=abs_tolerance):
                 success = False
                 logging.critical(f'line id <{line_id}> wrong specific flow value')
             else:
@@ -334,11 +365,20 @@ def runtest_method_F(trajfile,
             
             # check density value
             if accepted_range[0] == accepted_range[1]:
-                condition = not math.isclose(out_rho_flow[1], number_pass_line[line_ids.index(line_id)] / (delta_t_seconds * delta_y) / accepted_range[0], abs_tol=abs_tolerance)
+                ref_density = np.array([num_peds_delta_t / (delta_t_seconds * delta_y) / accepted_range[0] for num_peds_delta_t in 
+                                        number_pass_line[line_ids.index(line_id)]])
+                condition = not np.allclose(ref_density, out_rho, atol=abs_tolerance)
             else:
-                rho_range = [number_pass_line[line_ids.index(line_id)] / (delta_t_seconds * delta_y) / accepted_range[1], 
-                             number_pass_line[line_ids.index(line_id)] / (delta_t_seconds * delta_y) / accepted_range[0]]
-                condition = rho_range[0] > out_rho_flow[1] or out_rho_flow[1] > rho_range[1]
+                ref_density_0 = [num_peds_delta_t / (delta_t_seconds * delta_y) / accepted_range[1] for num_peds_delta_t in 
+                                 number_pass_line[line_ids.index(line_id)]]
+                ref_density_1 = [num_peds_delta_t / (delta_t_seconds * delta_y) / accepted_range[0] for num_peds_delta_t in 
+                                 number_pass_line[line_ids.index(line_id)]]
+                rho_valid = True
+                val_idx = 0
+                for rho_val in out_rho:
+                    rho_valid = (ref_density_0[val_idx] <= rho_val and ref_density_1[val_idx] >= rho_val and rho_valid)
+                    val_idx += 1
+                condition = not rho_valid
 
             if condition:
                 success = False
@@ -445,12 +485,7 @@ def get_num_peds_per_dx(start_pos_x, dist, num_columns, peds_y,
             column_position_t0 = column_position_t1
             column_position_t1 = [pos + dist_per_delta_t for pos in column_position_t0]
             num_columns_delta_t.append(current_num_columns * peds_y)
-        if len(num_columns_delta_t) == 1:
-            num_peds_per_dx.append(num_columns_delta_t[0])
-        else:
-            num_peds_per_dx.append(num_columns_delta_t)
-        # at the moment only trajectories with one delta t are used
-        # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
+        num_peds_per_dx.append(num_columns_delta_t)
 
     return num_peds_per_dx
 
@@ -462,6 +497,7 @@ def runtest_method_G(trajfile,
                      number_pass_cut_area, number_pass_area, distances_per_dt):
     success = True
     abs_tolerance = 0.0001
+    delta_t_frames = delta_t_seconds * fps
     # values are rounded differently in output files -> +- 0.0001 as tolerance
     general_output_path = os.path.join('./Output', 'Fundamental_Diagram', 'Method_G')
 
@@ -484,66 +520,61 @@ def runtest_method_G(trajfile,
     #### CHECK DX (FIXED PLACE) ###############
 
     logging.info('---- check dx values ----')
-    # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
-    if out_v.ndim > 1:
+
+    number_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
+
+    if not (out_v.shape == (n_polygon, number_time_intervals) and number_time_intervals > 1) and \
+        not (out_v.shape == (n_polygon,) and number_time_intervals == 1):
         # should be one time interval in these scenarios
         # else the array has to be handled differently below
         success = False
-        logging.critical('wrong number of time intervals for velocity for dx (fixed place)')
-    elif out_rho.ndim > 1:
+        logging.critical('wrong number of velocity values for dx (fixed place)')
+    elif not (out_rho.shape == (n_polygon, number_time_intervals) and number_time_intervals > 1) and \
+        not (out_rho.shape == (n_polygon,) and number_time_intervals == 1):
         # should be one time interval in these scenarios
         # else the array has to be handled differently below
         success = False
-        logging.critical('wrong number of time intervals for density for dx (fixed place)')
+        logging.critical('wrong number of density values for dx (fixed place)')
     else:
-        logging.info('correct number of time intervals for dx (fixed place)')
-
-        if out_v.size != n_polygon:
-            success = False
-            logging.critical('wrong number of velocity values for cut polygons')
-        else:
-            logging.info('correct number of velocity values for cut polygons')
-
-        if out_rho.size != n_polygon:
-            success = False
-            logging.critical('wrong number of density values for cut polygons')
-        else:
-            logging.info('correct number of density values for cut polygons')
-
-        # check if the correct number of values for velocity/density (fixed place dx)
-        # were output -> should be the number of polygons
+        logging.info('correct number of values for dx (fixed place)')
         
-        if out_rho.size == out_v.size and out_v.size == n_polygon:
-            v_range_dx = get_velocity_range(dx, real_velocity, fps, abs_tolerance)
-            # the same reason for v_range as in method_F
-            # however: v_range is not needed for velocity calculation over delta x
-            # as pedestrians do not have to pass the whole area to be included in
-            # velocity calculation -> the velocity is calculated for each dt
-            # (also distances are not discrete, but frames are)
+        v_range_dx = get_velocity_range(dx, real_velocity, fps, abs_tolerance)
+        # the same reason for v_range as in method_F
+        # however: v_range is not needed for velocity calculation over dt
+        # as pedestrians do not have to pass the whole area to be included in
+        # velocity calculation -> the velocity is calculated for each dt
+        # (also distances are not discrete, but frames are)
 
-            # iterate though all polygons and the velocity/density values
-            # NOTE: if tests with multiple time intervals are included in the future, this part has to be adjusted!
-            idx_polygon = 0
-            for v_value in out_v:
-                logging.info(f'---- cut polygon {idx_polygon} ----')
+        # iterate though all polygons
+        idx_polygon = 0
+        for v_values in out_v:
+            logging.info(f'---- cut polygon {idx_polygon} ----')
 
+            if number_time_intervals == 1:
+                v_values = [v_values]
+
+            # iterate though all time intervals
+            for idx_time_interval in range(number_time_intervals):
                 # check velocity value
-                if number_pass_cut_area[idx_polygon] == 0:
-                    condition = not np.isnan(v_value)
+                if number_pass_cut_area[idx_polygon][idx_time_interval] == 0:
+                    condition = not np.isnan(v_values[idx_time_interval])
                 elif v_range_dx[0] == v_range_dx[1]:
-                    condition = not math.isclose(v_value, v_range_dx[0], abs_tol=abs_tolerance)
+                    condition = not math.isclose(v_values[idx_time_interval], v_range_dx[0], abs_tol=abs_tolerance)
                 else:
-                    condition = v_range_dx[0] > v_value or v_value > v_range_dx[1]
+                    condition = v_range_dx[0] > v_values[idx_time_interval] or v_values[idx_time_interval] > v_range_dx[1]
                 if condition:
                     success = False
-                    logging.critical(f'velocity value {v_value} for dx (fixed place) is not in accepted '
+                    logging.critical(f'velocity value {v_values[idx_time_interval]} for dx (fixed place) is not in accepted '
                                      f'range around {real_velocity} m/s')
                 else:
                     logging.info('correct velocity value for dx (fixed place)')
 
                 # check density value
-                rho_value = out_rho[idx_polygon]
-                density_formula = (number_pass_cut_area[idx_polygon] * dx / real_velocity) / (delta_t_seconds * dx)
+                if number_time_intervals == 1:
+                    rho_value = out_rho[idx_polygon]
+                else:
+                    rho_value = out_rho[idx_polygon][idx_time_interval]
+                density_formula = (number_pass_cut_area[idx_polygon][idx_time_interval] * dx / real_velocity) / (delta_t_seconds * dx)
                 # velocity formula -> rewriting the formula and inserting the real velocity to get the sum of the time
                 # -> might not represent the actual density, but the density according to the formula used in method G 
                 # -> e.g. real density might be 10, but 9.92555 here (which is also what jpsreport should output)
@@ -552,7 +583,7 @@ def runtest_method_G(trajfile,
                 # from delta_t_seconds (after converting it to seconds)
                 # this is the reason why the formula is used to check results
 
-                rho_range_dx = get_density_range(dx, real_velocity, fps, abs_tolerance, number_pass_cut_area[idx_polygon], delta_t_seconds)
+                rho_range_dx = get_density_range(dx, real_velocity, fps, abs_tolerance, number_pass_cut_area[idx_polygon][idx_time_interval], delta_t_seconds)
                 if rho_range_dx[0] == rho_range_dx[1]:
                     condition = not math.isclose(rho_value, rho_range_dx[0], abs_tol=abs_tolerance)
                 else:
@@ -560,16 +591,15 @@ def runtest_method_G(trajfile,
                 if condition:
                     success = False
                     logging.critical(f'density value {rho_value} for dx (fixed place) is not in accepted '
-                                     f'range around {density_formula} 1/m')
+                                        f'range around {density_formula} 1/m')
                 else:
                     logging.info('correct density value for dx (fixed place)')
 
-                idx_polygon += 1
+            idx_polygon += 1
 
     #### CHECK DT (FIXED TIME) ###############
     
     logging.info('---- check dt values ----')
-    delta_t_frames = delta_t_seconds * fps
     number_time_intervals = get_num_time_intervals(num_frames - (num_frames % delta_t_frames) + 1, dt_frames)
     if out_rho_flow_v.shape[0] != number_time_intervals:
         # check number of time intervals
@@ -589,9 +619,9 @@ def runtest_method_G(trajfile,
                 reference_v.append(np.nan)
             reference_flow.append(distances_per_dt[dt_idx] / (dt_seconds * delta_x))
             dt_idx += 1
-        reference_v = np.array(reference_v)
-        reference_flow = np.array(reference_flow)
-        reference_rho = np.array([num_peds_dt / delta_x for num_peds_dt in number_pass_area])
+        reference_v = np.array(reference_v[:number_time_intervals])
+        reference_flow = np.array(reference_flow[:number_time_intervals])
+        reference_rho = np.array([num_peds_dt / delta_x for num_peds_dt in number_pass_area][:number_time_intervals])
 
         if not np.allclose(reference_v, out_rho_flow_v[:, 0], atol=abs_tolerance, equal_nan=True):
             success = False
@@ -637,9 +667,8 @@ def runtest_method_H(trajfile,
     out_data = np.genfromtxt(out_fname)
 
     number_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
-    # adjust this later for tests with more than one time interval
 
-    if not (out_data.shape == (3, number_time_intervals) and number_time_intervals > 1) and \
+    if not (out_data.shape == (number_time_intervals, 3) and number_time_intervals > 1) and \
             not (out_data.shape == (3,) and number_time_intervals == 1):
         success = False
         logging.critical('wrong number of time intervals')
@@ -647,8 +676,8 @@ def runtest_method_H(trajfile,
         logging.info('correct number of time intervals')
 
         if number_time_intervals == 1:
-            ref_rho = accum_peds_delta_t / delta_t_frames / delta_x
-            # accum_peds_delta_t is the sum of the pedestrians that are on the MA at a freme
+            ref_rho = accum_peds_delta_t[0] / delta_t_frames / delta_x
+            # accum_peds_delta_t is the sum of the pedestrians that are on the MA at a frame
             # for each frame -> is "sum of time"
             # delta_t_frames does not have to be changed to seconds, as the ratio
             # between accum_peds_delta_t and delta_t_frames matters
@@ -660,19 +689,23 @@ def runtest_method_H(trajfile,
             condition_flow = not math.isclose(ref_flow, out_data[0], abs_tol=abs_tolerance)
             condition_rho = not math.isclose(ref_rho, out_data[1], abs_tol=abs_tolerance)
             condition_v = not math.isclose(real_velocity, out_data[2], abs_tol=abs_tolerance)
-        # adjust this later for tests with more than one time interval
+        else:
+            ref_rho = np.array([num_peds / delta_t_frames / delta_x for num_peds in accum_peds_delta_t])
+            ref_flow = ref_rho * real_velocity
+
+            condition_flow = not np.allclose(ref_flow, out_data[:, 0], atol=abs_tolerance)
+            condition_rho = not np.allclose(ref_rho, out_data[:, 1], atol=abs_tolerance)
+            condition_v = not np.allclose(real_velocity, out_data[:, 2], atol=abs_tolerance)
 
         if condition_flow:
             success = False
             logging.critical("wrong flow values")
-            logging.info(ref_flow)
         else:
             logging.info("correct flow values")
 
         if condition_rho:
             success = False
             logging.critical("wrong density values")
-            logging.info(ref_rho)
         else:
             logging.info("correct density values")
 

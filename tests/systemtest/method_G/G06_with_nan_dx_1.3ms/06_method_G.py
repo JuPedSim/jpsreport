@@ -13,7 +13,7 @@
 # different number of pedestrians is counted for each dx (first two dx -> no peds, last two dx -> 20)
 # there are not always pedestrians in the area for each dx -> dx output should contain nan values
 # the pedestrians which should be counted as well as the sum of distances are 
-# reconstructed in the methods get_num_peds_distance_per_dt/get_num_peds_per_dx
+# reconstructed in the methods get_num_peds_distance_per_interval/get_num_peds_per_dx
 # and get compared to the output
 
 import os
@@ -26,7 +26,7 @@ path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 
-from test_functions import runtest_method_G, get_num_peds_distance_per_dt, get_num_peds_per_dx
+from test_functions import runtest_method_G, get_num_peds_distance_per_interval, get_num_peds_per_dx
 # import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ################################
@@ -64,8 +64,8 @@ ped_distance = 0.25
 number_pass_cut_area = get_num_peds_per_dx(startPosX, ped_distance, numPedsX, numPedsY, 
                                            delta_t_frames, delta_t_seconds, real_velocity, num_frames, 4.5, dx, n_polygon)
 # number of pedestrians that pass the cut polygon areas (for each polygon and delta T) -> dx
-num_peds_distance_dt = get_num_peds_distance_per_dt(startPosX, ped_distance, numPedsX, numPedsY,
-                                                   dt_frames, dt_seconds, real_velocity, num_frames, 4.5, 5.5)
+num_peds_distance_dt = get_num_peds_distance_per_interval(startPosX, ped_distance, numPedsX, numPedsY,
+                                                         dt_frames, dt_seconds, real_velocity, num_frames, 4.5, 5.5)
 number_pass_area = num_peds_distance_dt[0]
 # number of pedestrians that pass the cut polygon areas (for each small time interval dt)
 distances_per_dt = num_peds_distance_dt[1]
@@ -75,7 +75,7 @@ distances_per_dt = num_peds_distance_dt[1]
 
 def runtest(inifile, trajfile):
     success = runtest_method_G(trajfile,
-                                dt_frames, dt_seconds, delta_t_seconds, num_frames,
+                                dt_frames, dt_seconds, delta_t_frames, delta_t_seconds, num_frames,
                                 delta_x, n_polygon, dx, 
                                 real_velocity, 
                                 fps,

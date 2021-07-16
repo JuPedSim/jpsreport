@@ -67,7 +67,7 @@ distances_per_dt = [2.5 for i in range(number_time_intervals)]
 
 def runtest(inifile, trajfile):
     success = runtest_method_G(trajfile,
-                               dt_frames, dt_seconds, delta_t_seconds, num_frames,
+                               dt_frames, dt_seconds, delta_t_frames, delta_t_seconds, num_frames,
                                delta_x, n_polygon, dx, 
                                real_velocity, 
                                fps, 

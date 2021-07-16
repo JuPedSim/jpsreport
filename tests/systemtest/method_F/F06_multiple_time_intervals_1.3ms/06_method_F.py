@@ -43,9 +43,9 @@ line_ids = [2, 3, 4] # ids of the lines that are considered
 
 numPedsX = 50
 numPedsY = 10
-# startPosX = 4.5
-# startPosY = 9.5
-# ped_distance = 1
+startPosX = 4.5
+startPosY = 9.5
+ped_distance = 1
 
 # trajectories are created with this command
 # (create_trajectories has to be imported as create_traj):

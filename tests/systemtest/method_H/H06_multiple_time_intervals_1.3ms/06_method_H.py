@@ -20,7 +20,7 @@ path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 
-from test_functions import runtest_method_H, get_num_peds_distance_per_dt, get_num_time_intervals
+from test_functions import runtest_method_H, get_num_peds_distance_per_interval, get_num_time_intervals
 # import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ################################
@@ -48,8 +48,8 @@ ped_distance = 1
 
 ######## NUMPED REFERENCE VALUES ###################################
 
-num_peds_per_frame = get_num_peds_distance_per_dt(startPosX, ped_distance, numPedsX, numPedsY, 
-                                                  1, 1/fps, real_velocity, num_frames, 4.5, 5.5)[0]
+num_peds_per_frame = get_num_peds_distance_per_interval(startPosX, ped_distance, numPedsX, numPedsY, 
+                                                       1, 1/fps, real_velocity, num_frames, 4.5, 5.5)[0]
 num_time_intervals = get_num_time_intervals(num_frames, delta_t_frames)
 num_peds_per_delta_t = []
 for time_interval in range(num_time_intervals):

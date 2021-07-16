@@ -21,7 +21,7 @@ path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 
-from test_functions import runtest_method_E, get_num_pass_lines, get_num_in_area
+from test_functions import runtest_method_E
 # import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ###############################

@@ -21,7 +21,7 @@ path.append(os.path.dirname(path[0]))  # source helper file
 from utils import SUCCESS, FAILURE
 from JPSRunTest import JPSRunTestDriver
 
-from test_functions import runtest_method_H, get_num_peds_distance_per_dt
+from test_functions import runtest_method_H, get_num_peds_distance_per_interval
 # import create_trajectories as create_traj
 
 ######### GENERAL REFERENCE VALUES ################################
@@ -49,8 +49,8 @@ ped_distance = 0.8
 
 ######## NUMPED REFERENCE VALUES ###################################
 
-num_peds_per_delta_t = [sum(get_num_peds_distance_per_dt(startPosX, ped_distance, numPedsX, numPedsY,
-                                                         1, 1/fps, real_velocity, num_frames, 4.5, 5.5)[0])]
+num_peds_per_delta_t = [sum(get_num_peds_distance_per_interval(startPosX, ped_distance, numPedsX, numPedsY,
+                                                               1, 1/fps, real_velocity, num_frames, 4.5, 5.5)[0])]
 # accum_peds_delta_t is the sum of the pedestrians that are on the MA at a frame
 # for each frame -> is "sum of time"
 

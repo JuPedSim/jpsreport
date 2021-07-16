@@ -118,11 +118,8 @@ def get_num_in_area(start_pos_x, dist, num_columns, peds_y, velocity, fps, num_f
             x_pos = column_position[column_idx]
             scenarios = [
                 math.isclose(x_pos, x0, abs_tol=0.00001) or math.isclose(x_pos, x1, abs_tol=0.00001),
-                x_pos >= x0 and x_pos <= x1,
-                x_pos > x1 and x_pos < (x1 + dist_per_frame) and not math.isclose(x_pos - dist_per_frame, x1, abs_tol=0.00001)
+                x_pos >= x0 and x_pos <= x1
                 ]
-            # last condition is added because of variant used to detect tIn/tOut
-            # this has to be modified if another variant is used
             if True in scenarios:
                 num_columns_frame += 1
         tmp_pos = column_position

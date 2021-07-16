@@ -79,16 +79,6 @@ bool Method_E::Process(
 
     LOG_INFO("------------------------Analyzing with Method E-----------------------------");
 
-    vector<vector<int>> TinTout = GetTinTout(
-        peddata.GetNumFrames(),
-        _areaForMethod_E->_poly,
-        peddata.GetNumPeds(),
-        _peds_t,
-        _xCor,
-        _yCor);
-    _tIn  = TinTout[0];
-    _tOut = TinTout[1];
-
     int accumPedsDeltaT = 0;
     for(const auto & [frameNr, ids] : _peds_t) {
         int frid = frameNr + _minFrame;
@@ -191,22 +181,10 @@ void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)
 {
     int pedsInMA = 0;
     for(int i = 0; i < numPeds; i++) {
-        if(frmNr == 0 && _tIn[i] == 0 && _tOut[i] == 0) {
-            double predictedX =
-                2 * _xCor(i, 0) - _xCor(i, 1);
-            double predictedY =
-                2 * _yCor(i, 0) - _yCor(i, 1);
-            if(within(make<point_2d>(predictedX, predictedY), _areaForMethod_E->_poly)) {
-                // this condition has to be adjusted if another variant is used for tIn/tOut!
-                // here variant 4 is used -> for this to be the real exit frame
-                // the last frame has had to be within the area (not covered_by)
-                pedsInMA++;
-            }
-        } else {
-            if((frmNr >= _tIn[i] && frmNr <= _tOut[i] && _tOut[i] != 0) || 
-                (frmNr >= _tIn[i] && _tOut[i] == 0 && _tIn[i] != 0)) {
-                pedsInMA++;
-            }
+        // N(t0, delta x) can be detected in a purely geometric way, tIn/tOut does not make sense
+        // here
+        if(covered_by(make<point_2d>(_xCor(i, frmNr), _yCor(i, frmNr)), _areaForMethod_E->_poly)) {
+            pedsInMA++;
         }
     }
 

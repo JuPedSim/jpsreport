@@ -48,7 +48,12 @@ private:
 
     void OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const;
 
-    void OutputDensity(int frmNr, int numPeds, std::ofstream & fRho);
+    void OutputDensity(
+        int frmNr, 
+        int numPeds,
+        const std::vector<double> & xs,
+        const std::vector<double> & ys,
+        std::ofstream & fRho);
 
     /**
      * returns number of pedestrians that passed the line during this frame

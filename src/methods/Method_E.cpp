@@ -88,9 +88,11 @@ bool Method_E::Process(
 
         const vector<int> idsInFrame =
             peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
+        const vector<double> XInFrame = peddata.GetXInFrame(frameNr, ids, zPos_measureArea);
+        const vector<double> YInFrame = peddata.GetYInFrame(frameNr, ids, zPos_measureArea);
 
         accumPedsDeltaT += GetNumberPassLine(frameNr, idsInFrame);
-        OutputDensity(frameNr, peddata.GetNumPeds(), fRho);
+        OutputDensity(frameNr, idsInFrame.size(), XInFrame, YInFrame, fRho);
 
         if((frameNr % _deltaT) == 0 && frameNr != 0) {
             OutputFlow(_fps, fFlow, accumPedsDeltaT);
@@ -177,13 +179,18 @@ void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int 
     fV << "\n";
 }
 
-void Method_E::OutputDensity(int frmNr, int numPeds, std::ofstream & fRho)
+void Method_E::OutputDensity(
+    int frmNr, 
+    int numPeds, 
+    const vector<double> & xs,
+    const vector<double> & ys,
+    std::ofstream & fRho)
 {
     int pedsInMA = 0;
     for(int i = 0; i < numPeds; i++) {
         // N(t0, delta x) can be detected in a purely geometric way, tIn/tOut does not make sense
         // here
-        if(covered_by(make<point_2d>(_xCor(i, frmNr), _yCor(i, frmNr)), _areaForMethod_E->_poly)) {
+        if(covered_by(make<point_2d>(xs[i], ys[i]), _areaForMethod_E->_poly)) {
             pedsInMA++;
         }
     }

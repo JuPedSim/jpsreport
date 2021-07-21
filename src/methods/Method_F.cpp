@@ -92,15 +92,13 @@ void Method_F::OutputVelocity(const PedData & peddata)
             if(_tIn[i] == 0) {
                 // If pedestrian is in measurement area at frame 0
                 // it is not certain whether this would be the entrance frame.
-                // With the positions at tIn/tOut and the frame difference
-                // the position of the pedestian at frame -1 is predicted.
+                // With the positions at frame 1 the position of the pedestian
+                // at frame -1 is predicted.
                 // If this is in the measurement area, frame 0 is not the entrance frame
                 // and the velocity for this pedestrian cannot be calculated.
 
-                double predictedX = _xCor(i, 0) - (_xCor(i, _tOut[i]) - _xCor(i, 0)) /
-                                                        (_tOut[i] - _tIn[i] * 1.0);
-                double predictedY = _yCor(i, 0) - (_yCor(i, _tOut[i]) - _yCor(i, 0)) /
-                                                        (_tOut[i] - _tIn[i] * 1.0);
+                double predictedX = 2 * _xCor(i, 0) - _xCor(i, 1);
+                double predictedY = 2 * _yCor(i, 0) - _yCor(i, 1);
                 if(covered_by(make<point_2d>(predictedX, predictedY), _areaForMethod_F->_poly)) {
                     // this condition has to be adjusted if another variant is used for tIn/tOut!
                     // here variant 4 is used
@@ -153,7 +151,15 @@ void Method_F::OutputDensityLine(
             fRho << accumPedsDeltaT << "\t" << density << "\t" << flow << "\t" << specificFlow
                  << "\n";
 
-            accumPedsDeltaT = GetNumberOnLine(frameNr, idsInFrame);
+            accumPedsDeltaT = GetNumberOnLine(
+                frameNr,
+                idsInFrame,
+                _lineForMethod_F->_lineStartX,
+                _lineForMethod_F->_lineStartY,
+                _lineForMethod_F->_lineEndX,
+                _lineForMethod_F->_lineEndY,
+                _xCor,
+                _yCor);
             // because certain frames are used in two frame intervals (e.g. delta t = 10 -> 0 to 10,
             // 10 to 20 etc.) these overlapping values have to also be included for the following
             // time interval
@@ -182,6 +188,20 @@ int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
                 _yCor(i, frame - 1),
                 _xCor(i, frame),
                 _yCor(i, frame));
+        } else if(frame == _firstFrame[i] && !_passLine[i]) {
+            // If this is the first frame of this pedestrian and the pedestrain is exatly on the
+            // measurement line, the pedestrian is counted as having passed the line in this frame.
+            // Reason: If this were any other frame than the first frame, this frame would also be
+            // counted as the "passing frame". If the pedestrian would not be counted in this frame,
+            // it would be counted as having passed the line in the next frame -> this means that
+            // the "passing frame" would be shifted by one frame
+
+            point_2d lineP0(_lineForMethod_F->_lineStartX, _lineForMethod_F->_lineStartY);
+            point_2d lineP1(_lineForMethod_F->_lineEndX, _lineForMethod_F->_lineEndY);
+            segment line(lineP0, lineP1);
+            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
+
+            IspassLine = boost::geometry::distance(posPed, line) < 0.1;
         }
         if(IspassLine) {
             _passLine[i] = true;
@@ -189,26 +209,6 @@ int Method_F::GetNumberPassLine(int frame, const vector<int> & ids)
         }
     }
     return framePassLine;
-}
-
-int Method_F::GetNumberOnLine(int frame, const vector<int> & ids)
-{
-    // returns number of pedestrians that are on line at this frame
-    int frameOnLine = 0;
-    for(auto const i : ids) {
-        if(frame > _firstFrame[i]) {
-            point_2d lineP0(_lineForMethod_F->_lineStartX, _lineForMethod_F->_lineStartY);
-            point_2d lineP1(_lineForMethod_F->_lineEndX, _lineForMethod_F->_lineEndY);
-            segment line(lineP0, lineP1);
-            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
-
-            if(boost::geometry::distance(posPed, line) < 0.1) {
-                // distance is lower than 0.0001 m -> "on line"
-                frameOnLine++;
-            }
-        }
-    }
-    return frameOnLine;
 }
 
 void Method_F::SetMeasurementArea(MeasurementArea_B * area)

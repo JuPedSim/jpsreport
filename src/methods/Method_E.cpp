@@ -101,7 +101,16 @@ bool Method_E::Process(
             double overlappingDensity = _densityPerFrame.back();
             _densityPerFrame.clear();
             _densityPerFrame.push_back(overlappingDensity);
-            accumPedsDeltaT = GetNumberOnLine(frameNr, idsInFrame);
+            accumPedsDeltaT = GetNumberOnLine(
+                frameNr,
+                idsInFrame,
+                _lineForMethod_E->_lineStartX,
+                _lineForMethod_E->_lineStartY,
+                _lineForMethod_E->_lineEndX,
+                _lineForMethod_E->_lineEndY, 
+                _xCor,
+                _yCor);
+
             // because certain frames are used in two frame intervals (e.g. delta t = 10 -> 0 to 10,
             // 10 to 20 etc.) these overlapping values have to also be included for the following
             // time interval
@@ -131,6 +140,20 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
                 _yCor(i, frame - 1),
                 _xCor(i, frame),
                 _yCor(i, frame));
+        } else if(frame == _firstFrame[i] && !_passLine[i]) {
+            // If this is the first frame of this pedestrian and the pedestrain is exatly on the
+            // measurement line, the pedestrian is counted as having passed the line in this frame.
+            // Reason: If this were any other frame than the first frame, this frame would also be
+            // counted as the "passing frame". If the pedestrian would not be counted in this frame,
+            // it would be counted as having passed the line in the next frame -> this means that
+            // the "passing frame" would be shifted by one frame
+
+            point_2d lineP0(_lineForMethod_E->_lineStartX, _lineForMethod_E->_lineStartY);
+            point_2d lineP1(_lineForMethod_E->_lineEndX, _lineForMethod_E->_lineEndY);
+            segment line(lineP0, lineP1);
+            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
+
+            IspassLine = boost::geometry::distance(posPed, line) < 0.1;
         }
         if(IspassLine) {
             _passLine[i] = true;
@@ -138,26 +161,6 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
         }
     }
     return framePassLine;
-}
-
-int Method_E::GetNumberOnLine(int frame, const vector<int> & ids)
-{
-    // returns number of pedestrians that are on line at this frame
-    int frameOnLine = 0;
-    for(auto const i : ids) {
-        if(frame > _firstFrame[i]) {
-            point_2d lineP0(_lineForMethod_E->_lineStartX, _lineForMethod_E->_lineStartY);
-            point_2d lineP1(_lineForMethod_E->_lineEndX, _lineForMethod_E->_lineEndY);
-            segment line(lineP0, lineP1);
-            point_2d posPed(_xCor(i, frame), _yCor(i, frame));
-
-            if(boost::geometry::distance(posPed, line) < 0.1) {
-                // distance is lower than 0.0001 m -> "on line"
-                frameOnLine++;
-            }
-        }
-    }
-    return frameOnLine;
 }
 
 void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const

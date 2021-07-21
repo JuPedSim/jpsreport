@@ -35,6 +35,28 @@ bool IsPassLine(
     double pt2_X,
     double pt2_Y);
 
+/**
+ * returns number of pedestrians that are on the line at this frame
+ * @param frame current frame
+ * @param ids of pedestrians to check
+ * @param lineStartX x coordinate of the starting point of the line
+ * @param lineStartY y coordinate of the starting point of the line
+ * @param lineEndX x coordinate of the ending point of the line
+ * @param lineEndY y coordinate of the ending point of the line
+ * @param xCor matrix of x coordinates and ids
+ * @param yCor matrix of y coordinates and ids
+ * @return number of pedestrians that are on the line at this frame
+ */
+int GetNumberOnLine(
+    int frame,
+    const std::vector<int> & ids,
+    double lineStartX,
+    double lineStartY,
+    double lineEndX,
+    double lineEndY,
+    const ub::matrix<double> & xCor,
+    const ub::matrix<double> & yCor);
+
 std::vector<std::vector<int>> GetTinTout(
     int numFrames,
     const polygon_2d & polygon,

@@ -49,7 +49,7 @@ private:
     void OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const;
 
     void OutputDensity(
-        int frmNr, 
+        int frmNr,
         int numPeds,
         const std::vector<double> & xs,
         const std::vector<double> & ys,
@@ -62,14 +62,6 @@ private:
      * @return number of pedestrians that passed the line during this frame
      */
     int GetNumberPassLine(int frame, const std::vector<int> & ids);
-
-    /**
-     * returns number of pedestrians that are on the line at this frame
-     * @param frame current frame
-     * @param ids of pedestrians to check
-     * @return number of pedestrians that are on the line at this frame
-     */
-    int GetNumberOnLine(int frame, const std::vector<int> & ids);
 };
 
 #endif /* METHOD_E_H_ */

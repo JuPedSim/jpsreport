@@ -54,6 +54,32 @@ bool IsPassLine(
     return (intersects(edge0, edge1));
 }
 
+int GetNumberOnLine(
+    int frame,
+    const vector<int> & ids,
+    double lineStartX,
+    double lineStartY,
+    double lineEndX,
+    double lineEndY, 
+    const ub::matrix<double> & xCor,
+    const ub::matrix<double> & yCor)
+{
+    // returns number of pedestrians that are on the line at this frame
+    int frameOnLine = 0;
+    for(auto const i : ids) {
+        point_2d lineP0(lineStartX, lineStartY);
+        point_2d lineP1(lineEndX, lineEndY);
+        segment line(lineP0, lineP1);
+        point_2d posPed(xCor(i, frame), yCor(i, frame));
+
+        if(boost::geometry::distance(posPed, line) < 0.1) {
+            // distance is lower than 0.0001 m -> "on line"
+            frameOnLine++;
+        }
+    }
+    return frameOnLine;
+}
+
 vector<vector<int>> GetTinTout(
     int numFrames,
     const polygon_2d & polygon,

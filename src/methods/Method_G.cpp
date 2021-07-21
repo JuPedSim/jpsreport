@@ -68,6 +68,7 @@ bool Method_G::Process(const PedData & peddata)
         LOG_INFO("The measurement area length for method G is {:.3f}", _areaForMethod_G->_length);
     }
 
+    LOG_INFO("Analyzing dx values (fixed place)");
     polygon_list cutPolygons = GetCutPolygons();
     for(polygon_2d polygon : cutPolygons) {
         vector<vector<int>> TinTout =
@@ -93,6 +94,7 @@ bool Method_G::Process(const PedData & peddata)
     fRhoDx.close();
     fVdx.close();
 
+    LOG_INFO("Analyzing dt values (fixed time)");
     OutputDensityVFlowDt(_numFrames - ((_numFrames - 1) % _deltaT));
     
     return true;
@@ -273,9 +275,8 @@ void Method_G::OutputDensityVdx(
                     // If this is in the measurement area, frame 0 is not the entrance frame
                     // and the velocity for this pedestrian cannot be calculated.
 
-                    double predictedX = _xCor(j, 0) - (_xCor(j, tOut[j]) - _xCor(j, 0)) /
-                                                          (tOut[j] - tIn[j] * 1.0);
-                    double predictedY = _yCor(j, 0) - (_yCor(j, tOut[j]) - _yCor(j, 0)) / (tOut[j] - tIn[j] * 1.0);
+                    double predictedX = 2 * _xCor(j, 0) - _xCor(j, 1);
+                    double predictedY = 2 * _yCor(j, 0) - _yCor(j, 1);
                     if(covered_by(
                            make<point_2d>(predictedX, predictedY), polygon)) {
                         // this condition has to be adjusted if another variant is used for

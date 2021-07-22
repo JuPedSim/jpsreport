@@ -11,7 +11,7 @@ using std::vector;
 typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double>> segment;
 
 std::ofstream GetFile(
-    string whatOutput, 
+    string whatOutput,
     string idCombination,
     fs::path outputLocation,
     fs::path trajName,
@@ -60,7 +60,7 @@ int GetNumberOnLine(
     double lineStartX,
     double lineStartY,
     double lineEndX,
-    double lineEndY, 
+    double lineEndY,
     const ub::matrix<double> & xCor,
     const ub::matrix<double> & yCor)
 {
@@ -85,7 +85,7 @@ vector<vector<int>> GetTinTout(
     const polygon_2d & polygon,
     int numPeds,
     std::map<int, std::vector<int>> peds_t,
-    ub::matrix<double> xCor, 
+    ub::matrix<double> xCor,
     ub::matrix<double> yCor)
 {
     vector<bool> IsinMeasurezone(numPeds, false);
@@ -95,15 +95,15 @@ vector<vector<int>> GetTinTout(
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
         vector<int> ids = peds_t[frameNr];
         for(int ID : ids) {
-            int x  = xCor(ID, frameNr);
-            int y  = yCor(ID, frameNr);
+            int x = xCor(ID, frameNr);
+            int y = yCor(ID, frameNr);
 
             // this is variant 4
             if(covered_by(make<point_2d>(x, y), polygon) && !(IsinMeasurezone[ID])) {
                 tIn[ID]             = frameNr;
                 IsinMeasurezone[ID] = true;
             } else if((!within(make<point_2d>(x, y), polygon)) && IsinMeasurezone[ID]) {
-                if (tIn[ID] == 0 && frameNr == 1) {
+                if(tIn[ID] == 0 && frameNr == 1) {
                     if(!within(make<point_2d>(xCor(ID, 0), yCor(ID, 0)), polygon)) {
                         // edge case -> if first frame in general is exactly on the upper boundary
                         // of MA, this is not the entrance frame, but the exit frame
@@ -152,7 +152,7 @@ EntryExit checkEntryExit(int tIn, int tOut, int t0, int t1, int numFrames)
     // during a time interval and whether entry and/or exit are during this time interval.
     // Depending on the return value, different values for distance/time in
     // measurement area are used.
-    
+
     // tIn -> frame of entry
     // tOut -> frame of exit
     // t0 -> first frame time interval

@@ -1,6 +1,7 @@
+#include "Method_G.h"
+
 #include "../Analysis.h"
 #include "../general/Logger.h"
-#include "Method_G.h"
 #include "../general/MethodFunctions.h"
 
 #include <fstream>
@@ -26,17 +27,17 @@ Method_G::Method_G()
 
 bool Method_G::Process(const PedData & peddata)
 {
-    _trajName        = peddata.GetTrajName();
-    _projectRootDir  = peddata.GetProjectRootDir();
-    _outputLocation  = peddata.GetOutputLocation();
-    _peds_t          = peddata.GetPedIDsByFrameNr();
-    _numPeds         = peddata.GetNumPeds();
-    _xCor            = peddata.GetXCor();
-    _yCor            = peddata.GetYCor();
-    _minFrame        = peddata.GetMinFrame();
-    _fps             = peddata.GetFps();
-    _firstFrame      = peddata.GetFirstFrame();
-    _numFrames       = peddata.GetNumFrames();
+    _trajName       = peddata.GetTrajName();
+    _projectRootDir = peddata.GetProjectRootDir();
+    _outputLocation = peddata.GetOutputLocation();
+    _peds_t         = peddata.GetPedIDsByFrameNr();
+    _numPeds        = peddata.GetNumPeds();
+    _xCor           = peddata.GetXCor();
+    _yCor           = peddata.GetYCor();
+    _minFrame       = peddata.GetMinFrame();
+    _fps            = peddata.GetFps();
+    _firstFrame     = peddata.GetFirstFrame();
+    _numFrames      = peddata.GetNumFrames();
     if(_deltaT == -1) {
         _deltaT = _numFrames - 1;
     }
@@ -96,11 +97,12 @@ bool Method_G::Process(const PedData & peddata)
 
     LOG_INFO("Analyzing dt values (fixed time)");
     OutputDensityVFlowDt(_numFrames - ((_numFrames - 1) % _deltaT));
-    
+
     return true;
 }
 
-void Method_G::OutputDensityVFlowDt(int numFrames) {
+void Method_G::OutputDensityVFlowDt(int numFrames)
+{
     std::ofstream fRhoVFlow =
         GetFile("rho_flow_v", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_G");
 
@@ -112,7 +114,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
 
     vector<vector<int>> TinTout =
         GetTinTout(numFrames, _areaForMethod_G->_poly, _numPeds, _peds_t, _xCor, _yCor);
-    vector<int> tIn = TinTout[0];
+    vector<int> tIn  = TinTout[0];
     vector<int> tOut = TinTout[1];
 
     for(int i = 0; i < (numFrames - _dt); i += _dt) {
@@ -124,7 +126,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _dt is end of time interval
-            
+
             auto entryExit = checkEntryExit(tIn[j], tOut[j], i, i + _dt, _numFrames);
             switch(entryExit) {
                 case EntryExit::EntryAndExit:
@@ -147,7 +149,7 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
         }
         double density      = pedsInMeasureArea / _deltaX;
         double meanVelocity = sumDistance / (pedsInMeasureArea * (_dt / _fps));
-        double flow         = sumDistance / (_deltaX * (_dt/ _fps));
+        double flow         = sumDistance / (_deltaX * (_dt / _fps));
 
         fRhoVFlow << meanVelocity << "\t" << density << "\t" << flow << "\n";
     }
@@ -156,9 +158,9 @@ void Method_G::OutputDensityVFlowDt(int numFrames) {
 
 polygon_list Method_G::GetCutPolygons()
 {
-    /* 
+    /*
        These parameters are given by the ini-file
-       The coordinates describe two points, which are one side of the 
+       The coordinates describe two points, which are one side of the
        rectangle (measurement area)
 
        Example:
@@ -175,9 +177,9 @@ polygon_list Method_G::GetCutPolygons()
     // only D and A are given, but C is also needed for calculation
     ring allPoints = _areaForMethod_G->_poly.outer();
     allPoints.pop_back(); // last point is the same as the first point
-    int posPointD  = -1;
-    int posPointA  = -1;
-    int posPointC  = -1;
+    int posPointD = -1;
+    int posPointA = -1;
+    int posPointC = -1;
     if(allPoints.size() != 4) {
         // this does not check whether its a rectangle
         // only checks the number of boundary points
@@ -199,8 +201,8 @@ polygon_list Method_G::GetCutPolygons()
                 idx1 = 2;
                 idx2 = 0;
             } else {
-                idx1 = i-1;
-                idx2 = i+1;
+                idx1 = i - 1;
+                idx2 = i + 1;
             }
             point_2d p1 = allPoints[idx1];
             point_2d p2 = allPoints[idx2];
@@ -232,10 +234,8 @@ polygon_list Method_G::GetCutPolygons()
         polygon_2d polygon;
         {
             const double coor[][2] = {
-                {d1 - k / _n * d1 + k / _n * a1, 
-                 d2 - k / _n * d2 + k / _n * a2},
-                {c1 - k / _n * d1 + k / _n * a1, 
-                 c2 - k / _n * d2 + k / _n * a2},
+                {d1 - k / _n * d1 + k / _n * a1, d2 - k / _n * d2 + k / _n * a2},
+                {c1 - k / _n * d1 + k / _n * a1, c2 - k / _n * d2 + k / _n * a2},
                 {c1 - (k + 1) / _n * d1 + (k + 1) / _n * a1,
                  c2 - (k + 1) / _n * d2 + (k + 1) / _n * a2},
                 {d1 - (k + 1) / _n * d1 + (k + 1) / _n * a1,
@@ -277,8 +277,7 @@ void Method_G::OutputDensityVdx(
 
                     double predictedX = 2 * _xCor(j, 0) - _xCor(j, 1);
                     double predictedY = 2 * _yCor(j, 0) - _yCor(j, 1);
-                    if(covered_by(
-                           make<point_2d>(predictedX, predictedY), polygon)) {
+                    if(covered_by(make<point_2d>(predictedX, predictedY), polygon)) {
                         // this condition has to be adjusted if another variant is used for
                         // tIn/tOut! here variant 4 is used
                         continue;
@@ -310,14 +309,17 @@ void Method_G::SetTimeInterval(int deltaT)
     _deltaT = deltaT;
 }
 
-void Method_G::SetDt(int dt) {
+void Method_G::SetDt(int dt)
+{
     _dt = dt;
 }
 
-void Method_G::SetNumberPolygons(int n) {
+void Method_G::SetNumberPolygons(int n)
+{
     _n = n;
 }
 
-void Method_G::SetPoints(std::vector<point_2d> points) {
+void Method_G::SetPoints(std::vector<point_2d> points)
+{
     _points = points;
 }

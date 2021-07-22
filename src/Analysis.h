@@ -129,14 +129,14 @@ private:
     std::vector<int> _dtMethodG;
     std::vector<int> _numberPolygonsMethodG;
     std::vector<std::vector<point_2d>> _pointsMethodG;
-    bool _DoesUseMethodA;     // Method A (Zhang2011a)
-    bool _DoesUseMethodB;     // Method B (Zhang2011a)
-    bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
-    bool _DoesUseMethodD;     // Method D--Voronoi method
-    bool _DoesUseMethodE;     // Method E
-    bool _DoesUseMethodF;     // Method F
-    bool _DoesUseMethodG;     // Method G
-    bool _DoesUseMethodH;     // Method H
+    bool _DoesUseMethodA; // Method A (Zhang2011a)
+    bool _DoesUseMethodB; // Method B (Zhang2011a)
+    bool _DoesUseMethodC; // Method C //calculate and save results of classic in separate file
+    bool _DoesUseMethodD; // Method D--Voronoi method
+    bool _DoesUseMethodE; // Method E
+    bool _DoesUseMethodF; // Method F
+    bool _DoesUseMethodG; // Method G
+    bool _DoesUseMethodH; // Method H
 
     std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
                              // the velocity

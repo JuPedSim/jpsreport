@@ -45,8 +45,8 @@ private:
     std::vector<point_2d> _entrancePoint; // where pedestrian enters the measurement area
     std::vector<point_2d> _exitPoint;     // where pedestrian leaves the measurement area
 
-    
-    /** 
+
+    /**
     get time of exit/entry and entry/exit position for each pedestrian that enters the area
      */
     void GetTinToutEntExt(int numFrames);

@@ -58,7 +58,7 @@ private:
         const polygon_2d & polygon);
 
     void OutputDensityVFlowDt(int numFrames);
-    
+
     /**
      * returns a list of the cut polygons using the paramters given in the inifile
      * @return list of the cut polygons using the paramters given in the inifile

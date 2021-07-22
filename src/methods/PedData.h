@@ -130,7 +130,7 @@ private:
     bool _IgnoreBackwardMovement = false;
 
     std::vector<int> _firstFrame; // Record the first frame of each pedestrian
-    std::vector<int> _lastFrame; // Record the last frame of each pedestrian
+    std::vector<int> _lastFrame;  // Record the last frame of each pedestrian
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
     ub::matrix<double> _zCor;

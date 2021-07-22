@@ -191,13 +191,13 @@ void Analysis::InitArgs(ArgumentParser * args)
     if(args->GetIsMethodF()) {
         _DoesUseMethodF                  = true;
         vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodF();
-        vector<int> Line_IDs = args->GetLineIDforMethodF();
+        vector<int> Line_IDs             = args->GetLineIDforMethodF();
         // GetAreaIDforMethodF() and GetLineIDforMethodF() should have the same size
         for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
             _areasForMethodF.push_back(dynamic_cast<MeasurementArea_B *>(
                 args->GetMeasurementArea(Measurement_Area_IDs[i])));
-            _linesForMethodF.push_back(dynamic_cast<MeasurementArea_L *>(
-                args->GetMeasurementArea(Line_IDs[i])));
+            _linesForMethodF.push_back(
+                dynamic_cast<MeasurementArea_L *>(args->GetMeasurementArea(Line_IDs[i])));
         }
         _deltaTMethodF = args->GetTimeIntervalF();
     }

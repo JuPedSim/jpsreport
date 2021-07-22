@@ -660,7 +660,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                     xMainNode->FirstChildElement("method_F")->FirstChildElement("measurement_area");
                 xMeasurementArea;
                 xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
-                int id = xmltoi(xMeasurementArea->Attribute("id"));
+                int id      = xmltoi(xMeasurementArea->Attribute("id"));
                 int line_id = xmltoi(xMeasurementArea->Attribute("line_id"));
 
                 if(_measurementAreasByIDs[id]->_type == "BoundingBox" &&
@@ -715,7 +715,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 xMeasurementArea;
                 xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
                 int id = xmltoi(xMeasurementArea->Attribute("id"));
-                
+
                 if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
                     TiXmlElement * xPoint1 = xMainNode->FirstChildElement("method_G")
                                                  ->FirstChildElement("measurement_area")
@@ -724,11 +724,11 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                                                  ->FirstChildElement("measurement_area")
                                                  ->FirstChildElement("point_2");
                     TiXmlElement * numberPolygons = xMainNode->FirstChildElement("method_G")
-                                                 ->FirstChildElement("measurement_area")
-                                                 ->FirstChildElement("number_areas");
+                                                        ->FirstChildElement("measurement_area")
+                                                        ->FirstChildElement("number_areas");
 
                     if(xPoint1->Attribute("x") && xPoint1->Attribute("y") &&
-                         xPoint2->Attribute("x") && xPoint2->Attribute("y")) {
+                       xPoint2->Attribute("x") && xPoint2->Attribute("y")) {
                         _areaIDforMethodG.push_back(id);
                         LOG_INFO("Measurement area id <{}> will be used for analysis", id);
                         if(xMeasurementArea->Attribute("frame_interval")) {
@@ -757,7 +757,8 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                             _dtMethodG.push_back(4); // what is a good default value?
                         }
                         if(numberPolygons->Attribute("n")) {
-                            _numberPolygonsMethodG.push_back(xmltoi(numberPolygons->Attribute("n")));
+                            _numberPolygonsMethodG.push_back(
+                                xmltoi(numberPolygons->Attribute("n")));
                         } else {
                             _numberPolygonsMethodG.push_back(10); // what is a good default value?
                         }
@@ -829,7 +830,7 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
 
     LOG_INFO("Finish parsing inifile");
     if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodF ||
-        _isMethodG || _isMethodH)) {
+         _isMethodG || _isMethodH)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -1350,7 +1351,8 @@ const std::vector<polygon_2d> & ArgumentParser::GetGeometry() const
     return _geometry;
 }
 
-bool ArgumentParser::IsInMeasureArea(MeasurementArea_L * line, MeasurementArea_B * area) {
+bool ArgumentParser::IsInMeasureArea(MeasurementArea_L * line, MeasurementArea_B * area)
+{
     double lx1 = line->_lineStartX;
     double ly1 = line->_lineStartY;
     double lx2 = line->_lineEndX;

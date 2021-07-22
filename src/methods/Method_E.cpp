@@ -13,28 +13,26 @@ using std::vector;
 
 Method_E::Method_E()
 {
-    _minFrame         = 0;
-    _deltaT           = -1;
-    _fps              = 16;
-    _areaForMethod_E  = nullptr;
-    _lineForMethod_E  = nullptr;
-    _dx               = 0;
-    _dy               = 0;
+    _minFrame        = 0;
+    _deltaT          = -1;
+    _fps             = 16;
+    _areaForMethod_E = nullptr;
+    _lineForMethod_E = nullptr;
+    _dx              = 0;
+    _dy              = 0;
 }
 
-bool Method_E::Process(
-    const PedData & peddata, 
-    double zPos_measureArea)
+bool Method_E::Process(const PedData & peddata, double zPos_measureArea)
 {
-    _trajName        = peddata.GetTrajName();
-    _outputLocation  = peddata.GetOutputLocation();
-    _peds_t          = peddata.GetPedIDsByFrameNr();
-    _xCor            = peddata.GetXCor();
-    _yCor            = peddata.GetYCor();
-    _minFrame        = peddata.GetMinFrame();
-    _fps             = peddata.GetFps();
-    _firstFrame      = peddata.GetFirstFrame();
-    _passLine        = std::vector<bool>(peddata.GetNumPeds(), false);
+    _trajName       = peddata.GetTrajName();
+    _outputLocation = peddata.GetOutputLocation();
+    _peds_t         = peddata.GetPedIDsByFrameNr();
+    _xCor           = peddata.GetXCor();
+    _yCor           = peddata.GetYCor();
+    _minFrame       = peddata.GetMinFrame();
+    _fps            = peddata.GetFps();
+    _firstFrame     = peddata.GetFirstFrame();
+    _passLine       = std::vector<bool>(peddata.GetNumPeds(), false);
     if(_deltaT == -1) {
         _deltaT = peddata.GetNumFrames() - 1;
     }
@@ -65,8 +63,8 @@ bool Method_E::Process(
         GetFile("rho", "id_" + _measureAreaId, _outputLocation, _trajName, "Method_E");
     // density is the same regardless of line position -> only one file for all lines
     string idCombination = "id_" + _measureAreaId + "_line_" + _lineId;
-    std::ofstream fFlow = GetFile("flow", idCombination, _outputLocation, _trajName, "Method_E");
-    std::ofstream fV = GetFile("v", idCombination, _outputLocation, _trajName, "Method_E");
+    std::ofstream fFlow  = GetFile("flow", idCombination, _outputLocation, _trajName, "Method_E");
+    std::ofstream fV     = GetFile("v", idCombination, _outputLocation, _trajName, "Method_E");
 
     if(!(fRho.is_open() && fFlow.is_open() && fV.is_open())) {
         LOG_ERROR("Cannot open files to write data for method E!\n");
@@ -107,7 +105,7 @@ bool Method_E::Process(
                 _lineForMethod_E->_lineStartX,
                 _lineForMethod_E->_lineStartY,
                 _lineForMethod_E->_lineEndX,
-                _lineForMethod_E->_lineEndY, 
+                _lineForMethod_E->_lineEndY,
                 _xCor,
                 _yCor);
 
@@ -165,7 +163,7 @@ int Method_E::GetNumberPassLine(int frame, const vector<int> & ids)
 
 void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const
 {
-    double flow = accumPeds / (_deltaT * 1.0 / fps);
+    double flow         = accumPeds / (_deltaT * 1.0 / fps);
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
     fFlow << flow << "\t" << specificFlow << "\n";
 }
@@ -173,7 +171,7 @@ void Method_E::OutputFlow(float fps, std::ofstream & fFlow, int accumPeds) const
 void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int frame) const
 {
     double specificFlow = accumPeds / (_deltaT * 1.0 / fps * _dy);
-    int frameNr = frame - _deltaT;
+    int frameNr         = frame - _deltaT;
     for(double density : _densityPerFrame) {
         double velocity = specificFlow / density;
         fV << frameNr << "\t" << velocity << "\n";
@@ -183,8 +181,8 @@ void Method_E::OutputVelocity(float fps, std::ofstream & fV, int accumPeds, int 
 }
 
 void Method_E::OutputDensity(
-    int frmNr, 
-    int numPeds, 
+    int frmNr,
+    int numPeds,
     const vector<double> & xs,
     const vector<double> & ys,
     std::ofstream & fRho)
@@ -198,7 +196,7 @@ void Method_E::OutputDensity(
         }
     }
 
-    double density = pedsInMA / _dx;
+    double density       = pedsInMA / _dx;
     double densityDeltaY = pedsInMA / (_dx * _dy);
     _densityPerFrame.push_back(densityDeltaY);
 

@@ -52,7 +52,7 @@ class MeasurementArea_B : public MeasurementArea
 {
 public:
     polygon_2d _poly;
-    double _length = -1.0;
+    double _length           = -1.0;
     double _lengthOrthogonal = -1.0;
     // delta y for methods E and F (orthogonal to movement direction)
 };

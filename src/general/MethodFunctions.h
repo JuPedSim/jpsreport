@@ -11,7 +11,7 @@ using namespace boost::geometry;
 /**
  * returns a file with the given parameters and creates the needed directories
  * @param whatOutput what will be the content of the file (e.g. rho_v)
- * @param idCombination id of measurement area or id combination of line and measurement area (e.g. 
+ * @param idCombination id of measurement area or id combination of line and measurement area (e.g.
  * id_1_line_2)
  * @param outputLocation general location of output
  * @param trajName name of the trajectory file

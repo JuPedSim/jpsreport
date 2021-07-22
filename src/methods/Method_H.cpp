@@ -1,6 +1,7 @@
+#include "Method_H.h"
+
 #include "../Analysis.h"
 #include "../general/Logger.h"
-#include "Method_H.h"
 #include "../general/MethodFunctions.h"
 
 #include <fstream>
@@ -51,7 +52,7 @@ bool Method_H::Process(const PedData & peddata)
 
     LOG_INFO("------------------------Analyzing with Method H-----------------------------");
     GetTinToutEntExt(peddata.GetNumFrames());
-    
+
     if(_areaForMethod_H->_length < 0) {
         LOG_WARNING("The measurement area length for method H is not assigned! Cannot calculate "
                     "mean density, velocity and flow!");
@@ -79,18 +80,16 @@ void Method_H::GetTinToutEntExt(int numFrames)
 
             // this is variant 4
             if(covered_by(make<point_2d>(x, y), _areaForMethod_H->_poly) &&
-                !(IsinMeasurezone[ID])) {
-                _tIn[ID]             = frameNr;
+               !(IsinMeasurezone[ID])) {
+                _tIn[ID]            = frameNr;
                 IsinMeasurezone[ID] = true;
                 _entrancePoint[ID].x(x * CMtoM);
                 _entrancePoint[ID].y(y * CMtoM);
             } else if(
-                (!within(make<point_2d>(x, y), _areaForMethod_H->_poly)) &&
-                IsinMeasurezone[ID]) {
+                (!within(make<point_2d>(x, y), _areaForMethod_H->_poly)) && IsinMeasurezone[ID]) {
                 if(_tIn[ID] == 0 && frameNr == 1) {
                     if(!within(
-                            make<point_2d>(_xCor(ID, 0), _yCor(ID, 0)),
-                            _areaForMethod_H->_poly)) {
+                           make<point_2d>(_xCor(ID, 0), _yCor(ID, 0)), _areaForMethod_H->_poly)) {
                         // edge case -> if first frame in general is exactly on the upper
                         // boundary of MA, this is not the entrance frame, but the exit frame
                         _tOut[ID] = 0;
@@ -100,7 +99,7 @@ void Method_H::GetTinToutEntExt(int numFrames)
                         continue;
                     }
                 }
-                _tOut[ID]            = frameNr;
+                _tOut[ID]           = frameNr;
                 IsinMeasurezone[ID] = false;
                 _exitPoint[ID].x(x * CMtoM);
                 _exitPoint[ID].y(y * CMtoM);
@@ -112,13 +111,13 @@ void Method_H::GetTinToutEntExt(int numFrames)
 void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
 {
     for(int i = 0; i < (numFrames - _deltaT); i += _deltaT) {
-        double sumTime        = 0;
+        double sumTime     = 0;
         double sumDistance = 0;
         for(int j = 0; j < _numPeds; j++) {
             // j is ID of pedestrian
             // i is start of time interval
             // i + _deltaT is end of time interval
-            
+
             auto entryExit = checkEntryExit(_tIn[j], _tOut[j], i, i + _deltaT, numFrames);
             switch(entryExit) {
                 case EntryExit::EntryAndExit:

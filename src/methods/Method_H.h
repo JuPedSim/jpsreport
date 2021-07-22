@@ -15,7 +15,7 @@ class Method_H
 {
 public:
     Method_H();
-    Method_H::~Method_H() = default;
+    ~Method_H() = default;
 
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetTimeInterval(int deltaT);

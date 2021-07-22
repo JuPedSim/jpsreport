@@ -15,7 +15,7 @@ class Method_F
 {
 public:
     Method_F();
-    Method_F::~Method_F() = default;
+    ~Method_F() = default;
 
     void SetMeasurementArea(MeasurementArea_B * area);
     void SetLine(MeasurementArea_L * area);

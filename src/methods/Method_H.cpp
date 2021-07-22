@@ -72,8 +72,7 @@ void Method_H::GetTinToutEntExt(int numFrames)
     vector<bool> IsinMeasurezone(_numPeds, false);
 
     for(int frameNr = 0; frameNr < numFrames; frameNr++) {
-        vector<int> ids       = _peds_t[frameNr];
-        int pedsinMeasureArea = 0;
+        vector<int> ids = _peds_t[frameNr];
         for(int ID : ids) {
             int x = _xCor(ID, frameNr);
             int y = _yCor(ID, frameNr);
@@ -135,6 +134,8 @@ void Method_H::OutputRhoVFlow(int numFrames, std::ofstream & fRhoVFlow)
                 case EntryExit::OnlyEntry:
                     sumTime += (i + _deltaT - _tIn[j] * 1.0) / _fps;
                     sumDistance += GetExactDistance(j, _tIn[j], i + _deltaT, _xCor, _yCor);
+                    break;
+                case EntryExit::NotInArea:
                     break;
             }
         }

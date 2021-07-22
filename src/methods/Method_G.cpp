@@ -145,6 +145,8 @@ void Method_G::OutputDensityVFlowDt(int numFrames)
                     pedsInMeasureArea++;
                     sumDistance += GetExactDistance(j, tIn[j], i + _dt, _xCor, _yCor);
                     break;
+                case EntryExit::NotInArea:
+                    break;
             }
         }
         double density      = pedsInMeasureArea / _deltaX;

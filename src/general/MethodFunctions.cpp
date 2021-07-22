@@ -133,10 +133,6 @@ double GetExactDistance(
 {
     double totalDist = 0;
     for(int i = (firstFrame + 1); i <= lastFrame; i += 1) {
-        double x0  = xCor(pedId, i - 1);
-        double x1  = xCor(pedId, i);
-        double y0  = yCor(pedId, i - 1);
-        double y1  = yCor(pedId, i);
         double dxq = (xCor(pedId, i - 1) - xCor(pedId, i)) * (xCor(pedId, i - 1) - xCor(pedId, i));
         double dyq = (yCor(pedId, i - 1) - yCor(pedId, i)) * (yCor(pedId, i - 1) - yCor(pedId, i));
         totalDist += sqrt(dxq + dyq) * CMtoM;

@@ -62,7 +62,10 @@ private:
     std::vector<point_2d> _exitPoint;     // where pedestrian leaves the measurement area
     double * _DensityPerFrame;            // the measured density in each frame
     void GetTinTout(int numFrames);
-    void GetFundamentalTinTout(double * DensityPerFrame, double LengthMeasurementarea);
+    void GetFundamentalTinTout(
+        double * DensityPerFrame,
+        double LengthMeasurementarea,
+        const PedData & peddata);
 };
 
 #endif /* METHOD_B_H_ */

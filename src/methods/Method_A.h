@@ -69,7 +69,7 @@ private:
 
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
-    int * _firstFrame;
+    std::vector<int> _firstFrame;
     float _fps;
 
     bool * _passLine;
@@ -95,16 +95,6 @@ private:
         int fps,
         const std::vector<int> & AccumPeds,
         const std::vector<double> & AccumVelocity);
-
-    bool IsPassLine(
-        double Line_startX,
-        double Line_startY,
-        double Line_endX,
-        double Line_endY,
-        double pt1_X,
-        double pt1_Y,
-        double pt2_X,
-        double pt2_Y);
 
     void GetAccumFlowVelocity(
         int frame,

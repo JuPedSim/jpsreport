@@ -5,12 +5,17 @@ set(methods
         methods/Method_B.cpp
         methods/Method_C.cpp
         methods/Method_D.cpp
+        methods/Method_E.cpp
+        methods/Method_F.cpp
+        methods/Method_G.cpp
+        methods/Method_H.cpp
 )
 
 set(source_files
         Analysis.cpp
         general/ArgumentParser.cpp
         general/Logger.cpp
+        general/MethodFunctions.cpp
 )
 
 set (header_files
@@ -22,11 +27,16 @@ set (header_files
         methods/Method_B.h
         methods/Method_C.h
         methods/Method_D.h
+        methods/Method_E.h
+        methods/Method_F.h
+        methods/Method_G.h
+        methods/Method_H.h
         methods/ConfigData_D.h
         general/ArgumentParser.h
         general/Compiler.h
         general/Macros.h
         general/Logger.h
+        general/MethodFunctions.h
 )
 
 add_library(report STATIC

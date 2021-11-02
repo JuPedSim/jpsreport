@@ -35,6 +35,10 @@
 #include "methods/Method_B.h"
 #include "methods/Method_C.h"
 #include "methods/Method_D.h"
+#include "methods/Method_E.h"
+#include "methods/Method_F.h"
+#include "methods/Method_G.h"
+#include "methods/Method_H.h"
 #include "methods/PedData.h"
 #include "methods/VoronoiDiagram.h"
 
@@ -75,6 +79,10 @@ Analysis::Analysis()
     _DoesUseMethodB = false; // Method B (Zhang2011a)
     _DoesUseMethodC = false; // Method C //calculate and save results of classic in separate file
     _DoesUseMethodD = false; // Method D--Voronoi method
+    _DoesUseMethodE = false; // Method E
+    _DoesUseMethodF = false; // Method F
+    _DoesUseMethodG = false; // Method G
+    _DoesUseMethodH = false; // Method H
 
     _vComponent =
         "B"; // to mark whether x, y or x and y coordinate are used when calculating the velocity
@@ -164,6 +172,57 @@ void Analysis::InitArgs(ArgumentParser * args)
             _areasForMethodD.push_back(area);
         }
         _geoPolyMethodD = GetRoomForMeasurementArea(_areasForMethodD);
+    }
+
+    if(args->GetIsMethodE()) {
+        _DoesUseMethodE                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodE();
+        vector<int> Line_IDs             = args->GetLineIDforMethodE();
+        // GetAreaIDforMethodE() and GetLineIDforMethodE() should have the same size
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodE.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+            _linesForMethodE.push_back(
+                dynamic_cast<MeasurementArea_L *>(args->GetMeasurementArea(Line_IDs[i])));
+        }
+        _deltaTMethodE = args->GetTimeIntervalE();
+    }
+
+    if(args->GetIsMethodF()) {
+        _DoesUseMethodF                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodF();
+        vector<int> Line_IDs             = args->GetLineIDforMethodF();
+        // GetAreaIDforMethodF() and GetLineIDforMethodF() should have the same size
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodF.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+            _linesForMethodF.push_back(
+                dynamic_cast<MeasurementArea_L *>(args->GetMeasurementArea(Line_IDs[i])));
+        }
+        _deltaTMethodF = args->GetTimeIntervalF();
+    }
+
+    if(args->GetIsMethodG()) {
+        _DoesUseMethodG                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodG();
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodG.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+        }
+        _deltaTMethodG         = args->GetTimeIntervalG();
+        _dtMethodG             = args->GetDtMethodG();
+        _numberPolygonsMethodG = args->GetNumPolyMethodG();
+        _pointsMethodG         = args->GetPointsMethodG();
+    }
+
+    if(args->GetIsMethodH()) {
+        _DoesUseMethodH                  = true;
+        vector<int> Measurement_Area_IDs = args->GetAreaIDforMethodH();
+        for(unsigned int i = 0; i < Measurement_Area_IDs.size(); i++) {
+            _areasForMethodH.push_back(dynamic_cast<MeasurementArea_B *>(
+                args->GetMeasurementArea(Measurement_Area_IDs[i])));
+        }
+        _deltaTMethodH = args->GetTimeIntervalH();
     }
 
     _deltaF                 = args->GetDelatT_Vins();
@@ -381,6 +440,111 @@ int Analysis::RunAnalysis(const fs::path & filename, const fs::path & path)
                 LOG_ERROR(
                     "Failed with Method D using measurement area id {}!\n",
                     _areasForMethodD[i]->_id);
+            }
+        }
+    }
+
+    if(_DoesUseMethodE) // method_E
+    {
+        if(_areasForMethodE.empty()) {
+            LOG_ERROR("Method E selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodE.size()); i++) {
+            Method_E method_E;
+            method_E.SetMeasurementArea(_areasForMethodE[i]);
+            method_E.SetLine(_linesForMethodE[i]);
+            method_E.SetTimeInterval(_deltaTMethodE[i]);
+            bool result_E = method_E.Process(data, _areasForMethodE[i]->_zPos);
+            if(result_E) {
+                LOG_INFO(
+                    "Success with Method E using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodE[i]->_id,
+                    _linesForMethodE[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method E using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodE[i]->_id,
+                    _linesForMethodE[i]->_id);
+            }
+        }
+    }
+
+    if(_DoesUseMethodF) // method_F
+    {
+        if(_areasForMethodF.empty()) {
+            LOG_ERROR("Method F selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodF.size()); i++) {
+            Method_F method_F;
+            method_F.SetMeasurementArea(_areasForMethodF[i]);
+            method_F.SetLine(_linesForMethodF[i]);
+            method_F.SetTimeInterval(_deltaTMethodF[i]);
+            bool result_F = method_F.Process(data, _areasForMethodF[i]->_zPos);
+            if(result_F) {
+                LOG_INFO(
+                    "Success with Method F using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodF[i]->_id,
+                    _linesForMethodF[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method F using measurement area id {} and "
+                    "line id {}!\n",
+                    _areasForMethodF[i]->_id,
+                    _linesForMethodF[i]->_id);
+            }
+        }
+    }
+
+    if(_DoesUseMethodG) // method_G
+    {
+        if(_areasForMethodG.empty()) {
+            LOG_ERROR("Method G selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodG.size()); i++) {
+            Method_G method_G;
+            method_G.SetMeasurementArea(_areasForMethodG[i]);
+            method_G.SetTimeInterval(_deltaTMethodG[i]);
+            method_G.SetDt(_dtMethodG[i]);
+            method_G.SetNumberPolygons(_numberPolygonsMethodG[i]);
+            method_G.SetPoints(_pointsMethodG[i]);
+            bool result_G = method_G.Process(data);
+            if(result_G) {
+                LOG_INFO(
+                    "Success with Method G using measurement area id {}!\n",
+                    _areasForMethodG[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method G using measurement area id {}!\n",
+                    _areasForMethodG[i]->_id);
+            }
+        }
+    }
+
+    if(_DoesUseMethodH) // method_H
+    {
+        if(_areasForMethodH.empty()) {
+            LOG_ERROR("Method H selected with no measurement area!");
+            exit(EXIT_FAILURE);
+        }
+        for(int i = 0; i < int(_areasForMethodH.size()); i++) {
+            Method_H method_H;
+            method_H.SetMeasurementArea(_areasForMethodH[i]);
+            method_H.SetTimeInterval(_deltaTMethodH[i]);
+            bool result_H = method_H.Process(data);
+            if(result_H) {
+                LOG_INFO(
+                    "Success with Method H using measurement area id {}!\n",
+                    _areasForMethodH[i]->_id);
+            } else {
+                LOG_ERROR(
+                    "Failed with Method H using measurement area id {}!\n",
+                    _areasForMethodH[i]->_id);
             }
         }
     }

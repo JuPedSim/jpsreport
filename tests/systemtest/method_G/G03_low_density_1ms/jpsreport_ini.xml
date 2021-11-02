@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<JPSreport project="corridor" version="0.8.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<geometry file="geometry.xml"/>
+
+	<output location="Output"/>
+
+	<trajectories format="txt" unit="m">
+		<file name="traj.txt" />
+	</trajectories>
+
+	<measurement_areas unit="m">
+		<area_B id="1" type="BoundingBox" zPos="None">
+			<vertex x="4.5" y="0" />
+			<vertex x="6" y="0" />
+			<vertex x="6" y="10" />
+			<vertex x="4.5" y="10" />
+			<length_in_movement_direction distance="1.5" />
+			<length_orthogonal_to_movement_direction distance="10.0" />
+		</area_B>
+	</measurement_areas>
+
+	<velocity frame_step="10" set_movement_direction="None" ignore_backward_movement="false"/>
+
+  <method_G enabled="true">
+    <measurement_area id="1" frame_interval="97" dt="1">
+      <number_areas n="3"/>
+      <point_1 x="4.5" y="0" />
+      <point_2 x="6" y="0" />
+    </measurement_area>
+  </method_G>
+</JPSreport>

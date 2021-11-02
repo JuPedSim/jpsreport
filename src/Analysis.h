@@ -122,10 +122,21 @@ private:
     int _deltaF; // half of the time interval that used to calculate instantaneous velocity of ped
                  // i.
     std::vector<int> _deltaT; // the time interval to calculate the classic flow
-    bool _DoesUseMethodA;     // Method A (Zhang2011a)
-    bool _DoesUseMethodB;     // Method B (Zhang2011a)
-    bool _DoesUseMethodC;     // Method C //calculate and save results of classic in separate file
-    bool _DoesUseMethodD;     // Method D--Voronoi method
+    std::vector<int> _deltaTMethodE;
+    std::vector<int> _deltaTMethodF;
+    std::vector<int> _deltaTMethodG;
+    std::vector<int> _deltaTMethodH;
+    std::vector<int> _dtMethodG;
+    std::vector<int> _numberPolygonsMethodG;
+    std::vector<std::vector<point_2d>> _pointsMethodG;
+    bool _DoesUseMethodA; // Method A (Zhang2011a)
+    bool _DoesUseMethodB; // Method B (Zhang2011a)
+    bool _DoesUseMethodC; // Method C //calculate and save results of classic in separate file
+    bool _DoesUseMethodD; // Method D--Voronoi method
+    bool _DoesUseMethodE; // Method E
+    bool _DoesUseMethodF; // Method F
+    bool _DoesUseMethodG; // Method G
+    bool _DoesUseMethodH; // Method H
 
     std::string _vComponent; // to mark whether x, y or x and y coordinate are used when calculating
                              // the velocity
@@ -141,6 +152,12 @@ private:
     std::vector<MeasurementArea_B *> _areasForMethodB;
     std::vector<MeasurementArea_B *> _areasForMethodC;
     std::vector<MeasurementArea_B *> _areasForMethodD;
+    std::vector<MeasurementArea_B *> _areasForMethodE;
+    std::vector<MeasurementArea_L *> _linesForMethodE;
+    std::vector<MeasurementArea_B *> _areasForMethodF;
+    std::vector<MeasurementArea_L *> _linesForMethodF;
+    std::vector<MeasurementArea_B *> _areasForMethodG;
+    std::vector<MeasurementArea_B *> _areasForMethodH;
 
     ConfigData_D configData_D;
 };

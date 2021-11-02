@@ -66,11 +66,12 @@ public:
     ub::matrix<double> GetYCor() const;
     ub::matrix<double> GetZCor() const;
     ub::matrix<double> GetId() const;
-    int * GetFirstFrame() const;
-    int * GetLastFrame() const;
+    std::vector<int> GetFirstFrame() const;
+    std::vector<int> GetLastFrame() const;
     std::vector<int> GetIndexInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids, double zPos) const;
+    int GetId(int frame, int id) const;
     std::vector<double> GetXInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<double> GetYInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<double> GetXInFrame(int frame, const std::vector<int> & ids) const;
@@ -98,8 +99,8 @@ private:
         int Tpast,
         int Tfuture,
         int ID,
-        int * Tfirst,
-        int * Tlast,
+        const std::vector<int> & Tfirst,
+        const std::vector<int> & Tlast,
         const ub::matrix<double> & Xcor,
         const ub::matrix<double> & Ycor) const;
     double GetInstantaneousVelocity1(
@@ -107,8 +108,8 @@ private:
         int Tpast,
         int Tfuture,
         int ID,
-        int * Tfirst,
-        int * Tlast,
+        const std::vector<int> & Tfirst,
+        const std::vector<int> & Tlast,
         const ub::matrix<double> & Xcor,
         const ub::matrix<double> & Ycor) const;
 
@@ -128,8 +129,8 @@ private:
     std::string _vComponent      = "B";
     bool _IgnoreBackwardMovement = false;
 
-    int * _firstFrame = nullptr; // Record the first frame of each pedestrian
-    int * _lastFrame  = nullptr; // Record the last frame of each pedestrian
+    std::vector<int> _firstFrame; // Record the first frame of each pedestrian
+    std::vector<int> _lastFrame;  // Record the last frame of each pedestrian
     ub::matrix<double> _xCor;
     ub::matrix<double> _yCor;
     ub::matrix<double> _zCor;

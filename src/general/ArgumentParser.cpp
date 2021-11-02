@@ -95,6 +95,10 @@ ArgumentParser::ArgumentParser()
     _isMethodB              = false;
     _isMethodC              = false;
     _isMethodD              = false;
+    _isMethodE              = false;
+    _isMethodF              = false;
+    _isMethodG              = false;
+    _isMethodH              = false;
     _steadyStart            = 100;
     _steadyEnd              = 1000;
     _trajectoriesLocation   = "./";
@@ -374,6 +378,16 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
                 areaB->_length = xmltof(xLength->Attribute("distance"));
                 LOG_INFO("Length in movement direction {:.3f}", areaB->_length);
             }
+
+            TiXmlElement * xLengthOrthogonal =
+                xMeasurementArea_B->FirstChildElement("length_orthogonal_to_movement_direction");
+            if(xLengthOrthogonal) {
+                areaB->_lengthOrthogonal = xmltof(xLengthOrthogonal->Attribute("distance"));
+                LOG_INFO(
+                    "Length orthogonal to movement direction {:.3f}", areaB->_lengthOrthogonal);
+            }
+            // delta y for methods E and F (orthogonal to movement direction)
+
             _measurementAreasByIDs[areaB->_id] = areaB;
         }
         for(TiXmlNode * xMeasurementArea_L =
@@ -582,8 +596,241 @@ bool ArgumentParser::ParseInifile(const fs::path & inifile)
         }
     }
 
+    // method E
+    TiXmlElement * xMethod_E = xMainNode->FirstChildElement("method_E");
+    if(xMethod_E) {
+        if(string(xMethod_E->Attribute("enabled")) == "true") {
+            _isMethodE = true;
+            LOG_INFO("Method E is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_E")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id      = xmltoi(xMeasurementArea->Attribute("id"));
+                int line_id = xmltoi(xMeasurementArea->Attribute("line_id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox" &&
+                   _measurementAreasByIDs[line_id]->_type == "Line") {
+                    if(IsInMeasureArea(
+                           dynamic_cast<MeasurementArea_L *>(GetMeasurementArea(line_id)),
+                           dynamic_cast<MeasurementArea_B *>(GetMeasurementArea(id)))) {
+                        _areaIDforMethodE.push_back(id);
+                        _lineIDforMethodE.push_back(line_id);
+                        LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                        if(xMeasurementArea->Attribute("frame_interval")) {
+                            if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                                _timeIntervalE.push_back(
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                                LOG_INFO(
+                                    "Frame interval used for calculating density is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            } else {
+                                _timeIntervalE.push_back(-1);
+                            }
+                        } else {
+                            _timeIntervalE.push_back(-1);
+                        }
+                    } else {
+                        LOG_WARNING(
+                            "Measurement area id <{}> with line id <{}> will NOT be used for "
+                            "analysis: The line is not located within the measurement area.",
+                            id,
+                            line_id);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis: Either type "
+                        "of measurement area ({}) is not BoundingBox, or type of line ({}) "
+                        "is not Line.",
+                        id,
+                        _measurementAreasByIDs[id]->_type,
+                        _measurementAreasByIDs[line_id]->_type);
+                }
+            }
+        }
+    }
+
+    // method F
+    TiXmlElement * xMethod_F = xMainNode->FirstChildElement("method_F");
+    if(xMethod_F) {
+        if(string(xMethod_F->Attribute("enabled")) == "true") {
+            _isMethodF = true;
+            LOG_INFO("Method F is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_F")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id      = xmltoi(xMeasurementArea->Attribute("id"));
+                int line_id = xmltoi(xMeasurementArea->Attribute("line_id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox" &&
+                   _measurementAreasByIDs[line_id]->_type == "Line") {
+                    if(IsInMeasureArea(
+                           dynamic_cast<MeasurementArea_L *>(GetMeasurementArea(line_id)),
+                           dynamic_cast<MeasurementArea_B *>(GetMeasurementArea(id)))) {
+                        _areaIDforMethodF.push_back(id);
+                        _lineIDforMethodF.push_back(line_id);
+                        LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                        if(xMeasurementArea->Attribute("frame_interval")) {
+                            if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                                _timeIntervalF.push_back(
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                                LOG_INFO(
+                                    "Frame interval used for calculating density is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            } else {
+                                _timeIntervalF.push_back(-1);
+                            }
+                        } else {
+                            _timeIntervalF.push_back(-1);
+                        }
+                    } else {
+                        LOG_WARNING(
+                            "Measurement area id <{}> with line id <{}> will NOT be used for "
+                            "analysis: The line is not located within the measurement area.",
+                            id,
+                            line_id);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis: Either type "
+                        "of measurement area ({}) is not BoundingBox, or type of line ({}) "
+                        "is not Line.",
+                        id,
+                        _measurementAreasByIDs[id]->_type,
+                        _measurementAreasByIDs[line_id]->_type);
+                }
+            }
+        }
+    }
+
+    // method G
+    TiXmlElement * xMethod_G = xMainNode->FirstChildElement("method_G");
+    if(xMethod_G) {
+        if(string(xMethod_G->Attribute("enabled")) == "true") {
+            _isMethodG = true;
+            LOG_INFO("Method G is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_G")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
+                    TiXmlElement * xPoint1 = xMainNode->FirstChildElement("method_G")
+                                                 ->FirstChildElement("measurement_area")
+                                                 ->FirstChildElement("point_1");
+                    TiXmlElement * xPoint2 = xMainNode->FirstChildElement("method_G")
+                                                 ->FirstChildElement("measurement_area")
+                                                 ->FirstChildElement("point_2");
+                    TiXmlElement * numberPolygons = xMainNode->FirstChildElement("method_G")
+                                                        ->FirstChildElement("measurement_area")
+                                                        ->FirstChildElement("number_areas");
+
+                    if(xPoint1->Attribute("x") && xPoint1->Attribute("y") &&
+                       xPoint2->Attribute("x") && xPoint2->Attribute("y")) {
+                        _areaIDforMethodG.push_back(id);
+                        LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                        if(xMeasurementArea->Attribute("frame_interval")) {
+                            if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                                _timeIntervalG.push_back(
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                                LOG_INFO(
+                                    "Frame interval used for calculation is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            } else {
+                                _timeIntervalG.push_back(-1);
+                            }
+                        } else {
+                            _timeIntervalG.push_back(-1);
+                        }
+                        if(xMeasurementArea->Attribute("dt")) {
+                            if(string(xMeasurementArea->Attribute("dt")) != "None") {
+                                _dtMethodG.push_back(xmltoi(xMeasurementArea->Attribute("dt")));
+                                LOG_INFO(
+                                    "Small frame interval (dt) used for calculation is <{}> frames",
+                                    xmltoi(xMeasurementArea->Attribute("dt")));
+                            } else {
+                                _dtMethodG.push_back(4); // what is a good default value?
+                            }
+                        } else {
+                            _dtMethodG.push_back(4); // what is a good default value?
+                        }
+                        if(numberPolygons->Attribute("n")) {
+                            _numberPolygonsMethodG.push_back(
+                                xmltoi(numberPolygons->Attribute("n")));
+                        } else {
+                            _numberPolygonsMethodG.push_back(10); // what is a good default value?
+                        }
+
+                        vector<point_2d> tmpPoints;
+                        double x = xmltof(xPoint1->Attribute("x")) * M2CM;
+                        double y = xmltof(xPoint1->Attribute("y")) * M2CM;
+                        tmpPoints.push_back(boost::geometry::make<point_2d>(x, y));
+                        x = xmltof(xPoint2->Attribute("x")) * M2CM;
+                        y = xmltof(xPoint2->Attribute("y")) * M2CM;
+                        tmpPoints.push_back(boost::geometry::make<point_2d>(x, y));
+                        _pointsMethodG.push_back(tmpPoints);
+                    } else {
+                        LOG_WARNING(
+                            "Measurement area id <{}> will NOT be used for analysis "
+                            "(no side of measurement area was given)",
+                            id,
+                            _measurementAreasByIDs[id]->_type);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis (Type "
+                        "<{}> is not BoundingBox)",
+                        id,
+                        _measurementAreasByIDs[id]->_type);
+                }
+            }
+        }
+    }
+
+    // method H
+    TiXmlElement * xMethod_H = xMainNode->FirstChildElement("method_H");
+    if(xMethod_H) {
+        if(string(xMethod_H->Attribute("enabled")) == "true") {
+            _isMethodH = true;
+            LOG_INFO("Method H is selected");
+            for(TiXmlElement * xMeasurementArea =
+                    xMainNode->FirstChildElement("method_H")->FirstChildElement("measurement_area");
+                xMeasurementArea;
+                xMeasurementArea = xMeasurementArea->NextSiblingElement("measurement_area")) {
+                int id = xmltoi(xMeasurementArea->Attribute("id"));
+
+                if(_measurementAreasByIDs[id]->_type == "BoundingBox") {
+                    _areaIDforMethodH.push_back(id);
+                    LOG_INFO("Measurement area id <{}> will be used for analysis", id);
+                    if(xMeasurementArea->Attribute("frame_interval")) {
+                        if(string(xMeasurementArea->Attribute("frame_interval")) != "None") {
+                            _timeIntervalH.push_back(
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                            LOG_INFO(
+                                "Frame interval for calculation is <{}> frames",
+                                xmltoi(xMeasurementArea->Attribute("frame_interval")));
+                        } else {
+                            _timeIntervalH.push_back(-1);
+                        }
+                    } else {
+                        _timeIntervalH.push_back(-1);
+                    }
+                } else {
+                    LOG_WARNING(
+                        "Measurement area id <{}> will NOT be used for analysis (Type "
+                        "<{}> is not BoundingBox)",
+                        id,
+                        _measurementAreasByIDs[id]->_type);
+                }
+            }
+        }
+    }
+
     LOG_INFO("Finish parsing inifile");
-    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD)) {
+    if(!(_isMethodA || _isMethodB || _isMethodC || _isMethodD || _isMethodE || _isMethodF ||
+         _isMethodG || _isMethodH)) {
         LOG_WARNING("No measurement method enabled. Nothing to do.");
         exit(EXIT_SUCCESS);
     }
@@ -965,6 +1212,31 @@ vector<int> ArgumentParser::GetTimeIntervalA() const
     return _timeIntervalA;
 }
 
+vector<int> ArgumentParser::GetTimeIntervalE() const
+{
+    return _timeIntervalE;
+}
+
+vector<int> ArgumentParser::GetTimeIntervalF() const
+{
+    return _timeIntervalF;
+}
+
+vector<int> ArgumentParser::GetTimeIntervalG() const
+{
+    return _timeIntervalG;
+}
+
+vector<int> ArgumentParser::GetTimeIntervalH() const
+{
+    return _timeIntervalH;
+}
+
+vector<int> ArgumentParser::GetDtMethodG() const
+{
+    return _dtMethodG;
+}
+
 bool ArgumentParser::GetIsMethodB() const
 {
     return _isMethodB;
@@ -978,6 +1250,26 @@ bool ArgumentParser::GetIsMethodC() const
 bool ArgumentParser::GetIsMethodD() const
 {
     return _isMethodD;
+}
+
+bool ArgumentParser::GetIsMethodE() const
+{
+    return _isMethodE;
+}
+
+bool ArgumentParser::GetIsMethodF() const
+{
+    return _isMethodF;
+}
+
+bool ArgumentParser::GetIsMethodG() const
+{
+    return _isMethodG;
+}
+
+bool ArgumentParser::GetIsMethodH() const
+{
+    return _isMethodH;
 }
 
 double ArgumentParser::GetSteadyStart() const
@@ -1005,6 +1297,46 @@ vector<int> ArgumentParser::GetAreaIDforMethodC() const
     return _areaIDforMethodC;
 }
 
+vector<int> ArgumentParser::GetAreaIDforMethodE() const
+{
+    return _areaIDforMethodE;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodF() const
+{
+    return _areaIDforMethodF;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodG() const
+{
+    return _areaIDforMethodG;
+}
+
+vector<int> ArgumentParser::GetAreaIDforMethodH() const
+{
+    return _areaIDforMethodH;
+}
+
+vector<int> ArgumentParser::GetLineIDforMethodE() const
+{
+    return _lineIDforMethodE;
+}
+
+vector<int> ArgumentParser::GetLineIDforMethodF() const
+{
+    return _lineIDforMethodF;
+}
+
+std::vector<vector<point_2d>> ArgumentParser::GetPointsMethodG() const
+{
+    return _pointsMethodG;
+}
+
+std::vector<int> ArgumentParser::GetNumPolyMethodG() const
+{
+    return _numberPolygonsMethodG;
+}
+
 MeasurementArea * ArgumentParser::GetMeasurementArea(int id)
 {
     if(_measurementAreasByIDs.count(id) == 0) {
@@ -1017,4 +1349,18 @@ MeasurementArea * ArgumentParser::GetMeasurementArea(int id)
 const std::vector<polygon_2d> & ArgumentParser::GetGeometry() const
 {
     return _geometry;
+}
+
+bool ArgumentParser::IsInMeasureArea(MeasurementArea_L * line, MeasurementArea_B * area)
+{
+    double lx1 = line->_lineStartX;
+    double ly1 = line->_lineStartY;
+    double lx2 = line->_lineEndX;
+    double ly2 = line->_lineEndY;
+
+    point_2d Line_pt0(lx1, ly1);
+    point_2d Line_pt1(lx2, ly2);
+
+    return covered_by(Line_pt0, area->_poly) && covered_by(Line_pt1, area->_poly) &&
+           line->_zPos == area->_zPos;
 }

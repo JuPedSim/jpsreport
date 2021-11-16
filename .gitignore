@@ -1,197 +1,321 @@
-/build/
-/lib/
-/bin/
-/outside/
-/doc
-/Debug
-/Release
-/Testing
-/doc/html
-/figs
-/figs_bot
-/inputfiles
-/Utest/*.txt
-/Utest/rimea_tests/*/*.txt
-/Utest/*/inifiles*/
-/Utest/*/trajectories
-/Utest/rimea_tests/*/inifiles*/
-/Utest/rimea_tests/*/trajectories
-/Utest/juelich_tests/*/trajectories
-/Utest/juelich_tests/*/inifiles
-/Utest/juelich_tests/*/inifiles_a
-/Utest/juelich_tests/*/inifiles_b
-Utest/Validation/*/inifiles*/
-/Utest/juelich_tests/*/*.txt
-/Utest/juelich_tests/*/*.png
-*~
-/Utest/validation/test_13
-/Utest/validation/1test_1D
-/build*
-/Utest/router_tests/test_router_9/inifiles/
-/Utest/router_tests/test_router_1/inifiles/
-/Utest/router_tests/test_router_2/inifiles/
-/Utest/router_tests/test_router_3/inifiles/
-/Utest/router_tests/test_router_4/inifiles/
-/Utest/router_tests/test_router_5/inifiles/
-/Utest/router_tests/test_router_6/inifiles/
-/Utest/router_tests/test_router_7/inifiles/
-/Utest/router_tests/test_router_8/inifiles/
-Matrix.txt
 
-# Python specific ignores
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,jetbrains
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,jetbrains
+
+### JetBrains ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# AWS User-specific
+.idea/**/aws.xml
+
+# Generated files
+.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+# .idea/artifacts
+# .idea/compiler.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# *.iml
+# *.ipr
+
+# CMake
+cmake-build-*/
+
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
+
+# File-based project format
+*.iws
+
+# IntelliJ
+out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Editor-based Rest Client
+.idea/httpRequests
+
+# Android studio 3.1+ serialized cache file
+.idea/caches/build_file_checksums.ser
+
+### JetBrains Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Sonarlint plugin
+# https://plugins.jetbrains.com/plugin/7973-sonarlint
+.idea/**/sonarlint/
+
+# SonarQube Plugin
+# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
+.idea/**/sonarIssues.xml
+
+# Markdown Navigator plugin
+# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
+.idea/**/markdown-navigator.xml
+.idea/**/markdown-navigator-enh.xml
+.idea/**/markdown-navigator/
+
+# Cache file creation bug
+# See https://youtrack.jetbrains.com/issue/JBR-2257
+.idea/$CACHE_FILE$
+
+# CodeStream plugin
+# https://plugins.jetbrains.com/plugin/12206-codestream
+.idea/codestream.xml
+
+### PyCharm ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+
+# AWS User-specific
+
+# Generated files
+
+# Sensitive or high-churn files
+
+# Gradle
+
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+# .idea/artifacts
+# .idea/compiler.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
+# *.iml
+# *.ipr
+
+# CMake
+
+# Mongo Explorer plugin
+
+# File-based project format
+
+# IntelliJ
+
+# mpeltonen/sbt-idea plugin
+
+# JIRA plugin
+
+# Cursive Clojure plugin
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+
+# Editor-based Rest Client
+
+# Android studio 3.1+ serialized cache file
+
+### PyCharm Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
+
+# Sonarlint plugin
+# https://plugins.jetbrains.com/plugin/7973-sonarlint
+
+# SonarQube Plugin
+# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
+
+# Markdown Navigator plugin
+# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
+
+# Cache file creation bug
+# See https://youtrack.jetbrains.com/issue/JBR-2257
+
+# CodeStream plugin
+# https://plugins.jetbrains.com/plugin/12206-codestream
+
+### Python ###
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-*.gch
-*_flymake
-# Compiled Dynamic libraries
+# C extensions
 *.so
-*.dylib
-*.dll
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Executables
-*.exe
-*.out
-*.app
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
 
-# Hidden files
-.*
-!/.gitignore
-!/.clang-format
-!/.clang-tidy
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Cmake
-CMakeCache.txt
-CMakeFiles
-Makefile
-cmake_install.cmake
-install_manifest.txt
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
 
-*.vtk
-*Traj*.xml
+# Translations
+*.mo
+*.pot
 
-CTestTestfile.cmake
-DartConfiguration.tcl
-
-vgcore.*
-/d
-/figs/*
-/TAGS
-/math/test.cpp
-/.dir-locals.el
-/Doxyfile
-/*log*
-/*plot*
-/.idea/.name
-/.idea/encodings.xml
-/.idea/jpscore.iml
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/scopes/scope_settings.xml
-/.idea/vcs.xml
-/.idea/workspace.xml
-/Testing/Temporary/CTestCostData.txt
-/Utest/runtests.py
-/Utest/test_11/.igncd
-/Utest/test_7/.gitignore
-/Utest/test_8/routing.xml
-/Utest/test_9/cpu.png
-/Utest/utils.pyc
-/auto/veloModel9.el
-/cpu.png
-/cscope.file
-/veloModel10.org
-/veloModel11.pdf
-/veloModel12.tex
-/.project
-/#%13Aediff-merge%14A#14545CrI#
-/#%15Aediff-merge%3C16%3E%17A#1454518Th#
-/.idea/dictionaries/chraibi.xml
-/Dumping
-/Martella/corridor_8x3.xml
-/Martella/regular_simmetric_90-90.xml
-/Utest/JPSRunTest.pyc
-/Utest/test.py
-/Utest/test_13/flow.txt
-/compile_commands.json
-/delme.py
-/mencoderVideos.sh
-/true_false.xml
-/JPScore.cbp
-/JPScore.layout
-/Max/
-*/old/*
-README.html
-Utest/r19.txt
-Utest/r3.txt
-Utest/rimea_tests/test_13/gauss.py
-Utest/test_10/cell.png
-Utest/test_10/result.txt
-Utest/test_10/times.txt
-Utest/todo.org
-html-dir/
-inputfiles/Bottleneck/rimea_test_120_geo.xml
-inputfiles/Karthik/
-inputfiles/U8/
-inputfiles/VerteilerEbene/
-.idea*
-idea/codeStyleSettings.xml
-*.fls
-*.fdb_latexmk
-*.tex
-*.aux
+# Django stuff:
 *.log
-*.pdf
-/Utest/rimea_tests/figures
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
 
-cmake-build-debug
-*.vcxproj
-*.vcxproj.filters
-*.cmake
-*.sln
-Win32/
-*.dir/
-*.user
-packages/
-/jpscore.srctrlbm
-/jpscore.srctrldb
-/jpscore.srctrlprj
-/jpscore2.srctrlbm
-/jpscore2.srctrldb
-/jpscore2.srctrlprj
-/test.py
-/threads.cpp
-/geometry.png
-/run.py
-/Utest/Validation/7test_BO/jpsreport_ini.xml
+# Flask stuff:
+instance/
+.webassets-cache
 
-/doc*
-/cmake-*
-!/cmake_modules
-/issues
-/latex
-/_site
-/tests/systemtest/test_geometry/clean_geometry/log*
-/tests/systemtest/test_geometry/clean_geometry/traj*
-js
-.DS_Store
-JuPedSim-blx.bib
-_tex/
-titlepage.tex
-/demos/*/results
+# Scrapy stuff:
+.scrapy
 
-__pycache__
-ipynb_checkpoints/
+# Sphinx documentation
+docs/_build/
 
-Output/
-Output_new/
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,jetbrains

@@ -36,7 +36,7 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 
-typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double>> segment;
+using segment = boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double>>;
 
 namespace ub = boost::numeric::ublas;
 using namespace boost::geometry;
@@ -45,7 +45,6 @@ class Method_A
 {
 public:
     Method_A();
-    virtual ~Method_A();
     void SetMeasurementArea(MeasurementArea_L * area);
     void SetTimeInterval(int deltaT);
     bool Process(
@@ -72,7 +71,7 @@ private:
     std::vector<int> _firstFrame;
     float _fps;
 
-    bool * _passLine;
+    std::vector<bool> _passLine;
     int _classicFlow; // the number of pedestrians pass a line in a certain time
     double _vDeltaT; // define this is to measure cumulative velocity each pedestrian pass a measure
                      // line each time step to calculate the <v>delat T=sum<vi>/N

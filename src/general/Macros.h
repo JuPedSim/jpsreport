@@ -91,11 +91,11 @@ typedef VD::cell_type::source_index_type source_index_type;
 // precision error
 #define J_EPS 0.001
 #define J_EPS_EVENT 0.00001 // zum pruefen des aktuellen Zeitschrittes auf events
-#define J_EPS_DIST 0.05     // [m]
+#define J_EPS_DIST 0.05 // [m]
 
 #define J_EPS_GOAL 0.005 /// [m] Abstand zum Ziel, damit Fußgänger immer zu einem Raum gehört
-#define J_TOLERANZ 0.03  /// [m] Toleranz beim erstellen der Linien
-#define J_EPS_V 0.1      /// [m/s] wenn  v<EPS_V wird mit 0 gerechnet
+#define J_TOLERANZ 0.03 /// [m] Toleranz beim erstellen der Linien
+#define J_EPS_V 0.1 /// [m/s] wenn  v<EPS_V wird mit 0 gerechnet
 
 // routing macros
 #define J_QUEUE_VEL_THRESHOLD_NEW_ROOM                                                             \
@@ -276,7 +276,7 @@ inline std::string concatenate(std::string const & name, int i)
 //**************************************************************
 
 // Text attributes
-#define OFF 0    // All attributes off
+#define OFF 0 // All attributes off
 #define BRIGHT 1 // Bold on
 //       4    Underscore (on monochrome display adapter only)
 #define BLINK 5 // Blink on

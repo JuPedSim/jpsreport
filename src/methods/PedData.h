@@ -66,8 +66,8 @@ public:
     ub::matrix<double> GetYCor() const;
     ub::matrix<double> GetZCor() const;
     ub::matrix<double> GetId() const;
-    std::vector<int> GetFirstFrame() const;
-    std::vector<int> GetLastFrame() const;
+    const std::vector<int> & GetFirstFrame() const;
+    const std::vector<int> & GetLastFrame() const;
     std::vector<int> GetIndexInFrame(int frame, const std::vector<int> & ids, double zPos) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids) const;
     std::vector<int> GetIdInFrame(int frame, const std::vector<int> & ids, double zPos) const;

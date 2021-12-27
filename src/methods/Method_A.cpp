@@ -43,13 +43,10 @@ Method_A::Method_A()
 {
     _classicFlow     = 0;
     _vDeltaT         = 0;
-    _passLine        = nullptr;
     _deltaT          = 100;
     _fps             = 16;
     _areaForMethod_A = nullptr;
 }
-
-Method_A::~Method_A() {}
 
 bool Method_A::Process(
     const PedData & peddata,
@@ -66,14 +63,11 @@ bool Method_A::Process(
     _firstFrame      = peddata.GetFirstFrame();
     _fps             = peddata.GetFps();
     _measureAreaId   = boost::lexical_cast<string>(_areaForMethod_A->_id);
-    _passLine        = new bool[peddata.GetNumPeds()];
+    _passLine        = std::vector<bool>(peddata.GetNumPeds(), false);
     string outputRhoV;
     outputRhoV.append(
         "#framerate:\t" + std::to_string(_fps) + "\n\n#Frame\tTime [s]\tCumulative pedestrians\n");
 
-    for(int i = 0; i < peddata.GetNumPeds(); i++) {
-        _passLine[i] = false;
-    }
     LOG_INFO("------------------------Analyzing with Method A-----------------------------");
     bool PedInGeometry = false;
     for(std::map<int, std::vector<int>>::iterator ite = _peds_t.begin(); ite != _peds_t.end();
@@ -85,7 +79,7 @@ bool Method_A::Process(
         }
         vector<int> ids = peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
         const vector<double> VInFrame = peddata.GetVInFrame(frameNr, ids, zPos_measureArea);
-        if(VInFrame.size() > 0) {
+        if(!VInFrame.empty()) {
             GetAccumFlowVelocity(frameNr, ids, VInFrame);
             char tmp[30];
             sprintf(tmp, "%d\t%.2f\t%d\n", frid, frid / _fps, _classicFlow);
@@ -99,7 +93,6 @@ bool Method_A::Process(
     } else {
         LOG_WARNING("No pedestrian exists on the plane of the selected Measurement area!!");
     }
-    delete[] _passLine;
     return true;
 }
 
@@ -142,10 +135,10 @@ void Method_A::GetAccumFlowVelocity(
                 _xCor(i, frame),
                 _yCor(i, frame));
         }
-        if(IspassLine == true) {
+        if(IspassLine) {
             _passLine[i] = true;
             _classicFlow++;
-            _vDeltaT += VInFrame[i];
+            _vDeltaT += VInFrame.at(i);
         }
     }
     _accumPedsPassLine.push_back(_classicFlow);
@@ -168,39 +161,37 @@ void Method_A::FlowRate_Velocity(
         exit(EXIT_FAILURE);
     }
     fprintf(fFD_FlowVelocity, "#Flow rate(1/s)	\t Mean velocity(m/s)\n");
-    int TotalTime = AccumPeds.size();         // the total Frame of in the data file
-    int TotalPeds = AccumPeds[TotalTime - 1]; // the total pedestrians in the data file
-    if(TotalPeds > 0) {
-        int firstPassT = -1; // the first time that there are pedestrians pass the line
-        int * pedspassT =
-            new int[TotalPeds + 1]; // the time for certain pedestrian passing the line
-        for(int i = 0; i <= TotalPeds; i++) {
-            pedspassT[i] = -1;
-        }
+    int numFrames = AccumPeds.size();         // the total Frame of in the data file
+    int numPeds   = AccumPeds[numFrames - 1]; // the total pedestrians in the data file
+    if(numPeds > 0) {
+        int firstPassFrame = -1; // the first time that there are pedestrians pass the line
+        std::vector<int> pedsPassFrame(
+            numPeds + 1, -1); // the time for certain pedestrian passing the line
 
-        for(int ix = 0; ix < TotalTime; ix++) {
-            if(AccumPeds[ix] > 0 && firstPassT < 0) {
-                firstPassT = ix;
+        for(int ix = 0; ix < numFrames; ix++) {
+            if(AccumPeds[ix] > 0 && firstPassFrame < 0) {
+                firstPassFrame = ix;
             }
-            if(pedspassT[AccumPeds[ix]] < 0) {
-                pedspassT[AccumPeds[ix]] = ix;
+            if(pedsPassFrame[AccumPeds[ix]] < 0) {
+                pedsPassFrame[AccumPeds[ix]] = ix;
             }
         }
-        for(int i = firstPassT + _deltaT; i < TotalTime; i += _deltaT) {
-            int N1 = AccumPeds[i - _deltaT]; // the total number of pedestrians pass the line at
-                                             // this time
-            int N2   = AccumPeds[i];
-            int t_N1 = pedspassT[N1];
-            int t_N2 = pedspassT[N2];
+        for(int currentFrame = firstPassFrame + _deltaT; currentFrame < numFrames;
+            currentFrame += _deltaT) {
+            int N1 = AccumPeds[currentFrame - _deltaT]; // the total number of pedestrians pass the
+                                                        // line at this time
+            int N2   = AccumPeds[currentFrame];
+            int t_N1 = pedsPassFrame[N1];
+            int t_N2 = pedsPassFrame[N2];
             if(N1 != N2) {
                 double flow_rate = fps * (N2 - N1) * 1.00 / (t_N2 - t_N1);
-                double MeanV     = (AccumVelocity[i] - AccumVelocity[i - _deltaT]) /
-                               (AccumPeds[i] - AccumPeds[i - _deltaT]);
+                double MeanV =
+                    (AccumVelocity[currentFrame] - AccumVelocity[currentFrame - _deltaT]) /
+                    (AccumPeds[currentFrame] - AccumPeds[currentFrame - _deltaT]);
                 fprintf(fFD_FlowVelocity, "%.3f\t%.3f\n", flow_rate, MeanV);
             }
         }
         fclose(fFD_FlowVelocity);
-        delete[] pedspassT;
     } else {
         LOG_WARNING("No person passing the reference line given by Method A!\n");
     }

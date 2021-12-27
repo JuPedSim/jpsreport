@@ -318,7 +318,7 @@ bool PedData::InitializeVariables(const fs::path & filename)
 
 vector<double> PedData::GetVInFrame(int frame, const vector<int> & ids, double zPos) const
 {
-    vector<double> VInFrame;
+    vector<double> VInFrame(_maxID, 0);
     for(unsigned int i = 0; i < ids.size(); i++) {
         int id      = ids[i];
         int Tpast   = frame - _deltaF;
@@ -328,10 +328,10 @@ vector<double> PedData::GetVInFrame(int frame, const vector<int> & ids, double z
         // TODO: zPos is set to 10000001.0 if it's None. Needed for this if-clause. But why?
         if(zPos < 1000000.0) {
             if(fabs(_zCor(id, frame) - zPos * M2CM) < J_EPS_EVENT) {
-                VInFrame.push_back(v);
+                VInFrame[id] = v;
             }
         } else {
-            VInFrame.push_back(v);
+            VInFrame[id] = v;
         }
     }
     return VInFrame;
@@ -680,12 +680,12 @@ ub::matrix<double> PedData::GetZCor() const
     return _zCor;
 }
 
-std::vector<int> PedData::GetFirstFrame() const
+const vector<int> & PedData::GetFirstFrame() const
 {
     return _firstFrame;
 }
 
-std::vector<int> PedData::GetLastFrame() const
+const vector<int> & PedData::GetLastFrame() const
 {
     return _lastFrame;
 }

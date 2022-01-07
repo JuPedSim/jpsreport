@@ -35,7 +35,7 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Check format
-        if: runner.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: |
           $GITHUB_WORKSPACE/scripts/check-format.sh
 

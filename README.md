@@ -15,3 +15,4 @@ Here are some useful links:
 * [Contributing Guidelines](https://github.com/JuPedSim/jpsreport/blob/develop/CONTRIBUTING.md) to the JuPedSim/jpsreport project.
 
 Pull requests welcome!
+

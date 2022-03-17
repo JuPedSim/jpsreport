@@ -30,21 +30,13 @@ jobs:
           sudo apt-get update && sudo apt-get install -y software-properties-common
           sudo apt-get update && sudo apt-get install -y wget \
                                  git \
-                                 g++ \
-                                 clang-8 \
                                  cmake \
                                  make \
-                                 libboost-dev \
-                                 libcgal-dev \
                                  python3 \
-                                 python3-pip \
-                                 python3-matplotlib
-          cp scripts/setup-deps.sh /opt/
-          cd /opt && chmod +x setup-deps.sh && CXX=/usr/bin/g++-9 CC=/usr/bin/gcc-9 ./setup-deps.sh
-          pip3 install numpy && \
-              pip3 install pandas && \
-              pip3 install dataclasses && \
-              pip3 install scipy
+                                 python3-pip
+          ./scripts/setup-deps.sh --install-path /opt/deps
+          pip3 install -r requirements.txt
+
       - name: Create Build Environment
         # Some projects don't allow in-source building, so create a separate build directory
         # We'll use this as our working directory for all subsequent commands

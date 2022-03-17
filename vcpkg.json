@@ -4,7 +4,7 @@
   "maintainers": [ "T. Schroedter" ],
   "description": "Juelich Pedestrian Dynamics Simulator",
   "homepage": "http://jupedsim.org",
-  "builtin-baseline": "761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e",
+  "builtin-baseline": "3768cef9c204bb168c04b3ba7cb93b10a140a91d",
   "dependencies": [
     "boost-foreach",
     "boost-geometry",

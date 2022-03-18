@@ -84,9 +84,15 @@ bool Method_A::Process(
             LOG_INFO("frame ID = {}", frid);
         }
         vector<int> ids = peddata.GetIndexInFrame(frameNr, _peds_t[frameNr], zPos_measureArea);
+
+        std::unordered_map<int, int> idToIndex;
+        for(size_t i = 0; i < ids.size(); ++i) {
+            idToIndex[ids[i]] = i;
+        }
         const vector<double> VInFrame = peddata.GetVInFrame(frameNr, ids, zPos_measureArea);
+
         if(VInFrame.size() > 0) {
-            GetAccumFlowVelocity(frameNr, ids, VInFrame);
+            GetAccumFlowVelocity(frameNr, ids, VInFrame, idToIndex);
             char tmp[30];
             sprintf(tmp, "%d\t%.2f\t%d\n", frid, frid / _fps, _classicFlow);
             outputRhoV.append(tmp);
@@ -127,7 +133,8 @@ void Method_A::WriteFile_N_t(string data)
 void Method_A::GetAccumFlowVelocity(
     int frame,
     const vector<int> & ids,
-    const vector<double> & VInFrame)
+    const vector<double> & VInFrame,
+    const std::unordered_map<int, int> & idToIndex)
 {
     for(auto const i : ids) {
         bool IspassLine = false;
@@ -145,7 +152,7 @@ void Method_A::GetAccumFlowVelocity(
         if(IspassLine == true) {
             _passLine[i] = true;
             _classicFlow++;
-            _vDeltaT += VInFrame[i];
+            _vDeltaT += VInFrame[idToIndex.at(i)];
         }
     }
     _accumPedsPassLine.push_back(_classicFlow);

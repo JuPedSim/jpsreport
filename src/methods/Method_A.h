@@ -35,6 +35,7 @@
 
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <unordered_map>
 
 typedef boost::geometry::model::segment<boost::geometry::model::d2::point_xy<double>> segment;
 
@@ -99,7 +100,8 @@ private:
     void GetAccumFlowVelocity(
         int frame,
         const std::vector<int> & ids,
-        const std::vector<double> & VInFrame);
+        const std::vector<double> & VInFrame,
+        const std::unordered_map<int, int> & idToIndex);
 };
 
 #endif /* METHOD_A_H_ */

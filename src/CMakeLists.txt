@@ -81,16 +81,3 @@ target_link_libraries(jpsreport
 
 set_property(TARGET jpsreport PROPERTY INTERPROCEDURAL_OPTIMIZATION ${USE_IPO})
 set_property(TARGET jpsreport PROPERTY INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
-
-################################################################################
-# Install targets
-################################################################################
-#install(TARGETS jpsreport
-#        DESTINATION bin
-#        COMPONENT applications)
-
-#set(CT_DATA_FILE_DIR "../demos")
-#file(GLOB CT_FILES "${CMAKE_SOURCE_DIR}/jpsreport/${CT_DATA_FILE_DIR}/*/*.xml")
-#install(FILES ${CT_FILES}
-#  DESTINATION "jpsreport_samples"
-#  COMPONENT jpsreport_samples)

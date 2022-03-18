@@ -3,13 +3,11 @@
 # Structure:
 # ├── LICENSE
 # ├── README.md
-# ├── JuPedSim.pdf
 # ├── bin
-# │   ├── jpscore
 # │   └── jpsreport
-# ├── jpscore_samples
 # └── jpsreport_samples
 #-------------------------------
+
 function (cpack_write_deb_config)
   message(STATUS "Package generation - LINUX")
   list(APPEND CPACK_GENERATOR "DEB")
@@ -29,11 +27,11 @@ function (cpack_write_osx_config)
   message(STATUS "Package generation - MacOS")
   list(APPEND CPACK_GENERATOR "DragNDrop")
   set (CPACK_GENERATOR  ${CPACK_GENERATOR} PARENT_SCOPE)
-  set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_SOURCE_DIR}/jpscore/forms/background.png" PARENT_SCOPE)
+  set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_SOURCE_DIR}/forms/jupedsim.png" PARENT_SCOPE)
   # set(CPACK_DMG_DS_STORE_SETUP_SCRIPT
   #   "${CMAKE_SOURCE_DIR}/jpscore/forms/DS_Store.scpt" PARENT_SCOPE)
   set(CPACK_DMG_DISABLE_APPLICATIONS_SYMLINK ON  PARENT_SCOPE)
-  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/jpscore/forms/JPScore.icns" PARENT_SCOPE)
+  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/forms/JPSreport.icns" PARENT_SCOPE)
   set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}" PARENT_SCOPE)
   set(CPACK_SYSTEM_NAME "OSX" PARENT_SCOPE)
 endfunction()
@@ -60,9 +58,6 @@ function (cpack_write_windows_config)
   set(CPACK_NSIS_HELP_LINK "http://www.jupedsim.org/jupedsim_install_on_windows.html")
   set(CPACK_NSIS_URL_INFO_ABOUT "http://www.jupedsim.org/")
   set(CPACK_NSIS_DISPLAY_NAME ${CMAKE_PROJECT_NAME})
-  # ----------------------------
-
-
 endfunction()
 
 function (cpack_write_config)
@@ -91,16 +86,4 @@ function (cpack_write_config)
   set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
   set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${PROJECT_VERSION}")
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-
-#    COMPONENT Documents)
-
-#  set(jpsguide "${CMAKE_SOURCE_DIR}/docs/jps_guide/JuPedSim.pdf")
-#  if(EXISTS "${jpsguide}")
-#    install(FILES "${jpsguide}"
-#      DESTINATION .
-#      COMPONENT Documents)
-#  endif()
-#
-#  print_var(CPACK_SOURCE_PACKAGE_FILE_NAME)
-
 endfunction()

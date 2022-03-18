@@ -115,8 +115,7 @@ else()
     )
 endif()
 
-#find_package(Threads REQUIRED)
-#find_package(PythonInterp 3 REQUIRED)
+find_package(PythonInterp 3 REQUIRED)
 
 ################################################################################
 # VCS info

@@ -192,7 +192,7 @@ bool Method_D::Process(
             } else {
                 // TODO: not sure what is happening here?? Positions are shifted when they are on
                 // the same line?
-                if(XInFrame.size() > 1 && ArePointsOnOneLine(XInFrame, YInFrame)) {
+                if(numPeds > 1 && ArePointsOnOneLine(XInFrame, YInFrame)) {
                     if(fabs(XInFrame[1] - XInFrame[0]) < DMIN) {
                         XInFrame[1] += JPS_OFFSET;
                     } else {

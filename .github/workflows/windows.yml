@@ -69,3 +69,14 @@ jobs:
           path: |
             ${{github.workspace}}/build/Testing/
             ${{github.workspace}}/tests/systemtest/
+
+      - name: 'Build installer'
+        working-directory: ${{github.workspace}}/build
+        shell: bash
+        run: cpack --verbose
+
+      - name: 'Upload installer'
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-installer
+          path: ${{github.workspace}}/build/jpsreport-installer-*.exe

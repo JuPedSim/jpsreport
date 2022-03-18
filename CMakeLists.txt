@@ -1,16 +1,13 @@
 # Documentation: Some useful options:
 # -DCMAKE_CXX_COMPILER=clang++
 # -DCMAKE_BUILD_TYPE=Debug (default Release)
-# -DCMAKE_VERBOSE_MAKEFILE=ON (default OFF)
 # -DBUILD_TESTING=ON (default OFF) for python tests
-# -DBUILD_CPPUNIT_TEST=ON (default OFF) for unit tests
-# -D Boost_NO_SYSTEM_PATHS=true (default false) -D BOOST_ROOT=PATH_where_to_find_boost
-#--------------------------------------------------------------------------
+# -DBUILD_UNIT_TEST=ON (default OFF) for unit tests
 ################################################################################
 # Project setup
 ################################################################################
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-project(JPSreport VERSION 0.8.4 LANGUAGES CXX)
+project(JPSreport VERSION 0.9.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

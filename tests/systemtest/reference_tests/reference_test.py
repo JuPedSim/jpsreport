@@ -91,8 +91,8 @@ def compare_file_contents(reference_folder: pathlib.Path, result_folder: pathlib
     error_float_values = False
     error_polygon_values = False
 
-    max_error_float = 1e-4
-    max_error_polygon = 1e-4
+    max_error_float = 1e-3
+    max_error_polygon = 1e-3
 
     for file in reference_folder.rglob("*.dat"):
         if file.is_file():

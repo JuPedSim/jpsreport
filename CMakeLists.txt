@@ -287,6 +287,7 @@ if (BUILD_TESTING)
   find_python_library(numpy)
   find_python_library(scipy)
   find_python_library(pandas)
+  find_python_library(shapely)
   add_subdirectory(tests/systemtest)
 endif (BUILD_TESTING)
 

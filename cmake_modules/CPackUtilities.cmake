@@ -3,8 +3,7 @@
 # Structure:
 # ├── LICENSE
 # ├── README.md
-# ├── bin
-# │   └── jpsreport
+# ├── jpsreport
 # └── jpsreport_samples
 #-------------------------------
 
@@ -37,41 +36,57 @@ endmacro()
 macro (cpack_write_windows_config)
   message(STATUS "Package generation - Windows")
   set(CPACK_GENERATOR "NSIS" CACHE STRING "Generator used by CPack")
-
   set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
-  set(VCPKG_DIR "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/")
-  set(DIRS ${VCPKG_DIR})
-  set(DLL_FILES "${VCPKG_DIR}/fmt.dll" "${VCPKG_DIR}/spdlog.dll")
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${DLL_FILES}")
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${BUNDLE_RUNTIME_DESTINATION}")
-
-  install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin)
 
   set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/forms/JPSreport.ico")
   set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/forms/JPSreport.ico")
   set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
   set(CPACK_NSIS_MODIFY_PATH)
-  set(CPACK_NSIS_HELP_LINK "http://www.jupedsim.org/jupedsim_install_on_windows.html")
+  set(CPACK_NSIS_HELP_LINK "https://www.jupedsim.org/jpsreport_introduction.html")
   set(CPACK_NSIS_URL_INFO_ABOUT "http://www.jupedsim.org/")
   set(CPACK_NSIS_DISPLAY_NAME ${CMAKE_PROJECT_NAME})
+  set(CPACK_NSIS_MODIFY_PATH TRUE)
 endmacro()
 
 macro (cpack_write_config)
   message(STATUS "Cpack write configs")
-  include(InstallRequiredSystemLibraries)
   include(GNUInstallDirs)
+  include(InstallRequiredSystemLibraries)
 
   install(TARGETS jpsreport
           DESTINATION bin
-          )
+  )
+
+  install(CODE [[
+    file(GET_RUNTIME_DEPENDENCIES
+      LIBRARIES $<TARGET_FILE:report>
+      EXECUTABLES $<TARGET_FILE:jpsreport>
+      RESOLVED_DEPENDENCIES_VAR _r_deps
+      UNRESOLVED_DEPENDENCIES_VAR _u_deps
+      DIRECTORIES ${MY_DEPENDENCY_PATHS}
+    )
+    foreach(_file ${_r_deps})
+      file(INSTALL
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+        TYPE SHARED_LIBRARY
+        FOLLOW_SYMLINK_CHAIN
+        FILES "${_file}"
+      )
+    endforeach()
+    list(LENGTH _u_deps _u_length)
+    if("${_u_length}" GREATER 0)
+      message(WARNING "Unresolved dependencies detected!")
+    endif()
+  ]])
 
   set(CPACK_PACKAGE_NAME "JPSreport")
   set(CPACK_PACKAGE_FILE_NAME "jpsreport-installer-${PROJECT_VERSION}")
-  set(CPACK_PACKAGE_VENDOR "Forschungszentrum Juelich GmbH")
+  set(CPACK_PACKAGE_VENDOR "Forschungszentrum Jülich GmbH")
   set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERISON_MAJOR})
   set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERISON_MINOR})
   set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERISON_PATCH})
 
+  set (CPACK_PACKAGE_INSTALL_DIRECTORY "JPSreport-${PROJECT_VERSION}")
   set(CPACK_PACKAGE_DESCRIPTION "jpsreport is a tool to analyze pedestrian trajectories.")
   set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
   set(CPACK_PACKAGE_HOMEPAGE_URL "https://www.jupedsim.org/jpsreport_introduction.html")
@@ -83,8 +98,10 @@ macro (cpack_write_config)
   install(FILES "${CMAKE_SOURCE_DIR}/LICENSE" "${CMAKE_SOURCE_DIR}/README.md"
           DESTINATION .)
 
-  set(CT_DATA_FILE_DIR "../demos")
-  file(GLOB CT_FILES "${CMAKE_SOURCE_DIR}/jpsreport/${CT_DATA_FILE_DIR}/*/*.xml")
+  # Copy sample files from demos folder
+  set(CT_DATA_FILE_DIR "demos")
+  file(GLOB CT_FILES "${CMAKE_SOURCE_DIR}/${CT_DATA_FILE_DIR}/*/*.xml" "${CMAKE_SOURCE_DIR}/${CT_DATA_FILE_DIR}/*/*.txt")
   install(FILES ${CT_FILES}
-          DESTINATION "jpsreport_samples")
+          DESTINATION "jpsreport_samples"
+  )
 endmacro()

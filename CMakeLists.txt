@@ -16,7 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -115,7 +115,6 @@ else()
     )
 endif()
 
-#find_package(Threads REQUIRED)
 find_package(PythonInterp 3 REQUIRED)
 
 ################################################################################
@@ -291,16 +290,18 @@ endif (BUILD_TESTING)
 #################################################################################
 ## Packaging with CPack
 #################################################################################
-#include(CPackUtilities)
-#IF(UNIX AND NOT APPLE)
-#  cpack_write_deb_config()
-#endif()
-#if(WIN32 AND NOT UNIX)
-#  cpack_write_windows_config()
-#endif()
-#if(APPLE)
-#  cpack_write_osx_config()
-#endif()
-#
-#cpack_write_config()
+include(CPackUtilities)
+cpack_write_config()
+
+IF(UNIX AND NOT APPLE)
+  cpack_write_deb_config()
+endif()
+if(WIN32 AND NOT UNIX)
+  cpack_write_windows_config()
+endif()
+if(APPLE)
+  cpack_write_osx_config()
+endif()
+include(CPack)
+
 

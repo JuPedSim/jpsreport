@@ -2,11 +2,9 @@
 /lib/
 /bin/
 /outside/
-/doc
 /Debug
 /Release
 /Testing
-/doc/html
 /figs
 /figs_bot
 /inputfiles

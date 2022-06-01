@@ -20,7 +20,7 @@ add_test(NAME reference_cut_off_enabled_global_IFD COMMAND ${PYTHON_EXECUTABLE} 
 add_test(NAME reference_cut_off_large_global_IFD COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/global_IFD/cut_off_large/test_cut_off_large.py ${jpsreport_exe})
 add_test(NAME reference_cut_off_small_global_IFD COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/global_IFD/cut_off_small/test_cut_off_small.py ${jpsreport_exe})
 add_test(NAME reference_start_stop_global_IFD COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/global_IFD/start_stop_frame/test_start_stop_frame.py ${jpsreport_exe})
-add_test(NAME reference_subrooms_global_IFD COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/global_IFD/subrooms/test_subrooms.py ${jpsreport_exe})
+#add_test(NAME reference_subrooms_global_IFD COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/global_IFD/subrooms/test_subrooms.py ${jpsreport_exe})
 
 add_test(NAME reference_methods_ABC COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/methods_ABC/test_methods_ABC.py ${jpsreport_exe})
 
@@ -46,7 +46,7 @@ set_tests_properties(
         reference_cut_off_large_global_IFD
         reference_cut_off_small_global_IFD
         reference_start_stop_global_IFD
-        reference_subrooms_global_IFD
+#        reference_subrooms_global_IFD
         reference_methods_ABC
 
         PROPERTIES LABELS "CI:FAST"

@@ -12,8 +12,6 @@
     "boost-range",
     "boost-ublas",
     "fmt",
-    "spdlog",
-    "catch2",
-    "cli11"
+    "spdlog"
   ]
 }

@@ -245,10 +245,11 @@ Analysis::GetRoomForMeasurementArea(const std::vector<MeasurementArea_B *> & are
     // loop over all areas
     for(auto && area : areas) {
         // search for the subroom that contains that area
-
         for(auto && room : _geometry) {
-            if(boost::geometry::within(area->_poly, room.outer()) ||
-               boost::geometry::within(room.outer(), area->_poly)) {
+            point_2d point(0, 0);
+            boost::geometry::centroid(area->_poly, point);
+
+            if(boost::geometry::within(point, room.outer())) {
                 geoPoly.emplace(area->_id, room);
             }
         }

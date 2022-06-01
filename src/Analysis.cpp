@@ -249,7 +249,7 @@ Analysis::GetRoomForMeasurementArea(const std::vector<MeasurementArea_B *> & are
             point_2d point(0, 0);
             boost::geometry::centroid(area->_poly, point);
 
-            if(boost::geometry::within(point, room)) {
+            if(boost::geometry::within(point, room.outer())) {
                 geoPoly.emplace(area->_id, room);
             }
         }

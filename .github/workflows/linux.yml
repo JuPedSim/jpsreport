@@ -34,13 +34,11 @@ jobs:
                                  clang-8 \
                                  cmake \
                                  make \
-                                 libboost-dev \
-                                 libcgal-dev \
                                  python3 \
                                  python3-pip \
                                  python3-matplotlib
           cp scripts/setup-deps.sh /opt/
-          cd /opt && chmod +x setup-deps.sh && CXX=/usr/bin/g++-9 CC=/usr/bin/gcc-9 ./setup-deps.sh
+          cd /opt && chmod +x setup-deps.sh && sudo CXX=/usr/bin/g++-9 CC=/usr/bin/gcc-9 ./setup-deps.sh --install-path /opt/deps
           pip3 install numpy && \
               pip3 install pandas && \
               pip3 install dataclasses && \

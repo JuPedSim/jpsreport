@@ -79,13 +79,13 @@ list(APPEND COMMON_COMPILE_OPTIONS
 add_subdirectory(third-party)
 
 # libfmt
-find_package(fmt 6.0 REQUIRED CONFIG)
+find_package(fmt 8.0 REQUIRED CONFIG)
 
 # spdlog
-find_package(spdlog 1.3 REQUIRED CONFIG)
+find_package(spdlog 1.9 REQUIRED CONFIG)
 
 # Boost
-find_package(Boost 1.65 REQUIRED ${BOOST_COMPONENTS})
+find_package(Boost 1.79 REQUIRED ${BOOST_COMPONENTS})
 
 # std::filesystem needs to be linked on gcc < 9
 add_library(fs INTERFACE)

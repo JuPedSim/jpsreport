@@ -1,7 +1,35 @@
 #! /bin/bash
-set -e
-ROOT_DIR=$(pwd)
-INSTALL_DIR=${ROOT_DIR}/deps
+set -ex
+
+fmt_version="8.0.1"
+spdlog_version="1.9.2"
+boost_version="1.79.0"
+
+install_path=/usr/local
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]; do
+  key="$1"
+
+  case $key in
+    --install-path)
+      install_path="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+
+if [ ${install_path} ]; then
+    if [ ! -d "${install_path}" ]; then
+        mkdir -p ${install_path}
+    fi
+    install_path="$(cd ${install_path}; pwd)"
+fi
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     CPUS=$(nproc)
@@ -9,66 +37,67 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     CPUS=$(sysctl -n hw.logicalcpu)
 fi
 
-FMTLIB_VER="6.0.0"
-wget https://github.com/fmtlib/fmt/archive/${FMTLIB_VER}.tar.gz
-tar xf ${FMTLIB_VER}.tar.gz
-cd fmt-${FMTLIB_VER}
-mkdir build
-cd build
-cmake .. \
-    -DFMT_TEST=OFF \
-    -DFMT_DOC=OFF \
-    -DFMT_INSTALL=ON \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
-cmake --build . --target install -- -j${CPUS}
-cd ../..
-rm -rf ${FMTLIB_VER}.tar.gz fmt-${FMTLIB_VER}
+function setup_boost {
+    root=$(pwd)
+    temp_folder=$(mktemp -d)
+    cd ${temp_folder}
+    boost_version_string=${boost_version//[.]/_}
+    wget https://boostorg.jfrog.io/artifactory/main/release/${boost_version}/source/boost_${boost_version_string}.tar.gz
+    tar xf boost_${boost_version_string}.tar.gz
+    cd boost_${boost_version_string}
+    ./bootstrap.sh --prefix=${install_path} --with-libraries="headers"
+    ./b2 --prefix=${install_path} install
 
-SPDLOG_VER="1.3.1"
-wget https://github.com/gabime/spdlog/archive/v${SPDLOG_VER}.tar.gz
-tar xf v${SPDLOG_VER}.tar.gz
-cd spdlog-${SPDLOG_VER}
-mkdir build
-cd build
-cmake .. \
-    -DSPDLOG_BUILD_EXAMPLES=OFF \
-    -DSPDLOG_BUILD_BENCH=OFF \
-    -DSPDLOG_BUILD_TESTS=OFF \
-    -DSPDLOG_FMT_EXTERNAL=ON \
-    -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
-cmake --build . --target install -- -j${CPUS}
-cd ../..
-rm -rf v${SPDLOG_VER}.tar.gz spdlog-${SPDLOG_VER}
+    cd ${root}
+    rm -rf ${temp_folder}
+}
 
-CATCH2_VER="2.9.2"
-wget https://github.com/catchorg/Catch2/archive/v${CATCH2_VER}.tar.gz
-tar xf v${CATCH2_VER}.tar.gz
-cd Catch2-${CATCH2_VER}
-mkdir build
-cd build
-cmake .. \
-    -DBUILD_TESTING=OFF      \
-    -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
-    -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
-cmake --build . --target install -- -j${CPUS}
-cd ../..
-rm -rf v${CATCH2_VER}.tar.gz Catch2-${CATCH2_VER}
+function setup_fmt {
+    root=$(pwd)
+    temp_folder=$(mktemp -d)
+    cd ${temp_folder}
 
-CLI11_VER="1.8.0"
-wget https://github.com/CLIUtils/CLI11/archive/v${CLI11_VER}.tar.gz
-tar xf v${CLI11_VER}.tar.gz
-cd CLI11-${CLI11_VER}
-mkdir build
-cd build
-cmake .. \
-    -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_TESTING=OFF \
-    -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-    -DCLI11_EXAMPLES=OFF
-cmake --build . --target install -- -j${CPUS}
-cd ../..
-rm -rf CLI11-${CLI11_VER} v${CLI11_VER}.tar.gz
+    wget https://github.com/fmtlib/fmt/archive/${fmt_version}.tar.gz
+    tar xf ${fmt_version}.tar.gz
+    cd fmt-${fmt_version}
+    mkdir build
+    cd build
+    cmake .. \
+        -DCMAKE_CXX_FLAGS="-fPIC -fvisibility=hidden" \
+        -DFMT_DOC=OFF \
+        -DFMT_TEST=OFF \
+        -DCMAKE_INSTALL_PREFIX=${install_path} \
+        -DCMAKE_BUILD_TYPE=Release
+    cmake --build . -j ${CPUS}
+    cmake --install .
+    cd ${root}
+    rm -rf ${temp_folder}
+}
+
+function setup_spdlog {
+    root=$(pwd)
+    temp_folder=$(mktemp -d)
+    cd ${temp_folder}
+
+    wget https://github.com/gabime/spdlog/archive/v${spdlog_version}.tar.gz
+    tar xf v${spdlog_version}.tar.gz
+    cd spdlog-${spdlog_version}
+    mkdir build
+    cd build
+    cmake .. \
+        -DCMAKE_CXX_FLAGS="-fPIC -fvisibility=hidden" \
+        -DSPDLOG_BUILD_BENCH=OFF \
+        -DSPDLOG_BUILD_TESTS=OFF \
+        -DSPDLOG_FMT_EXTERNAL=ON \
+        -DCMAKE_PREFIX_PATH=${install_path} \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=${install_path}
+    cmake --build . --target install -- -j${CPUS}
+
+    cd ${root}
+    rm -rf ${temp_folder}
+}
+
+setup_boost
+setup_fmt
+setup_spdlog

@@ -950,16 +950,16 @@ std::optional<std::vector<polygon_2d>> ArgumentParser::ParseGeometry(const fs::p
                     }
                 }
                 correct(obstacle);
+                obstacles.push_back(obstacle);
             }
 
             // Add obstacles as holes in subroom polygon
             int k = 1;
             for(auto && obstacle : obstacles) {
                 subroom.inners().resize(k++);
-                subroom.inners().back();
                 model::ring<point_2d> & inner = subroom.inners().back();
                 for(auto && tmp_point : obstacle.outer()) {
-                    append(inner, make<point_2d>(tmp_point.x() * M2CM, tmp_point.y() * M2CM));
+                    append(inner, make<point_2d>(tmp_point.x(), tmp_point.y()));
                 }
                 correct(subroom);
             }

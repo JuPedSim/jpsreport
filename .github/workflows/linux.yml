@@ -62,11 +62,11 @@ jobs:
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
         run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_TESTING=ON -DBUILD_UNIT_TEST=ON -DCMAKE_PREFIX_PATH=/opt/deps
 
-      - name: Prebuild Tests
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        # Check if code is formatted correctly
-        run: cmake --build . --target check-format
+#      - name: Prebuild Tests
+#        working-directory: ${{github.workspace}}/build
+#        shell: bash
+#        # Check if code is formatted correctly
+#        run: cmake --build . --target check-format
 
       - name: Build
         working-directory: ${{github.workspace}}/build
